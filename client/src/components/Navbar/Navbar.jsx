@@ -34,6 +34,7 @@ export default function Navbar({ showCta = false }) {
           <span onClick={() => navigate('/empresa')}>Empresa</span> */}
           <span onClick={() => navigate('/menu')}>Menu</span>
           <span onClick={() => navigate('/sorteio')}>Sorteio</span>
+          {isAuthenticated && <span onClick={() => navigate('/streak')}>Sequência 🔥</span>}
           {isAuthenticated
             ? <span onClick={() => logout()}>Sair</span>
             : <span onClick={() => navigate('/auth')}>Entrar</span>}
@@ -81,6 +82,7 @@ export default function Navbar({ showCta = false }) {
             <span onClick={() => handleNavegar('/empresa')}>Empresa</span> */}
             <span onClick={() => handleNavegar('/menu')}>Menu</span>
             <span onClick={() => handleNavegar('/sorteio')}>Sorteio</span>
+            {isAuthenticated && <span onClick={() => handleNavegar('/streak')}>Sequência 🔥</span>}
             {isAuthenticated
               ? <span onClick={() => { logout(); setMenuAberto(false) }}>Sair{cliente?.nome ? ` (${cliente.nome})` : ''}</span>
               : <span onClick={() => handleNavegar('/auth')}>Entrar</span>}

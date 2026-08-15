@@ -293,6 +293,43 @@ export interface OrderContextType {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Streak / Sequência (Fase 4)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type StreakTierTipo = 'desconto' | 'item_gratis'
+
+/** Escalão da escada de recompensas (configurável no admin). */
+export interface StreakTier {
+  /** Dias úteis consecutivos necessários. */
+  dias: number
+  tipo: StreakTierTipo
+  /** Percentagem (para `desconto`); ignorado para `item_gratis`. */
+  valor: number
+  descricao: string
+}
+
+/** Recompensa de item grátis ganha ao atingir um marco. */
+export interface RecompensaGanha {
+  _id?: string
+  dias: number
+  descricao: string
+  ganhoEm: Date | string
+  /** Marcado pelo admin quando entregue. */
+  cumprida: boolean
+}
+
+/** Estado de streak devolvido por GET /api/streak/me. */
+export interface StreakInfo {
+  streakAtual: number
+  maiorStreak: number
+  ultimoDiaPedido: string | null
+  descontoAtual: number
+  proximaRecompensa: StreakTier | null
+  tiers: StreakTier[]
+  recompensasGanhas: RecompensaGanha[]
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Utilities
 // ═══════════════════════════════════════════════════════════════════════════
 

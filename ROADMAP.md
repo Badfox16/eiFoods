@@ -77,16 +77,17 @@ Bloqueia quase tudo o resto. Fazer primeiro. **Concluída** (branch `feat/fase-0
 - [ ] UI no client: secção "Exclusivos" com indicação de bloqueio/como desbloquear.
 - [ ] Admin: gerir o que é exclusivo e a que tier pertence.
 
-## Fase 4 — Sistema de streak (estilo Duolingo)
+## Fase 4 — Sistema de streak (estilo Duolingo) ✅
 
-- [ ] **Modelo de streak no `Cliente`**: `streakAtual`, `maiorStreak`, `ultimoDiaPedido`, `recompensasResgatadas`.
-- [ ] **Lógica de incremento**: +1 por dia útil com pedido; reset ao falhar (definir regra de "dia falhado" com timezone Maputo). Idempotente por dia.
-- [ ] **Escada de recompensas configurável no admin** (valores por omissão):
-  - 3 dias → 8% desconto · 7 → 11% · 12 → 20% · 16 → 28%
-  - 21 → dose de batata grátis · 26 → prato grátis · 30 → 40% desconto · 35 → 2 pratos grátis (no mês)
-- [ ] **Aplicação da recompensa** no cálculo do total do pedido (server-side; nunca confiar no client).
-- [ ] **UI de streak (client)**: dias acumulados, próximas recompensas, progresso visual/animação (fugir do genérico — dar personalidade).
-- [ ] Admin: editar a escada de recompensas e ver streaks dos clientes.
+**Concluída** (branch `feat/fase-4-streak`).
+
+- [x] **Modelo de streak no `Cliente`**: `streakAtual`, `maiorStreak`, `ultimoDiaPedido`, `recompensasGanhas[]`.
+- [x] **Lógica de incremento** (`lib/streak.ts`): +1 por dia útil com pedido; reset ao falhar; idempotente por dia. "Dia útil anterior" salta domingo (`getPreviousBusinessDayKey`, timezone Maputo). Testada.
+- [x] **Escada de recompensas configurável no admin** (`StreakConfig` singleton, defaults 3/7/12/16/21/26/30/35).
+- [x] **Aplicação da recompensa** server-side no total do pedido (`POST /orders`, auth opcional): desconto cumulativo (maior escalão `dias ≤ streak`); itens grátis concedidos uma vez no marco exato → `recompensasGanhas`.
+- [x] **UI de streak (client)** (`pages/Streak`): dias acumulados (chama animada), desconto atual, próxima recompensa com barra de progresso, escada com estados, prémios ganhos. Link "Sequência 🔥" no Navbar (autenticados).
+- [x] Admin (`pages/Streak`): editor da escada (`GET/PUT /streak/config`, reset) + tabela de clientes por sequência (`GET /streak/clientes`).
+- [ ] _Follow-up_: proteger rotas admin (`PUT /streak/config`, `/streak/clientes`) — hoje o painel admin não tem auth (dívida transversal, não específica desta fase).
 
 ## Fase 5 — Reestruturação visual do client
 

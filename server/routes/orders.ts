@@ -3,8 +3,11 @@ import Order, { type OrderStatus } from '../models/Order'
 import Prato from '../models/Prato'
 import Extra from '../models/Extra'
 import Empresa, { getCurrentDateKey } from '../models/Empresa'
+import Cliente from '../models/Cliente'
 import PratoDoDia, { type DiaSemana } from '../models/PratoDoDia'
 import { getMaputoWeekdayNumber } from '../lib/businessTime'
+import { lerSessao } from '../lib/auth'
+import { registrarPedidoStreak } from '../lib/streak'
 
 const router = Router()
 
@@ -145,11 +148,37 @@ router.post('/', async (req, res, next) => {
     )
 
     const taxaForaDoDia = foraDoDiaCount * FORA_DO_DIA_TAXA
-    const total = orderItems.reduce((sum, i) => sum + i.total, 0)
+    const subtotal = orderItems.reduce((sum, i) => sum + i.total, 0)
+
+    // ── Streak: cliente autenticado (opcional) ──
+    // Se houver sessão válida, atualiza o streak (idempotente por dia) e aplica
+    // o desconto correspondente ao total. Pedidos anónimos ignoram este bloco.
+    let clienteId: string | undefined
+    let descontoStreakPercent = 0
+    let recompensasStreak: { dias: number; descricao: string }[] = []
+    const sessao = lerSessao(req)
+    if (sessao) {
+      const cliente = await Cliente.findById(sessao.sub)
+      if (cliente) {
+        clienteId = String(cliente._id)
+        const resultado = await registrarPedidoStreak(cliente)
+        descontoStreakPercent = resultado.descontoPercent
+        recompensasStreak = resultado.novasRecompensas
+        // Preenche o nome do cliente no primeiro pedido, se ainda vazio.
+        if (!cliente.nome && deliveryDetails.name?.trim()) {
+          cliente.nome = deliveryDetails.name.trim()
+          await cliente.save()
+        }
+      }
+    }
+
+    const descontoStreakValor = Math.round((subtotal * descontoStreakPercent) / 100)
+    const total = Math.max(0, subtotal - descontoStreakValor)
 
     const order = await Order.create({
       empresaId,
       empresaCodigo: empresaCodigoResolved,
+      clienteId,
       items: orderItems,
       deliveryDetails: {
         name:     deliveryDetails.name,
@@ -159,6 +188,9 @@ router.post('/', async (req, res, next) => {
       },
       foraDoDiaCount,
       taxaForaDoDia,
+      subtotal,
+      descontoStreakPercent,
+      descontoStreakValor,
       total,
     })
 
@@ -175,7 +207,12 @@ router.post('/', async (req, res, next) => {
       }
     }
 
-    res.status(201).json(order)
+    res.status(201).json({
+      ...order.toObject(),
+      streak: clienteId
+        ? { descontoPercent: descontoStreakPercent, descontoValor: descontoStreakValor, novasRecompensas: recompensasStreak }
+        : null,
+    })
   } catch (err: unknown) {
     const e = err as Error & { status?: number }
     if (e.status) return res.status(e.status).json({ error: e.message })

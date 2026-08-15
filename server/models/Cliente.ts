@@ -5,11 +5,20 @@ import mongoose, { type Document, type Model, Schema, type Types } from 'mongoos
  * Base para streaks, planos e histórico. As funcionalidades de empresa
  * ficam em standby: `empresaId` é opcional e não é exigido no fluxo atual.
  *
- * Nota de extensibilidade: os campos de streak (streakAtual, maiorStreak,
- * ultimoDiaPedido, recompensasResgatadas) serão adicionados numa fase
- * posterior (Fase 4). Adicioná-los mais tarde é uma alteração aditiva e
- * não-destrutiva ao schema.
+ * Campos de streak (Fase 4): contam dias úteis consecutivos com pedido.
+ * Ver lib/streak.ts para a lógica de incremento/reset e cálculo de recompensas.
  */
+
+/** Recompensa de item grátis ganha ao atingir um marco do streak. */
+export interface IRecompensaGanha {
+	/** Nº de dias do marco (ex.: 21, 26, 35). */
+	dias: number
+	descricao: string
+	ganhoEm: Date
+	/** Marcado pelo admin quando o prémio for entregue. */
+	cumprida: boolean
+}
+
 export interface ICliente extends Document {
 	/** Telefone normalizado no formato 258XXXXXXXXX (único). */
 	telefone: string
@@ -17,9 +26,27 @@ export interface ICliente extends Document {
 	nome?: string
 	/** Empresa associada (opcional — empresa em standby). */
 	empresaId?: Types.ObjectId
+	/** Dias úteis consecutivos com pedido. */
+	streakAtual: number
+	/** Maior streak alguma vez atingido. */
+	maiorStreak: number
+	/** Chave de dia (AAAA-MM-DD, timezone Maputo) do último pedido contado. */
+	ultimoDiaPedido?: string
+	/** Recompensas de item grátis ganhas (histórico). */
+	recompensasGanhas: IRecompensaGanha[]
 	createdAt: Date
 	updatedAt: Date
 }
+
+const RecompensaGanhaSchema = new Schema<IRecompensaGanha>(
+	{
+		dias: { type: Number, required: true },
+		descricao: { type: String, required: true },
+		ganhoEm: { type: Date, default: Date.now },
+		cumprida: { type: Boolean, default: false },
+	},
+	{ _id: true }
+)
 
 const ClienteSchema = new Schema<ICliente>(
 	{
@@ -33,6 +60,10 @@ const ClienteSchema = new Schema<ICliente>(
 		},
 		nome: { type: String, trim: true, default: '' },
 		empresaId: { type: Schema.Types.ObjectId, ref: 'Empresa' },
+		streakAtual: { type: Number, default: 0, min: 0 },
+		maiorStreak: { type: Number, default: 0, min: 0 },
+		ultimoDiaPedido: { type: String },
+		recompensasGanhas: { type: [RecompensaGanhaSchema], default: [] },
 	},
 	{ timestamps: true }
 )
