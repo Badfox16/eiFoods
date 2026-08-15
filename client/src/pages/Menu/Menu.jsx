@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useOrder } from '../../context/useOrder'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
-import { pratosApi, scheduleApi } from '../../api'
+import { menuApi } from '../../api'
 import styles from './Menu.module.css'
 
 const DIAS = ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado']
@@ -131,13 +131,23 @@ export default function Menu() {
   useEffect(() => {
     let active = true
 
-    Promise.all([
-      pratosApi.list({ disponivel: true }),
-      scheduleApi.getHoje().catch(() => ({ prato: null })),
-    ])
-      .then(([listaPratos, hoje]) => {
+    menuApi.getHoje()
+      .then((menu) => {
         if (!active) return
-        setPratoDoDia(hoje?.prato ?? null)
+
+        // Itens do menu de hoje → lista plana de pratos (pratoId vem populado)
+        const itens = Array.isArray(menu?.itens) ? menu.itens : []
+        const listaPratos = itens
+          .map((item) => {
+            const prato = typeof item.pratoId === 'object' ? item.pratoId : null
+            if (!prato) return null
+            return { ...prato, destaque: Boolean(item.destaque), exclusivo: Boolean(item.exclusivo) }
+          })
+          .filter(Boolean)
+
+        // Prato em destaque assume o papel do antigo "prato do dia"
+        const destaque = listaPratos.find((p) => p.destaque) ?? null
+        setPratoDoDia(destaque)
 
         const companyPratoIds = selectedEmpresa?.menu?.pratoIds
           ? selectedEmpresa.menu.pratoIds.map((p) => (typeof p === 'string' ? p : p._id))
@@ -147,15 +157,15 @@ export default function Menu() {
           ? listaPratos.filter((p) => companyPratoIds.includes(p._id))
           : listaPratos
 
-        const hojeId = hoje?.prato?._id
-        if (!hojeId) {
+        const destaqueId = destaque?._id
+        if (!destaqueId) {
           setPratos(pratosBase)
           return
         }
 
         const ordenados = [...pratosBase].sort((a, b) => {
-          if (a._id === hojeId) return -1
-          if (b._id === hojeId) return 1
+          if (a._id === destaqueId) return -1
+          if (b._id === destaqueId) return 1
           return 0
         })
 

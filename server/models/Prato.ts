@@ -10,7 +10,8 @@ export interface IPrato extends Document {
   descricao: string
   preco: number
   imagem: IImagem
-  disponivel: boolean          // flag: está no menu de hoje?
+  /** @deprecated — substituído por Menu. flag legada: está no menu de hoje? */
+  disponivel: boolean
   extrasProprios: Types.ObjectId[]  // extras exclusivos deste prato
   createdAt: Date
   updatedAt: Date

@@ -10,6 +10,7 @@ import swaggerUi from 'swagger-ui-express'
 import pratosRouter from './routes/pratos.ts'
 import extrasRouter from './routes/extras.ts'
 import pratoDoDiaRouter from './routes/pratoDoDia.ts'
+import menuRouter from './routes/menu.ts'
 import ordersRouter from './routes/orders.ts'
 import sorteioRouter from './routes/sorteio.ts'
 import empresasRouter from './routes/empresas.ts'
@@ -54,7 +55,9 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/pratos', pratosRouter)
 app.use('/api/extras', extrasRouter)
+// @deprecated — substituído por /api/menu (menu por data de calendário). Mantido temporariamente.
 app.use('/api/prato-do-dia', pratoDoDiaRouter)
+app.use('/api/menu', menuRouter)
 app.use('/api/orders', ordersRouter)
 app.use('/api/sorteio', sorteioRouter)
 app.use('/api/empresas', empresasRouter)

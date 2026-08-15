@@ -102,6 +102,23 @@ export interface ApiEmpresaCodigoValidation {
   menu: ApiEmpresaMenu
 }
 
+export interface ApiMenuItem {
+  pratoId: ApiPrato | string
+  destaque: boolean
+  exclusivo: boolean
+}
+
+export interface ApiMenu {
+  _id?: string
+  data: string
+  itens: ApiMenuItem[]
+  ativo: boolean
+  message?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+// @deprecated — substituído por ApiMenu
 export interface ApiDiaAgendado {
   diaSemana: 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado'
   prato: ApiPrato | null
@@ -215,7 +232,7 @@ export const extrasApi = {
     request<{ message: string }>(`/extras/${id}`, { method: 'DELETE' }),
 }
 
-// ── Prato do Dia ──────────────────────────────────────────────────────────────
+// ── Prato do Dia (@deprecated — substituído por menuApi) ──────────────────────
 
 export const scheduleApi = {
   get: () =>
@@ -226,6 +243,26 @@ export const scheduleApi = {
 
   setDay: (diaSemana: string, pratoId: string | null) =>
     request<ApiSchedule>(`/prato-do-dia/${diaSemana}`, json('PUT', { pratoId })),
+}
+
+// ── Menu por dia ──────────────────────────────────────────────────────────────
+
+export const menuApi = {
+  /** Menu do dia atual (timezone Maputo) com pratos populados */
+  getHoje: () =>
+    request<ApiMenu>('/menu/hoje'),
+
+  /** Menu de uma data específica (AAAA-MM-DD); devolve null se não existir */
+  getByData: (data: string) =>
+    request<ApiMenu | null>(`/menu?data=${encodeURIComponent(data)}`),
+
+  /** Lista de menus futuros (>= hoje) */
+  list: () =>
+    request<ApiMenu[]>('/menu'),
+
+  /** Cria ou atualiza (upsert) o menu de uma data */
+  save: (data: string, payload: { itens: Array<{ pratoId: string; destaque?: boolean; exclusivo?: boolean }>; ativo?: boolean }) =>
+    request<ApiMenu>(`/menu/${data}`, json('PUT', payload)),
 }
 
 // ── Orders ────────────────────────────────────────────────────────────────────

@@ -8,6 +8,7 @@ import { Extras } from './pages/Extras/Extras'
 import { Empresas } from './pages/Empresas/Empresas'
 import { Settings } from './pages/Settings/Settings'
 import { PratoDoDia } from './pages/PratoDoDia/PratoDoDia'
+import { MenuDia } from './pages/MenuDia/MenuDia'
 import { SorteioAdmin } from './pages/SorteioAdmin/SorteioAdmin'
 import './App.css'
 
@@ -25,6 +26,7 @@ function App() {
               <Route path="/extras" element={<Extras />} />
               <Route path="/empresas" element={<Empresas />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/menu-dia" element={<MenuDia />} />
               <Route path="/prato-do-dia" element={<PratoDoDia />} />
               <Route path="/sorteio" element={<SorteioAdmin />} />
             </Routes>

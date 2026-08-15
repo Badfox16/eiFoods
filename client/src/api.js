@@ -30,8 +30,14 @@ export const extrasApi = {
   listForPrato: (pratoId) => request(`/extras/prato/${pratoId}`),
 }
 
+/** @deprecated substituído por menuApi (menu por data de calendário) */
 export const scheduleApi = {
   getHoje: () => request('/prato-do-dia/hoje'),
+}
+
+export const menuApi = {
+  /** Menu do dia atual (timezone Maputo) com pratos populados em itens.pratoId */
+  getHoje: () => request('/menu/hoje'),
 }
 
 export const ordersApi = {

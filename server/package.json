@@ -7,7 +7,8 @@
     "dev": "bun --watch index.ts",
     "start": "bun index.ts",
     "seed": "bun seed.ts",
-    "migrate:single-company-code": "bun migrate-single-company-code.ts"
+    "migrate:single-company-code": "bun migrate-single-company-code.ts",
+    "migrate:pratodia-to-menu": "bun migrate-pratodia-to-menu.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

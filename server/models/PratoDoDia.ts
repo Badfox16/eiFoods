@@ -1,3 +1,8 @@
+/**
+ * @deprecated — substituído por Menu (server/models/Menu.ts).
+ * Agenda semanal (1 prato por dia da semana). Mantido para não partir código
+ * ainda a decorrer noutra fase; não usar em código novo.
+ */
 import mongoose, { type Document, type Model, Schema, type Types } from 'mongoose'
 
 export type DiaSemana = 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado'
