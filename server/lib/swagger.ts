@@ -19,7 +19,8 @@ const spec = {
     { name: 'Saúde', description: 'Estado do servidor' },
     { name: 'Pratos', description: 'Catálogo de pratos' },
     { name: 'Extras', description: 'Extras pagos (globais e exclusivos por prato)' },
-    { name: 'Prato do Dia', description: 'Agenda semanal do prato em destaque' },
+    { name: 'Menu', description: 'Menu por data de calendário (substitui o prato do dia)' },
+    { name: 'Prato do Dia', description: '[deprecated] Agenda semanal do prato em destaque — substituído por Menu' },
     { name: 'Encomendas', description: 'Gestão de encomendas de clientes' },
     { name: 'Sorteio', description: 'Gestão do sorteio diário (participantes e resultado)' },
     { name: 'Empresas', description: 'Gestão de empresas, código único e menus exclusivos' },
@@ -104,6 +105,30 @@ const spec = {
             type: 'array',
             items: { $ref: '#/components/schemas/DiaAgendado' },
           },
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+
+      MenuItem: {
+        type: 'object',
+        properties: {
+          pratoId: {
+            oneOf: [{ $ref: '#/components/schemas/Prato' }, { type: 'string' }],
+            description: 'Prato do menu (populado nas respostas)',
+          },
+          destaque: { type: 'boolean', example: false, description: 'Prato em destaque do dia' },
+          exclusivo: { type: 'boolean', example: false, description: 'Prato exclusivo (tier premium)' },
+        },
+      },
+
+      Menu: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string' },
+          data: { type: 'string', example: '2026-08-15', description: 'Chave do dia AAAA-MM-DD (timezone Maputo)' },
+          itens: { type: 'array', items: { $ref: '#/components/schemas/MenuItem' } },
+          ativo: { type: 'boolean', example: true },
+          createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
         },
       },
@@ -472,7 +497,99 @@ const spec = {
       },
     },
 
-    // ── Prato do Dia ─────────────────────────────────────────────────────────
+    // ── Menu por dia ─────────────────────────────────────────────────────────
+    '/menu/hoje': {
+      get: {
+        tags: ['Menu'],
+        summary: 'Menu do dia atual',
+        description: 'Devolve o menu do dia atual (timezone Maputo) com os pratos populados em `itens.pratoId`. Se não existir menu, devolve `{ data, itens: [], ativo: false, message }`.',
+        responses: {
+          200: { description: 'Menu de hoje', content: { 'application/json': { schema: { $ref: '#/components/schemas/Menu' } } } },
+        },
+      },
+    },
+
+    '/menu': {
+      get: {
+        tags: ['Menu'],
+        summary: 'Menu por data ou lista de menus futuros',
+        description: 'Com `?data=AAAA-MM-DD` devolve o menu dessa data (ou `null`). Sem query devolve a lista de menus com data >= hoje, ordenados por data.',
+        parameters: [
+          {
+            name: 'data',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', example: '2026-08-15' },
+            description: 'Chave do dia AAAA-MM-DD',
+          },
+        ],
+        responses: {
+          200: {
+            description: 'Menu(s)',
+            content: {
+              'application/json': {
+                schema: {
+                  oneOf: [
+                    { $ref: '#/components/schemas/Menu' },
+                    { type: 'array', items: { $ref: '#/components/schemas/Menu' } },
+                    { type: 'null' },
+                  ],
+                },
+              },
+            },
+          },
+          400: { description: 'Data inválida', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/menu/{data}': {
+      put: {
+        tags: ['Menu'],
+        summary: 'Criar ou atualizar (upsert) o menu de uma data',
+        parameters: [
+          {
+            name: 'data',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', example: '2026-08-15' },
+            description: 'Chave do dia AAAA-MM-DD',
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['itens'],
+                properties: {
+                  itens: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      required: ['pratoId'],
+                      properties: {
+                        pratoId: { type: 'string', example: '66a1f2e3b5d4c8f01234abcd' },
+                        destaque: { type: 'boolean', example: true },
+                        exclusivo: { type: 'boolean', example: false },
+                      },
+                    },
+                  },
+                  ativo: { type: 'boolean', example: true },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Menu criado/atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Menu' } } } },
+          400: { description: 'Data ou itens inválidos', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    // ── Prato do Dia (@deprecated — substituído por Menu) ────────────────────
     '/prato-do-dia': {
       get: {
         tags: ['Prato do Dia'],

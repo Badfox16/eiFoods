@@ -1,5 +1,10 @@
 import { NavLink } from 'react-router-dom'
+import { CalendarDays } from 'lucide-react'
 import styles from './Sidebar.module.css'
+
+function IcoMenuDia() {
+  return <CalendarDays size={17} strokeWidth={2} />
+}
 
 function IcoDashboard() {
   return (
@@ -92,7 +97,8 @@ const navGroups = [
       { path: '/dishes',       label: 'Pratos',      icon: <IcoPratos /> },
       { path: '/extras',       label: 'Extras',       icon: <IcoExtras /> },
       { path: '/empresas',     label: 'Empresas',     icon: <IcoEmpresas /> },
-      { path: '/prato-do-dia', label: 'Prato do Dia', icon: <IcoPratoDoDia /> },
+      { path: '/menu-dia',     label: 'Menu do Dia',  icon: <IcoMenuDia /> },
+      { path: '/prato-do-dia', label: 'Prato do Dia (legado)', icon: <IcoPratoDoDia /> },
     ]
   },
   {

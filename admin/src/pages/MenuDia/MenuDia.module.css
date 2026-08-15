@@ -1,0 +1,169 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xl);
+}
+
+.errorBanner {
+  padding: 10px 14px;
+  background: var(--ui-danger-soft, #fdecea);
+  border-radius: 8px;
+  color: var(--ui-danger, #c62828);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.errorClose {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 16px;
+}
+
+.okBanner {
+  padding: 10px 14px;
+  background: var(--ui-success-soft, #e6f4ea);
+  border-radius: 8px;
+  color: var(--ui-success, #1e7e34);
+  font-size: 13px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-lg);
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.78rem;
+  color: var(--ui-text-2);
+  font-weight: 600;
+}
+
+.dateInput {
+  min-height: 38px;
+  border: 1.5px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font-size: 0.86rem;
+  outline: none;
+}
+
+.dateInput:focus {
+  border-color: var(--brand-primary);
+}
+
+.ativoWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  color: var(--ui-text);
+  cursor: pointer;
+  padding-bottom: 8px;
+}
+
+.toolbarRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding-bottom: 2px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-md);
+}
+
+.pratoCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+  border: 1px solid var(--ui-border);
+}
+
+.pratoCardSel {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 2px var(--brand-primary-light);
+}
+
+.pratoHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pratoImagem {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 1px solid var(--ui-border);
+  flex-shrink: 0;
+}
+
+.pratoInfo {
+  min-width: 0;
+}
+
+.pratoNome {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+
+.pratoPreco {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+}
+
+.flags {
+  display: flex;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+}
+
+.flag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--ui-text);
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

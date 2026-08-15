@@ -216,7 +216,32 @@ export type OrderAction =
   | { type: 'RESET_ORDER' }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Agenda Semanal / Prato do Dia
+// Menu por dia (menu por data de calendário)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/** Item de um menu — prato mais flags de destaque/exclusivo */
+export interface MenuItem {
+  /** Populado com o prato completo (server popula `itens.pratoId`) */
+  pratoId: Prato | string
+  /** Assume o papel visual do antigo "prato do dia" */
+  destaque?: boolean
+  /** Prato exclusivo (tier premium — Fase 3) */
+  exclusivo?: boolean
+}
+
+/** Menu de um dia de calendário (chave `data` no formato AAAA-MM-DD, timezone Maputo) */
+export interface Menu {
+  _id?: string
+  /** Chave do dia no formato AAAA-MM-DD */
+  data: string
+  itens: MenuItem[]
+  ativo: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Agenda Semanal / Prato do Dia  (@deprecated — substituído por Menu)
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** Dias de serviço (2ª a sábado) */
@@ -224,13 +249,13 @@ export type DiaSemana = 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 's
 
 export const DIAS_SEMANA: DiaSemana[] = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado']
 
-/** Entrada de um dia no agendamento semanal */
+/** @deprecated substituído por MenuItem. Entrada de um dia no agendamento semanal */
 export interface DiaAgendado {
   diaSemana: DiaSemana
   prato: Prato | null
 }
 
-/** Documento de agendamento semanal (singleton no servidor) */
+/** @deprecated substituído por Menu. Documento de agendamento semanal (singleton no servidor) */
 export interface AgendaSemanal {
   semana: DiaAgendado[]
   updatedAt?: Date | string
