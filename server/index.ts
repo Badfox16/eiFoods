@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import { dirname, resolve } from 'node:path'
@@ -13,6 +14,7 @@ import pratoDoDiaRouter from './routes/pratoDoDia.ts'
 import ordersRouter from './routes/orders.ts'
 import sorteioRouter from './routes/sorteio.ts'
 import empresasRouter from './routes/empresas.ts'
+import authRouter from './routes/auth.ts'
 import swaggerSpec from './lib/swagger.ts'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -39,6 +41,7 @@ app.use(cors({
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 // HTTP request logger
 const isDev = (process.env['NODE_ENV'] ?? 'development') === 'development'
@@ -58,6 +61,7 @@ app.use('/api/prato-do-dia', pratoDoDiaRouter)
 app.use('/api/orders', ordersRouter)
 app.use('/api/sorteio', sorteioRouter)
 app.use('/api/empresas', empresasRouter)
+app.use('/api/auth', authRouter)
 
 // ── API Docs (Swagger UI) ────────────────────────────────────────────────────
 

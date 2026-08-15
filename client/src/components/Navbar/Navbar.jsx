@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useOrder } from '../../context/useOrder'
+import { useAuth } from '../../context/useAuth'
 import styles from './Navbar.module.css'
 
 export default function Navbar({ showCta = false }) {
   const navigate = useNavigate()
   const { state } = useOrder()
+  const { isAuthenticated, cliente, logout } = useAuth()
   const totalItens = state.orderItems.reduce((acc, item) => acc + Math.max(1, item.quantity ?? 1), 0)
   const [menuAberto, setMenuAberto] = useState(false)
 
@@ -28,9 +30,13 @@ export default function Navbar({ showCta = false }) {
 
         <nav className={styles.navDesktop}>
           <span onClick={() => navigate('/')}>Início</span>
-          <span onClick={() => navigate('/empresa')}>Empresa</span>
+          {/* empresa em standby — link removido do fluxo principal
+          <span onClick={() => navigate('/empresa')}>Empresa</span> */}
           <span onClick={() => navigate('/menu')}>Menu</span>
           <span onClick={() => navigate('/sorteio')}>Sorteio</span>
+          {isAuthenticated
+            ? <span onClick={() => logout()}>Sair</span>
+            : <span onClick={() => navigate('/auth')}>Entrar</span>}
         </nav>
 
         <div className={styles.rightSection}>
@@ -71,9 +77,13 @@ export default function Navbar({ showCta = false }) {
           <div className={styles.overlay} onClick={() => setMenuAberto(false)} />
           <nav className={styles.navMobile}>
             <span onClick={() => handleNavegar('/')}>Início</span>
-            <span onClick={() => handleNavegar('/empresa')}>Empresa</span>
+            {/* empresa em standby — link removido do fluxo principal
+            <span onClick={() => handleNavegar('/empresa')}>Empresa</span> */}
             <span onClick={() => handleNavegar('/menu')}>Menu</span>
             <span onClick={() => handleNavegar('/sorteio')}>Sorteio</span>
+            {isAuthenticated
+              ? <span onClick={() => { logout(); setMenuAberto(false) }}>Sair{cliente?.nome ? ` (${cliente.nome})` : ''}</span>
+              : <span onClick={() => handleNavegar('/auth')}>Entrar</span>}
             {showCta && (
               <span className={styles.navMobileCta} onClick={() => handleNavegar('/menu')}>
                 Encomendar agora

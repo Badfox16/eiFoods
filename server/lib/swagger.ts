@@ -23,11 +23,23 @@ const spec = {
     { name: 'Encomendas', description: 'Gestão de encomendas de clientes' },
     { name: 'Sorteio', description: 'Gestão do sorteio diário (participantes e resultado)' },
     { name: 'Empresas', description: 'Gestão de empresas, código único e menus exclusivos' },
+    { name: 'Auth', description: 'Identidade do cliente por telefone + OTP (sessão em cookie httpOnly)' },
   ],
 
   // ── Reusable schemas ──────────────────────────────────────────────────────
   components: {
     schemas: {
+      Cliente: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', example: '66a1f2e3b5d4c8f01234abcd' },
+          telefone: { type: 'string', example: '258841234567', description: 'Normalizado para 258XXXXXXXXX' },
+          nome: { type: 'string', example: 'Ana Machava' },
+          empresaId: { type: 'string', nullable: true, description: 'Empresa associada (opcional; em standby)' },
+          createdAt: { type: 'string', format: 'date-time' },
+        },
+      },
+
       Imagem: {
         type: 'object',
         properties: {
@@ -861,6 +873,85 @@ const spec = {
           },
           400: { description: 'Payload inválido', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           404: { description: 'Empresa não encontrada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    // ── Auth ─────────────────────────────────────────────────────────────────
+    '/auth/request-otp': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Pedir código OTP',
+        description: 'Gera um código de 6 dígitos e envia-o para o telefone (em dev, apenas logado no console). Rate-limit por telefone.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['telefone'],
+                properties: {
+                  telefone: { type: 'string', example: '841234567', description: 'Aceita vários formatos; normalizado para 258XXXXXXXXX' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Código enviado', content: { 'application/json': { schema: { type: 'object', properties: { ok: { type: 'boolean' }, telefone: { type: 'string' }, message: { type: 'string' } } } } } },
+          400: { description: 'Telefone inválido', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          429: { description: 'Rate-limit (aguardar antes de novo pedido)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/auth/verify-otp': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Verificar OTP e iniciar sessão',
+        description: 'Valida o código, cria o cliente se não existir e emite a sessão via cookie httpOnly (JWT).',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['telefone', 'codigo'],
+                properties: {
+                  telefone: { type: 'string', example: '841234567' },
+                  codigo: { type: 'string', example: '123456' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Sessão iniciada', content: { 'application/json': { schema: { type: 'object', properties: { ok: { type: 'boolean' }, novo: { type: 'boolean', description: 'true se o cliente foi criado agora' }, cliente: { $ref: '#/components/schemas/Cliente' } } } } } },
+          400: { description: 'Telefone ou código inválido', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Código incorreto/expirado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/auth/logout': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Terminar sessão',
+        description: 'Limpa o cookie de sessão.',
+        responses: {
+          200: { description: 'Sessão terminada', content: { 'application/json': { schema: { type: 'object', properties: { ok: { type: 'boolean' } } } } } },
+        },
+      },
+    },
+
+    '/auth/me': {
+      get: {
+        tags: ['Auth'],
+        summary: 'Cliente da sessão atual',
+        description: 'Requer sessão válida (cookie httpOnly).',
+        responses: {
+          200: { description: 'Cliente autenticado', content: { 'application/json': { schema: { type: 'object', properties: { cliente: { $ref: '#/components/schemas/Cliente' } } } } } },
+          401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
         },
       },
     },

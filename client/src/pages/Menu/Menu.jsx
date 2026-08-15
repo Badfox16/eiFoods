@@ -139,6 +139,9 @@ export default function Menu() {
         if (!active) return
         setPratoDoDia(hoje?.prato ?? null)
 
+        // empresa em standby — selectedEmpresa fica sempre null no fluxo atual
+        // (sem passo de código de empresa), por isso pratosBase = listaPratos.
+        // Lógica de filtro mantida para reativação futura.
         const companyPratoIds = selectedEmpresa?.menu?.pratoIds
           ? selectedEmpresa.menu.pratoIds.map((p) => (typeof p === 'string' ? p : p._id))
           : null

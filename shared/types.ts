@@ -141,6 +141,52 @@ export interface EmpresaCodigoValidation {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Identidade do cliente (telefone + OTP)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Cliente singular — conta leve identificada por telefone.
+ * Base para streaks, planos e histórico. `empresaId` é opcional (empresa em standby).
+ */
+export interface Cliente {
+  /** MongoDB ObjectId como string */
+  _id: string
+  /** Telefone normalizado no formato 258XXXXXXXXX */
+  telefone: string
+  nome?: string
+  /** Empresa associada (opcional — em standby) */
+  empresaId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+/**
+ * Sessão de autenticação do cliente no client.
+ * A sessão real vive num cookie httpOnly; este tipo descreve o estado no contexto.
+ */
+export interface AuthSession {
+  /** Cliente autenticado, ou null quando não há sessão */
+  cliente: Cliente | null
+  /** Se ainda está a resolver a sessão inicial (/auth/me) */
+  loading: boolean
+}
+
+/** Resposta de POST /api/auth/verify-otp */
+export interface VerifyOtpResponse {
+  ok: boolean
+  /** true se o cliente foi criado agora (primeiro login) */
+  novo: boolean
+  cliente: Cliente
+}
+
+/** Resposta de POST /api/auth/request-otp */
+export interface RequestOtpResponse {
+  ok: boolean
+  telefone: string
+  message: string
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Estado da Aplicação
 // ═══════════════════════════════════════════════════════════════════════════
 

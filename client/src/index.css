@@ -1,42 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap');
-
-:root {
-  /* Verde — cor primária (do logo) */
-  --color-primary: #359420;
-  --color-primary-dark: #256B16;
-  --color-primary-light: #E8F5E3;
-  --color-primary-xlight: #F2FAF0;
-
-  /* Laranja — accent (do logo) */
-  --color-accent: #E85210;
-  --color-accent-dark: #C44008;
-  --color-accent-light: #FFF1E8;
-
-  --color-bg: #F6FAF4;
-  --color-surface: #FFFFFF;
-  --color-border: #D8E8D0;
-  --color-text-primary: #182214;
-  --color-text-secondary: #4E6044;
-  --color-text-muted: #8A9E82;
-  --color-success: #359420;
-  --color-error: #D63B3B;
-  --font-display: 'Sora', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 40px;
-  --space-2xl: 64px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.10);
-  --transition: 220ms cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Design tokens (fonte única de cor, tipografia, espaçamento, motion, etc.) */
+@import './styles/tokens.css';
 
 *, *::before, *::after {
   box-sizing: border-box;

@@ -102,6 +102,7 @@ export default function Checkout() {
           return Array.from({ length: qty }, () => itemPayload)
         }),
         deliveryDetails,
+        // empresa em standby — empresaCodigo fica vazio no fluxo atual (envia undefined)
         empresaCodigo: state.empresaCodigo || undefined,
       }
       const order = await ordersApi.create(payload)

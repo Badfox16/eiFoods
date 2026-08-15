@@ -1,18 +1,24 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "../../context/useOrder";
+import { useAuth } from "../../context/useAuth";
 import styles from "./Delivery.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 
 export default function Delivery() {
   const navigate = useNavigate();
   const { state, dispatch } = useOrder();
+  const { cliente } = useAuth();
 
   const [form, setForm] = useState({
-    name: "",
-    company: "",
-    location: "",
-    contact: "",
+    // Pré-preenche a partir do que já está no pedido ou do cliente autenticado.
+    name: state.deliveryDetails.name || cliente?.nome || "",
+    company: state.deliveryDetails.company || "",
+    location: state.deliveryDetails.location || "",
+    // Telefone do cliente autenticado (formato local, sem prefixo 258).
+    contact:
+      state.deliveryDetails.contact ||
+      (cliente?.telefone ? cliente.telefone.replace(/^258/, "") : ""),
   });
 
   const [errors, setErrors] = useState({});
