@@ -2,6 +2,7 @@ import { Router } from 'express'
 import cloudinary from '../lib/cloudinary'
 import upload from '../lib/upload'
 import Prato from '../models/Prato'
+import { requireAdmin } from '../lib/adminAuth'
 
 const router = Router()
 
@@ -49,7 +50,7 @@ router.get('/:id', async (req, res, next) => {
 
 // ── POST /api/pratos ─────────────────────────────────────────────────────────
 // multipart/form-data: nome, descricao, preco, imagem (file), extrasProprios (JSON array)
-router.post('/', upload.single('imagem'), async (req, res, next) => {
+router.post('/', requireAdmin, upload.single('imagem'), async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Imagem obrigatória' })
 
@@ -76,7 +77,7 @@ router.post('/', upload.single('imagem'), async (req, res, next) => {
 
 // ── PUT /api/pratos/:id ──────────────────────────────────────────────────────
 // multipart/form-data: campos opcionais + imagem opcional
-router.put('/:id', upload.single('imagem'), async (req, res, next) => {
+router.put('/:id', requireAdmin, upload.single('imagem'), async (req, res, next) => {
   try {
     const prato = await Prato.findById(req.params['id'])
     if (!prato) return res.status(404).json({ error: 'Prato não encontrado' })
@@ -108,7 +109,7 @@ router.put('/:id', upload.single('imagem'), async (req, res, next) => {
 })
 
 // ── DELETE /api/pratos/:id ───────────────────────────────────────────────────
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requireAdmin, async (req, res, next) => {
   try {
     const prato = await Prato.findByIdAndDelete(req.params['id'])
     if (!prato) return res.status(404).json({ error: 'Prato não encontrado' })
@@ -125,7 +126,7 @@ router.delete('/:id', async (req, res, next) => {
 
 // ── PATCH /api/pratos/:id/disponivel ────────────────────────────────────────
 // Body: { disponivel: boolean }
-router.patch('/:id/disponivel', async (req, res, next) => {
+router.patch('/:id/disponivel', requireAdmin, async (req, res, next) => {
   try {
     const { disponivel } = req.body as { disponivel: boolean }
     if (typeof disponivel !== 'boolean') {

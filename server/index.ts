@@ -16,6 +16,7 @@ import ordersRouter from './routes/orders.ts'
 import sorteioRouter from './routes/sorteio.ts'
 import empresasRouter from './routes/empresas.ts'
 import authRouter from './routes/auth.ts'
+import adminRouter from './routes/admin.ts'
 import streakRouter from './routes/streak.ts'
 import planosRouter from './routes/planos.ts'
 import subscricoesRouter from './routes/subscricoes.ts'
@@ -68,6 +69,7 @@ app.use('/api/orders', ordersRouter)
 app.use('/api/sorteio', sorteioRouter)
 app.use('/api/empresas', empresasRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/admin', adminRouter)
 app.use('/api/streak', streakRouter)
 app.use('/api/planos', planosRouter)
 app.use('/api/subscricoes', subscricoesRouter)

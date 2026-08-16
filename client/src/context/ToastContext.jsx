@@ -1,13 +1,6 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import styles from './Toast.module.css'
-
-const ToastContext = createContext(null)
-
-export function useToast() {
-  const ctx = useContext(ToastContext)
-  if (!ctx) throw new Error('useToast deve ser usado dentro de ToastProvider')
-  return ctx
-}
+import { ToastContext } from './toast'
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([])

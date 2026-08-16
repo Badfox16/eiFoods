@@ -170,11 +170,33 @@ export interface ApiSorteio {
 
 // ── Request helper ────────────────────────────────────────────────────────────
 
+/** Erro de API com o código HTTP, para tratamento diferenciado (ex.: 401). */
+export class ApiError extends Error {
+  status: number
+  constructor(status: number, message: string) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+  }
+}
+
+/**
+ * Handler global invocado sempre que uma resposta é 401 (sessão de admin
+ * ausente/expirada). O AdminAuthProvider regista-o para forçar o logout e voltar
+ * ao ecrã de login, mesmo que a sessão expire a meio de uma ação.
+ */
+let unauthorizedHandler: (() => void) | null = null
+export function setUnauthorizedHandler(fn: (() => void) | null): void {
+  unauthorizedHandler = fn
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, options)
+  // `credentials: 'include'` envia o cookie httpOnly da sessão de admin.
+  const res = await fetch(`${BASE}${path}`, { credentials: 'include', ...options })
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText })) as { error?: string }
-    throw new Error(body.error ?? `HTTP ${res.status}`)
+    if (res.status === 401) unauthorizedHandler?.()
+    throw new ApiError(res.status, body.error ?? `HTTP ${res.status}`)
   }
   return res.json() as Promise<T>
 }
@@ -474,4 +496,24 @@ export const sorteioApi = {
 
   updateValorRifa: (valorRifa: number) =>
     request<ApiSorteio>('/sorteio/valor-rifa', json('PATCH', { valorRifa })),
+}
+
+// ── Autenticação do admin (Fase 6) ────────────────────────────────────────────
+
+export interface ApiAdminUser {
+  _id: string
+  username: string
+  nome: string
+}
+
+export const adminAuthApi = {
+  login: (username: string, password: string) =>
+    request<{ ok: true; admin: ApiAdminUser }>('/admin/login', json('POST', { username, password })),
+
+  logout: () =>
+    request<{ ok: true }>('/admin/logout', { method: 'POST' }),
+
+  /** Admin da sessão atual; lança ApiError 401 se não autenticado. */
+  me: () =>
+    request<{ admin: ApiAdminUser }>('/admin/me'),
 }

@@ -5,7 +5,7 @@ Monorepo com 3 pacotes: **server** (Bun + Express + Mongoose/MongoDB), **client*
 (React 19 + Vite, público) e **admin** (React 19 + TS + Vite). `shared/` contém
 tipos, constantes e validadores partilhados.
 
-> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16 (Fases 3 e 5 concluídas).
+> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16 (Fase 6 em curso: auth do admin, testes e seeds; follow-ups de auth resolvidos).
 
 ---
 
@@ -49,7 +49,8 @@ Bloqueia quase tudo o resto. Fazer primeiro. **Concluída** (branch `feat/fase-0
 - [x] **Design tokens** (`client/src/styles/tokens.css`): paleta, tipografia, espaçamento, raios, sombras, motion.
 - [x] Retrofit do fluxo de pedido para reutilizar o perfil autenticado (pré-preencher `deliveryDetails`).
 - [x] **Empresas em standby**: modelos/rotas mantidos; passo de código de empresa removido do fluxo principal do client (rota `/empresa` fora do menu).
-- [ ] _Follow-up_: `gerarCodigo()` deve usar `crypto.randomInt` (atualmente `Math.random`); integrar provider real de WhatsApp/SMS em `enviarOtp` para auth funcionar em produção.
+- [x] _Follow-up_: `gerarCodigo()` (OTP) e os códigos de empresa passaram a usar `crypto.randomInt` (CSPRNG).
+- [ ] _Follow-up_: integrar provider real de WhatsApp/SMS em `enviarOtp` para auth funcionar em produção.
 
 ## Fase 1 — Menu por dia (substituir "prato do dia") ✅
 
@@ -71,7 +72,7 @@ Bloqueia quase tudo o resto. Fazer primeiro. **Concluída** (branch `feat/fase-0
 - [x] **Admin** (`pages/Planos`): listar subscrições por estado, ver comprovativo, **confirmar/rejeitar** → ativa, credita refeições e define validade (`PATCH /subscricoes/:id/confirmar|rejeitar`).
 - [x] **Consumo no pedido** (`lib/subscricao.ts` + `POST /orders`): subscrição ativa com saldo → cada **prato base** abate 1 refeição (extras e taxa fora-do-dia continuam cobrados); desconto de streak aplica-se ao valor ainda cobrado. Cobre primeiro os pratos mais caros. Saldo a 0 → `expirada`.
 - [x] **Admin `Planos`**: CRUD de planos e preços (`/api/planos`, soft-delete via `ativo:false`).
-- [ ] _Follow-up_: proteger rotas admin de planos/subscrições (`POST/PUT/DELETE /planos`, `PATCH /subscricoes/*`, `GET /subscricoes`) — mesma dívida transversal de auth do painel admin (ver Fase 4).
+- [x] _Follow-up_: rotas admin de planos/subscrições protegidas com `requireAdmin` (Fase 6).
 
 ## Fase 3 — Menus / pratos exclusivos (tier premium) ✅
 
@@ -95,7 +96,7 @@ menu com `exclusivo:true` (já existente na Fase 1) exigem esse tier.
 - [x] **Aplicação da recompensa** server-side no total do pedido (`POST /orders`, auth opcional): desconto cumulativo (maior escalão `dias ≤ streak`); itens grátis concedidos uma vez no marco exato → `recompensasGanhas`.
 - [x] **UI de streak (client)** (`pages/Streak`): dias acumulados (chama animada), desconto atual, próxima recompensa com barra de progresso, escada com estados, prémios ganhos. Link "Sequência 🔥" no Navbar (autenticados).
 - [x] Admin (`pages/Streak`): editor da escada (`GET/PUT /streak/config`, reset) + tabela de clientes por sequência (`GET /streak/clientes`).
-- [ ] _Follow-up_: proteger rotas admin (`PUT /streak/config`, `/streak/clientes`) — hoje o painel admin não tem auth (dívida transversal, não específica desta fase).
+- [x] _Follow-up_: rotas admin de streak (`PUT /streak/config`, `POST /streak/config/reset`, `GET /streak/clientes`) protegidas com `requireAdmin` (Fase 6).
 
 ## Fase 5 — Reestruturação visual do client ✅
 
@@ -112,14 +113,29 @@ emoji-ícone nem pill por defeito — regras registadas em memória do projeto.
 - [x] Páginas de valor: Home (o quadro de hoje), Sequência (cartão de selos), Planos (tabela).
 - [x] Fluxo de pedido em linguagem de talão: Menu, Customize, OrderSummary, Delivery, Checkout, Confirmation (talão carimbado). Sorteio/Empresa em token-sweep.
 - [x] Acessibilidade (foco visível, reduced-motion, aria) e responsividade mobile-first.
-- [ ] _Follow-up_: `ToastContext.jsx` tem aviso pré-existente de lint (`react-refresh/only-export-components`), fora do âmbito desta fase.
+- [x] _Follow-up_: resolvido o aviso de lint do `ToastContext.jsx` — contexto/hook extraídos para `context/toast.js` (Fase 6).
 
 ## Fase 6 — Polimento & consolidação
 
-- [ ] Redesign do admin com o mesmo design system.
-- [ ] Atualizar Swagger para todas as rotas novas (auth, menu, planos, subscrições, streak).
-- [ ] Seeds/fixtures atualizados (`server/seed.ts`).
-- [ ] Testes dos cálculos críticos (total com desconto/streak, consumo de plano).
+- [x] **Auth do painel admin** (dívida transversal das Fases 2/3/4). Modelo
+  `AdminUser` (username + hash bcrypt via `Bun.password`), `lib/adminAuth.ts`
+  (`requireAdmin`, cookie httpOnly `eifoods_admin`, JWT dedicado com fallback ao
+  `JWT_SECRET`), rotas `POST /api/admin/login|logout` + `GET /api/admin/me`.
+  Todas as rotas de escrita/gestão passaram a exigir `requireAdmin` (pratos,
+  extras, menu, orders, empresas, sorteio, streak, planos, subscrições),
+  mantendo públicas as leituras client-facing e o `POST /orders`. Admin frontend:
+  ecrã de **Login**, `AdminAuthProvider` + guarda de rota, `credentials:'include'`
+  e handler global de 401, botão de logout na Sidebar.
+- [x] Seeds/fixtures atualizados (`server/seed.ts`): Menu do dia, Planos (incl.
+  premium), `StreakConfig` e **admin inicial** (de `ADMIN_USERNAME`/`ADMIN_PASSWORD`,
+  criado só se não existir). Novas chaves em `.env.example`.
+- [x] Testes dos cálculos críticos (`bun test`): `lib/pedidoTotais.test.ts`
+  (total com consumo de plano + desconto de streak, cobre pratos mais caros,
+  extras não abatidos, total nunca negativo) e `lib/streak.test.ts`
+  (desconto por escalão, próximo tier, transições de streak). Cálculo do total
+  extraído para `lib/pedidoTotais.ts` (função pura) e reutilizado em `orders.ts`.
+- [ ] Redesign do admin com o mesmo design system ("Quadro & Papel").
+- [ ] Atualizar Swagger para todas as rotas novas (auth, admin, menu, planos, subscrições, streak).
 
 ---
 

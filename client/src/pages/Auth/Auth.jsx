@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
-import { useToast } from '../../context/ToastContext'
+import { useToast } from '../../context/toast'
 import Navbar from '../../components/Navbar/Navbar'
 import { Button } from '../../components/ui'
 import styles from './Auth.module.css'

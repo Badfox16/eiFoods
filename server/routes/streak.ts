@@ -2,6 +2,7 @@ import { Router } from 'express'
 import Cliente from '../models/Cliente'
 import { DEFAULT_STREAK_TIERS, type IStreakTier } from '../models/StreakConfig'
 import { requireAuth } from '../lib/auth'
+import { requireAdmin } from '../lib/adminAuth'
 import { getStreakConfig, descontoParaStreak, proximoTier } from '../lib/streak'
 
 const router = Router()
@@ -24,7 +25,7 @@ router.get('/config', async (_req, res, next) => {
  * Body: { tiers: IStreakTier[] }
  * Substitui a escada de recompensas. Valida e ordena por dias.
  */
-router.put('/config', async (req, res, next) => {
+router.put('/config', requireAdmin, async (req, res, next) => {
 	try {
 		const { tiers } = req.body as { tiers: IStreakTier[] }
 		if (!Array.isArray(tiers) || tiers.length === 0) {
@@ -58,7 +59,7 @@ router.put('/config', async (req, res, next) => {
 /**
  * POST /api/streak/config/reset   (admin) → repõe os defaults.
  */
-router.post('/config/reset', async (_req, res, next) => {
+router.post('/config/reset', requireAdmin, async (_req, res, next) => {
 	try {
 		const config = await getStreakConfig()
 		config.tiers = DEFAULT_STREAK_TIERS
@@ -97,7 +98,7 @@ router.get('/me', requireAuth, async (req, res, next) => {
  * GET /api/streak/clientes   (admin)
  * Lista de clientes ordenada por streak atual (para o painel do admin).
  */
-router.get('/clientes', async (_req, res, next) => {
+router.get('/clientes', requireAdmin, async (_req, res, next) => {
 	try {
 		const clientes = await Cliente.find()
 			.select('telefone nome streakAtual maiorStreak ultimoDiaPedido recompensasGanhas')

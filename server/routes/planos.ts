@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import Plano, { type PlanoTipo } from '../models/Plano'
+import { requireAdmin } from '../lib/adminAuth'
 
 const router = Router()
 
@@ -48,7 +49,7 @@ function validarCorpo(body: Record<string, unknown>): string | null {
 /**
  * POST /api/planos         (admin)
  */
-router.post('/', async (req, res, next) => {
+router.post('/', requireAdmin, async (req, res, next) => {
 	try {
 		const erro = validarCorpo(req.body)
 		if (erro) return res.status(400).json({ error: erro })
@@ -73,7 +74,7 @@ router.post('/', async (req, res, next) => {
 /**
  * PUT /api/planos/:id      (admin)
  */
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requireAdmin, async (req, res, next) => {
 	try {
 		const erro = validarCorpo(req.body)
 		if (erro) return res.status(400).json({ error: erro })
@@ -104,7 +105,7 @@ router.put('/:id', async (req, res, next) => {
  * DELETE /api/planos/:id   (admin)
  * Soft-delete: marca `ativo: false` para não afetar subscrições históricas.
  */
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requireAdmin, async (req, res, next) => {
 	try {
 		const plano = await Plano.findByIdAndUpdate(
 			req.params['id'],

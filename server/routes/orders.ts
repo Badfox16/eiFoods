@@ -8,8 +8,10 @@ import Menu, { getCurrentMenuDateKey } from '../models/Menu'
 import PratoDoDia, { type DiaSemana } from '../models/PratoDoDia'
 import { getMaputoWeekdayNumber } from '../lib/businessTime'
 import { lerSessao } from '../lib/auth'
+import { requireAdmin } from '../lib/adminAuth'
 import { registrarPedidoStreak } from '../lib/streak'
 import { getSubscricaoAtiva, consumirRefeicoes, isClientePremium } from '../lib/subscricao'
+import { calcularTotaisPedido } from '../lib/pedidoTotais'
 
 const router = Router()
 
@@ -177,7 +179,6 @@ router.post('/', async (req, res, next) => {
     )
 
     const taxaForaDoDia = foraDoDiaCount * FORA_DO_DIA_TAXA
-    const subtotal = orderItems.reduce((sum, i) => sum + i.total, 0)
 
     // ── Cliente autenticado (opcional): plano pré-pago + streak ──
     // Se houver sessão válida:
@@ -185,37 +186,20 @@ router.post('/', async (req, res, next) => {
     //     refeição (extras e taxa fora-do-dia continuam a ser cobrados).
     //  2) Atualiza o streak (idempotente por dia) e aplica o desconto ao valor
     //     ainda cobrado em dinheiro.
-    // Pedidos anónimos ignoram este bloco.
+    // Pedidos anónimos ignoram este bloco. O cálculo dos totais em si é puro
+    // (ver lib/pedidoTotais.ts) — aqui apenas reunimos os inputs e aplicamos os
+    // efeitos (abater saldo, marcar itens, gravar o cliente).
     let clienteId: string | undefined
     let subscricaoId: string | undefined
-    let refeicoesConsumidas = 0
-    let valorPlanoCoberto = 0
     let descontoStreakPercent = 0
     let recompensasStreak: { dias: number; descricao: string }[] = []
+    let subscricao: Awaited<ReturnType<typeof getSubscricaoAtiva>> = null
     {
       const cliente = clienteDoc
       if (cliente) {
         clienteId = String(cliente._id)
 
-        // ── Consumo de plano pré-pago ──
-        const subscricao = await getSubscricaoAtiva(cliente._id)
-        if (subscricao) {
-          // Cobre primeiro os pratos mais caros (mais valor para o cliente).
-          const idxPorPreco = orderItems
-            .map((_, i) => i)
-            .sort((a, b) => orderItems[b]!.pratoPreco - orderItems[a]!.pratoPreco)
-          for (const i of idxPorPreco) {
-            if (refeicoesConsumidas >= subscricao.refeicoesRestantes) break
-            const item = orderItems[i]!
-            item.pagoComPlano = true
-            valorPlanoCoberto += item.pratoPreco
-            refeicoesConsumidas += 1
-          }
-          if (refeicoesConsumidas > 0) {
-            await consumirRefeicoes(subscricao, refeicoesConsumidas)
-            subscricaoId = String(subscricao._id)
-          }
-        }
+        subscricao = await getSubscricaoAtiva(cliente._id)
 
         // ── Streak ──
         const resultado = await registrarPedidoStreak(cliente)
@@ -229,10 +213,19 @@ router.post('/', async (req, res, next) => {
       }
     }
 
-    // Base a cobrar em dinheiro = bruto − o que o plano cobriu.
-    const baseAposPlano = Math.max(0, subtotal - valorPlanoCoberto)
-    const descontoStreakValor = Math.round((baseAposPlano * descontoStreakPercent) / 100)
-    const total = Math.max(0, baseAposPlano - descontoStreakValor)
+    const totais = calcularTotaisPedido(
+      orderItems,
+      subscricao?.refeicoesRestantes ?? 0,
+      descontoStreakPercent
+    )
+    const { subtotal, refeicoesConsumidas, valorPlanoCoberto, descontoStreakValor, total } = totais
+
+    // Aplica os efeitos do consumo de plano: marca os itens cobertos e abate o saldo.
+    if (subscricao && refeicoesConsumidas > 0) {
+      for (const i of totais.itensPagosComPlano) orderItems[i]!.pagoComPlano = true
+      await consumirRefeicoes(subscricao, refeicoesConsumidas)
+      subscricaoId = String(subscricao._id)
+    }
 
     const order = await Order.create({
       empresaId,
@@ -287,7 +280,7 @@ router.post('/', async (req, res, next) => {
 
 // ── GET /api/orders ──────────────────────────────────────────────────────────
 // Query: ?status=pending|preparing|ready|delivered|cancelled
-router.get('/', async (req, res, next) => {
+router.get('/', requireAdmin, async (req, res, next) => {
   try {
     const filter: Record<string, unknown> = {}
     if (req.query['status'] && VALID_STATUSES.includes(req.query['status'] as OrderStatus)) {
@@ -301,7 +294,7 @@ router.get('/', async (req, res, next) => {
 })
 
 // ── GET /api/orders/:id ──────────────────────────────────────────────────────
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', requireAdmin, async (req, res, next) => {
   try {
     const order = await Order.findById(req.params['id'])
     if (!order) return res.status(404).json({ error: 'Encomenda não encontrada' })
@@ -313,7 +306,7 @@ router.get('/:id', async (req, res, next) => {
 
 // ── PATCH /api/orders/:id/status ─────────────────────────────────────────────
 // Body: { status: OrderStatus }
-router.patch('/:id/status', async (req, res, next) => {
+router.patch('/:id/status', requireAdmin, async (req, res, next) => {
   try {
     const { status } = req.body as { status: OrderStatus }
 

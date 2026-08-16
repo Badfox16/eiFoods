@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import PratoDoDia, { type DiaSemana, DIAS_SEMANA } from '../models/PratoDoDia'
 import Prato from '../models/Prato'
+import { requireAdmin } from '../lib/adminAuth'
 
 const router = Router()
 
@@ -63,7 +64,7 @@ router.get('/hoje', async (_req, res, next) => {
 // ── PUT /api/prato-do-dia/:diaSemana ─────────────────────────────────────────
 // Body: { pratoId: string | null }
 // Atribui ou remove o prato de um dia específico
-router.put('/:diaSemana', async (req, res, next) => {
+router.put('/:diaSemana', requireAdmin, async (req, res, next) => {
   try {
     const diaSemana = req.params['diaSemana'] as DiaSemana
     if (!DIAS_SEMANA.includes(diaSemana)) {

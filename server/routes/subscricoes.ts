@@ -4,6 +4,7 @@ import Plano from '../models/Plano'
 import cloudinary from '../lib/cloudinary'
 import upload from '../lib/upload'
 import { requireAuth } from '../lib/auth'
+import { requireAdmin } from '../lib/adminAuth'
 import { reconciliarValidade } from '../lib/subscricao'
 
 const router = Router()
@@ -111,7 +112,7 @@ router.post('/:id/comprovativo', requireAuth, upload.single('comprovativo'), asy
  * Query: ?estado=pendente_pagamento|ativa|expirada|rejeitada
  * Popula cliente (telefone/nome) e plano.
  */
-router.get('/', async (req, res, next) => {
+router.get('/', requireAdmin, async (req, res, next) => {
 	try {
 		const filter: Record<string, unknown> = {}
 		const estado = req.query['estado'] as SubscricaoEstado | undefined
@@ -132,7 +133,7 @@ router.get('/', async (req, res, next) => {
  * Ativa a subscrição: credita `numRefeicoes` e define a janela de validade a
  * partir de agora (usa `validadeDias` do plano atual, com fallback ao snapshot).
  */
-router.patch('/:id/confirmar', async (req, res, next) => {
+router.patch('/:id/confirmar', requireAdmin, async (req, res, next) => {
 	try {
 		const sub = await Subscricao.findById(req.params['id'])
 		if (!sub) return res.status(404).json({ error: 'Subscrição não encontrada' })
@@ -163,7 +164,7 @@ router.patch('/:id/confirmar', async (req, res, next) => {
  * PATCH /api/subscricoes/:id/rejeitar    (admin)
  * Body opcional: { notaAdmin }
  */
-router.patch('/:id/rejeitar', async (req, res, next) => {
+router.patch('/:id/rejeitar', requireAdmin, async (req, res, next) => {
 	try {
 		const sub = await Subscricao.findById(req.params['id'])
 		if (!sub) return res.status(404).json({ error: 'Subscrição não encontrada' })

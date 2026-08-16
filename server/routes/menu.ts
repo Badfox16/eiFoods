@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import Menu, { getCurrentMenuDateKey, type IMenuItem } from '../models/Menu'
 import Prato from '../models/Prato'
+import { requireAdmin } from '../lib/adminAuth'
 
 const router = Router()
 
@@ -82,7 +83,7 @@ router.get('/', async (req, res, next) => {
 // ── PUT /api/menu/:data ──────────────────────────────────────────────────────
 // Body: { itens: [{ pratoId, destaque?, exclusivo? }], ativo? }
 // Cria ou atualiza (upsert) o menu da data indicada
-router.put('/:data', async (req, res, next) => {
+router.put('/:data', requireAdmin, async (req, res, next) => {
   try {
     const data = req.params['data']
     if (!isValidDateKey(data)) {

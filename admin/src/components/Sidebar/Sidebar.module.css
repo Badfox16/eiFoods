@@ -149,3 +149,23 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.logoutBtn {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface);
+  color: var(--ui-text-2);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.logoutBtn:hover {
+  color: var(--status-cancelled);
+  border-color: var(--status-cancelled);
+}
