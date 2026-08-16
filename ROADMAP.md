@@ -5,7 +5,7 @@ Monorepo com 3 pacotes: **server** (Bun + Express + Mongoose/MongoDB), **client*
 (React 19 + Vite, público) e **admin** (React 19 + TS + Vite). `shared/` contém
 tipos, constantes e validadores partilhados.
 
-> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16 (Fase 6 em curso: auth do admin, testes e seeds; follow-ups de auth resolvidos).
+> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16 (Fase 6: auth do admin, testes, seeds e **redesign do admin** feitos; follow-ups resolvidos. Falta só o Swagger).
 
 ---
 
@@ -134,7 +134,17 @@ emoji-ícone nem pill por defeito — regras registadas em memória do projeto.
   extras não abatidos, total nunca negativo) e `lib/streak.test.ts`
   (desconto por escalão, próximo tier, transições de streak). Cálculo do total
   extraído para `lib/pedidoTotais.ts` (função pura) e reutilizado em `orders.ts`.
-- [ ] Redesign do admin com o mesmo design system ("Quadro & Papel").
+- [x] **Redesign do admin** com o design system "Quadro & Papel". Tokens
+  portados para `admin/src/index.css` (Fraunces/Hanken/Spline, paleta panela/
+  xima/brasa/folha/matapa, filetes em vez de sombras suaves, raios contidos),
+  mantendo os nomes dos tokens semânticos para cascata automática. Casca refeita
+  (Sidebar = quadro escuro com destaque brasa, Header com filete), componentes
+  partilhados (Button retangular/brasa, Card/StatCard com filete, Badge tingido)
+  e sweep das 10 páginas (remoção de cores Tailwind genéricas e gradientes).
+  Verificado no browser (login + dashboard + pedidos).
+- [x] Corrigidos os 2 avisos de lint pré-existentes do admin (`AdminContext`
+  → `useAdmin` em módulo próprio; `Dishes` preview via `useMemo` sem setState
+  em effect). Admin com typecheck + lint + build limpos.
 - [ ] Atualizar Swagger para todas as rotas novas (auth, admin, menu, planos, subscrições, streak).
 
 ---

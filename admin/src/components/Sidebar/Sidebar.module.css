@@ -1,8 +1,8 @@
 .sidebar {
   width: 248px;
   height: 100vh;
-  background: var(--ui-surface);
-  border-right: 1px solid var(--ui-border);
+  background: var(--ui-panela);
+  border-right: 1px solid #000;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -15,7 +15,7 @@
 /* ── Logo ── */
 .logo {
   padding: 18px 16px 14px;
-  border-bottom: 1px solid var(--ui-border);
+  border-bottom: 1px solid rgba(247, 244, 236, 0.12);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -32,11 +32,11 @@
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--brand-primary-dark);
-  background-color: var(--brand-primary-light);
+  letter-spacing: 0.1em;
+  color: var(--ui-giz);
+  border: 1px solid var(--brand-accent);
   padding: 2px 8px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
 }
 
 /* ── Nav ── */
@@ -57,17 +57,18 @@
 }
 
 .navGroup + .navGroup {
-  border-top: 1px solid var(--ui-border);
+  border-top: 1px solid rgba(247, 244, 236, 0.1);
   padding-top: 8px;
   margin-top: 4px;
 }
 
 .navGroupLabel {
-  font-size: 0.63rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ui-text-3);
+  letter-spacing: 0.12em;
+  color: #9A927E;
   padding: 4px 8px 4px;
 }
 
@@ -76,36 +77,38 @@
   align-items: center;
   gap: 9px;
   padding: 8px 10px;
-  border-radius: var(--radius-md);
-  color: var(--ui-text-2);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid transparent;
+  color: #C9C2B0;
   text-decoration: none;
   font-size: 0.845rem;
   font-weight: 500;
-  transition: all var(--transition);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
 }
 
 .navItem:hover {
-  background: var(--brand-primary-xlight);
-  color: var(--brand-primary-dark);
+  background: rgba(247, 244, 236, 0.06);
+  color: var(--ui-giz);
 }
 
 .navItem.active {
-  background: var(--brand-primary-light);
-  color: var(--brand-primary-dark);
+  background: rgba(226, 87, 15, 0.14);
+  border-left-color: var(--brand-accent);
+  color: var(--ui-giz);
   font-weight: 600;
 }
 
 .navIcon {
   display: flex;
   align-items: center;
-  color: var(--ui-text-3);
+  color: #9A927E;
   flex-shrink: 0;
   transition: color var(--transition);
 }
 
 .navItem:hover .navIcon,
 .navItem.active .navIcon {
-  color: var(--brand-primary);
+  color: var(--brand-accent);
 }
 
 .navLabel { flex: 1; }
@@ -113,7 +116,7 @@
 /* ── Footer ── */
 .footer {
   padding: 12px 14px;
-  border-top: 1px solid var(--ui-border);
+  border-top: 1px solid rgba(247, 244, 236, 0.12);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -123,13 +126,14 @@
 .userAvatar {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
-  color: white;
+  border-radius: var(--radius-sm);
+  background: var(--brand-accent);
+  color: var(--ui-giz);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -139,12 +143,13 @@
 .userName {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--ui-text);
+  color: var(--ui-giz);
 }
 
 .userEmail {
-  font-size: 0.68rem;
-  color: var(--ui-text-3);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: #9A927E;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -157,15 +162,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--ui-border);
-  border-radius: var(--radius-md);
-  background: var(--ui-surface);
-  color: var(--ui-text-2);
+  border: 1px solid rgba(247, 244, 236, 0.2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: #C9C2B0;
   cursor: pointer;
-  transition: var(--transition);
+  transition: color var(--transition), border-color var(--transition);
 }
 
 .logoutBtn:hover {
-  color: var(--status-cancelled);
-  border-color: var(--status-cancelled);
+  color: var(--ui-giz);
+  border-color: var(--brand-accent);
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #000;
+  }
 }

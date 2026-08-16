@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useAdmin } from '../../context/AdminContext'
+import { useAdmin } from '../../context/useAdmin'
 import { Header, Card, Button } from '../../components'
 import type { ApiEmpresa, ApiEmpresaMenu } from '../../lib/api'
 import styles from './Empresas.module.css'

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useAdmin } from '../../context/AdminContext'
+import { useAdmin } from '../../context/useAdmin'
 import { Header, Card, Button, Badge } from '../../components'
 import { menuApi, type ApiMenu, type ApiMenuItem, type ApiPrato } from '../../lib/api'
 import { formatPrice } from '../../../../shared/utils'

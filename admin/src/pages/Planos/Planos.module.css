@@ -163,7 +163,7 @@
 .filterActive {
   background: var(--brand-primary);
   border-color: var(--brand-primary);
-  color: #fff;
+  color: var(--ui-giz);
 }
 
 .empty {

@@ -6,9 +6,9 @@
 
 .errorBanner {
   padding: 10px 14px;
-  background: var(--ui-danger-soft, #fdecea);
-  border-radius: 8px;
-  color: var(--ui-danger, #c62828);
+  background: var(--ui-danger-soft, #F6DED9);
+  border-radius: var(--radius-lg);
+  color: var(--ui-danger, var(--status-cancelled));
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -26,9 +26,9 @@
 
 .okBanner {
   padding: 10px 14px;
-  background: var(--ui-success-soft, #e6f4ea);
-  border-radius: 8px;
-  color: var(--ui-success, #1e7e34);
+  background: var(--ui-success-soft, var(--brand-primary-light));
+  border-radius: var(--radius-lg);
+  color: var(--brand-primary-dark);
   font-size: 13px;
 }
 

@@ -18,9 +18,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: #f9fafb;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  background: var(--ui-sunken);
+  border: 2px solid var(--ui-border);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -29,14 +29,14 @@
 }
 
 .filterButton:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
+  background: var(--ui-sunken);
+  border-color: var(--ui-border-strong);
 }
 
 .filterButton.activeFilter {
-  background: #dbeafe;
-  border-color: #2563eb;
-  color: #2563eb;
+  background: #D9E6EA;
+  border-color: var(--brand-accent);
+  color: var(--brand-accent);
 }
 
 .filterLabel {
@@ -54,7 +54,7 @@
 }
 
 .orderCard:hover {
-  border-color: #2563eb;
+  border-color: var(--brand-accent);
 }
 
 .orderHeader {
@@ -62,7 +62,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--ui-border);
   margin-bottom: 1rem;
 }
 
@@ -75,13 +75,13 @@
 .orderId {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--ui-text);
 }
 
 .orderTotal {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--brand-accent);
 }
 
 .orderBody {
@@ -106,24 +106,24 @@
 .infoLabel {
   display: flex;
   align-items: center;
-  color: var(--ui-text-3, #9ca3af);
+  color: var(--ui-text-3, var(--ui-text-3));
   flex-shrink: 0;
 }
 
 .infoValue {
   font-size: 0.875rem;
-  color: #374151;
+  color: var(--ui-text-2);
 }
 
 .orderItems {
-  background: #f9fafb;
+  background: var(--ui-sunken);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
 }
 
 .itemsTitle {
   font-weight: 600;
-  color: #111827;
+  color: var(--ui-text);
   margin-bottom: 0.75rem;
   font-size: 0.875rem;
 }
@@ -133,7 +133,7 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.75rem 0;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--ui-border);
 }
 
 .orderItem:first-of-type {
@@ -155,7 +155,7 @@
 
 .itemName {
   font-weight: 600;
-  color: #111827;
+  color: var(--ui-text);
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
 }
@@ -172,27 +172,27 @@
   align-items: center;
   justify-content: center;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.7rem;
   font-weight: 700;
-  color: #2563eb;
-  background: #dbeafe;
+  color: var(--brand-accent);
+  background: #D9E6EA;
 }
 
 .itemCustomizations {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
 }
 
 .itemUnitPrice {
   margin-top: 0.25rem;
   font-size: 0.72rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
 }
 
 .itemPrice {
   font-weight: 600;
-  color: #374151;
+  color: var(--ui-text-2);
   font-size: 0.875rem;
 }
 
@@ -201,12 +201,12 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--ui-border);
 }
 
 .orderTime {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
 }
 
 .orderActions {
@@ -229,13 +229,13 @@
 .emptyTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--ui-text);
   margin: 0 0 0.5rem 0;
 }
 
 .emptyText {
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
   margin: 0;
 }
 

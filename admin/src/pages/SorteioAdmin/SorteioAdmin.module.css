@@ -6,7 +6,7 @@
 
 .btnAddParticipante {
   background-color: var(--brand-accent);
-  color: white;
+  color: var(--ui-giz);
   border: none;
   padding: 9px 20px;
   border-radius: var(--radius-full);
@@ -71,7 +71,7 @@
   transition: border-color var(--transition);
 }
 
-.input:focus { border-color: var(--brand-primary); background: white; }
+.input:focus { border-color: var(--brand-primary); background: var(--ui-surface); }
 
 .formAcoes {
   display: flex;
@@ -95,7 +95,7 @@
 
 .btnConfirmar {
   background-color: var(--brand-primary);
-  color: white;
+  color: var(--ui-giz);
   border: none;
   padding: 8px 20px;
   border-radius: var(--radius-full);
@@ -241,7 +241,7 @@
 
 .btnSortear {
   background-color: var(--brand-accent);
-  color: white;
+  color: var(--ui-giz);
   border: none;
   padding: 13px 0;
   border-radius: var(--radius-full);
@@ -286,7 +286,7 @@
 
 /* ── Vencedor ── */
 .vencedorCard {
-  background: linear-gradient(135deg, var(--brand-accent) 0%, var(--brand-accent-dark) 100%);
+  background: var(--brand-accent);
   border-radius: var(--radius-lg);
   padding: var(--sp-lg);
   display: flex;
@@ -300,7 +300,7 @@
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.vencedorIcone { color: #FFD700; flex-shrink: 0; }
+.vencedorIcone { color: #B5790C; flex-shrink: 0; }
 
 .vencedorInfo { flex: 1; }
 
@@ -315,7 +315,7 @@
 .vencedorNome {
   font-size: 1.15rem;
   font-weight: 700;
-  color: white;
+  color: var(--ui-giz);
   line-height: 1.1;
 }
 
@@ -431,7 +431,7 @@
 .trAtivo td { background: var(--brand-primary-light) !important; }
 
 .trVencedor td {
-  background: linear-gradient(90deg, var(--brand-accent-light) 0%, white 100%) !important;
+  background: var(--brand-accent-light) !important;
   border-left: 3px solid var(--brand-accent);
 }
 
@@ -445,7 +445,7 @@
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: white;
+  color: var(--ui-giz);
   background: var(--brand-accent);
   padding: 2px 8px;
   border-radius: var(--radius-full);
@@ -473,15 +473,15 @@
 }
 
 .btnRemover:hover {
-  background: #FEF2F2;
-  border-color: #EF4444;
-  color: #EF4444;
+  background: #F6DED9;
+  border-color: var(--status-cancelled);
+  color: var(--status-cancelled);
 }
 
 .btnAprovar {
-  border: 1px solid var(--ui-success, #16a34a);
-  background: var(--ui-success-soft, #e8f5e9);
-  color: var(--ui-success, #16a34a);
+  border: 1px solid var(--ui-success, var(--brand-primary));
+  background: var(--ui-success-soft, var(--brand-primary-light));
+  color: var(--ui-success, var(--brand-primary));
   border-radius: var(--radius-sm);
   padding: 4px 10px;
   font-size: 0.72rem;

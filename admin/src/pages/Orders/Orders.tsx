@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAdmin } from '../../context/AdminContext'
+import { useAdmin } from '../../context/useAdmin'
 import { Header, Card, Button, Badge } from '../../components'
 import { formatPrice } from '../../../../shared/utils'
 import type { ApiOrder } from '../../lib/api'

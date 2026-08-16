@@ -7,9 +7,9 @@
 .errorBanner {
   margin-bottom: 16px;
   padding: 10px 14px;
-  background: var(--ui-danger-soft, #fdecea);
-  border-radius: 8px;
-  color: var(--ui-danger, #c62828);
+  background: var(--ui-danger-soft, #F6DED9);
+  border-radius: var(--radius-lg);
+  color: var(--ui-danger, var(--status-cancelled));
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -59,9 +59,9 @@
 .hojeBadge {
   font-size: 11px;
   padding: 2px 8px;
-  border-radius: 10px;
-  background: var(--ui-primary-soft, #e8eaf6);
-  color: var(--ui-primary, #3949ab);
+  border-radius: var(--radius-lg);
+  background: var(--ui-primary-soft, #D9E6EA);
+  color: var(--ui-primary, var(--brand-accent-dark));
   font-weight: 600;
 }
 

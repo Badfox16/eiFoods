@@ -1,14 +1,15 @@
 .statCard {
-  background: white;
-  border-radius: 12px;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
 
 .statCard:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  border-color: var(--ui-border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .header {
@@ -25,26 +26,33 @@
 }
 
 .title {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ui-text-3);
+  font-weight: 600;
 }
 
 .value {
+  font-family: var(--font-display);
   font-size: 2rem;
-  font-weight: 700;
-  color: #111827;
+  font-weight: 600;
+  color: var(--ui-text);
   line-height: 1;
 }
 
 .icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--ui-border);
+  background: var(--ui-sunken);
+  color: var(--brand-accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .trend {
@@ -56,9 +64,9 @@
 }
 
 .trend.positive {
-  color: #16a34a;
+  color: var(--brand-primary-dark);
 }
 
 .trend.negative {
-  color: #dc2626;
+  color: var(--status-cancelled);
 }

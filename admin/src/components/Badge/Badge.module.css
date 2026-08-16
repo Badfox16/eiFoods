@@ -1,44 +1,52 @@
+/* Selo/etiqueta — pill é permitido para tags/estados (não para botões) */
 .badge {
   display: inline-flex;
   align-items: center;
-  border-radius: 9999px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
   font-weight: 600;
+  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
-/* Variants */
+/* Variants — fundos tingidos na paleta terrosa */
 .default {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--ui-sunken);
+  color: var(--ui-text-2);
+  border-color: var(--ui-border);
 }
 
 .success {
-  background: #d1fae5;
-  color: #065f46;
+  background: #E1E7D3;
+  color: #2E5A22;
+  border-color: #C7D3B0;
 }
 
 .warning {
-  background: #fef3c7;
-  color: #92400e;
+  background: #F5E4BE;
+  color: #8A5A0B;
+  border-color: #E3CE97;
 }
 
 .danger {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #F6DED9;
+  color: #A32B10;
+  border-color: #E9C3B8;
 }
 
 .info {
-  background: #dbeafe;
-  color: #1e40af;
+  background: #D9E6EA;
+  color: #2C5A6B;
+  border-color: #BBD2D9;
 }
 
 /* Sizes */
 .small {
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
 }
 
 .medium {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
 }
