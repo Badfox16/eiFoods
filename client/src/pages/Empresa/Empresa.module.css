@@ -1,76 +1,81 @@
 .page {
 	min-height: 100vh;
-	background: #f8fafc;
+	background: var(--xima);
 }
 
 .main {
 	max-width: 980px;
 	margin: 0 auto;
-	padding: 24px 16px 40px;
+	padding: var(--space-xl) var(--space-lg) var(--space-2xl);
 	display: grid;
-	gap: 14px;
+	gap: var(--space-md);
 }
 
 .form {
 	display: flex;
-	gap: 8px;
+	gap: var(--space-sm);
 	flex-wrap: wrap;
 }
 
 .form input {
 	flex: 1;
 	min-width: 220px;
-	border: 1px solid #cbd5e1;
-	border-radius: 10px;
-	padding: 10px 12px;
-	font-size: 14px;
+	border: 1.5px solid var(--linha-forte);
+	border-radius: var(--radius-md);
+	padding: 11px var(--space-md);
+	font-family: var(--font-body);
+	font-size: var(--text-sm);
+	background: var(--color-surface);
+	color: var(--tinta-1);
 }
+.form input:focus { outline: none; border-color: var(--piri); box-shadow: var(--ring-focus); }
 
 .form button {
 	border: none;
-	border-radius: 10px;
-	padding: 10px 14px;
-	font-weight: 600;
-	background: #0f766e;
-	color: white;
+	border-radius: var(--radius-sm);
+	padding: 11px var(--space-md);
+	font-family: var(--font-body);
+	font-weight: var(--weight-semibold);
+	background: var(--piri);
+	color: var(--giz);
 	cursor: pointer;
 }
+.form button:hover { background: var(--piri-dark); }
 
 .error {
-	color: #b91c1c;
+	color: var(--piri-dark);
+	font-size: var(--text-sm);
 	margin: 0;
 }
 
 .result {
 	display: grid;
-	gap: 12px;
+	gap: var(--space-md);
 }
 
 .meta {
-	background: white;
-	border-radius: 12px;
-	border: 1px solid #e2e8f0;
-	padding: 14px;
+	background: var(--color-surface);
+	border-radius: var(--radius-md);
+	border: 1.5px solid var(--linha);
+	padding: var(--space-md);
 }
 
-.meta h2,
-.meta p {
-	margin: 0;
-}
+.meta h2 { font-family: var(--font-display); margin: 0; }
+.meta p { margin: 0; color: var(--tinta-2); }
 
 .cards {
 	display: grid;
-	gap: 10px;
+	gap: var(--space-sm);
 }
 
 .card {
-	background: white;
-	border: 1px solid #e2e8f0;
-	border-radius: 12px;
+	background: var(--color-surface);
+	border: 1.5px solid var(--linha);
+	border-radius: var(--radius-md);
 	display: grid;
 	grid-template-columns: 100px 1fr auto;
-	gap: 12px;
-	padding: 10px;
+	gap: var(--space-md);
+	padding: var(--space-sm);
 	align-items: center;
 }
 
@@ -78,7 +83,7 @@
 	width: 100px;
 	height: 75px;
 	object-fit: cover;
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
 }
 
 .card p,
@@ -86,15 +91,19 @@
 .card span {
 	margin: 0;
 }
+.card strong { font-family: var(--font-display); }
 
 .card button {
 	border: none;
-	border-radius: 8px;
-	background: #0f766e;
-	color: white;
-	padding: 8px 10px;
+	border-radius: var(--radius-sm);
+	background: var(--piri);
+	color: var(--giz);
+	font-family: var(--font-body);
+	font-weight: var(--weight-semibold);
+	padding: 8px 12px;
 	cursor: pointer;
 }
+.card button:hover { background: var(--piri-dark); }
 
 @media (max-width: 700px) {
 	.card {

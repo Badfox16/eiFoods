@@ -5,6 +5,7 @@ import { useOrder } from '../../context/useOrder'
 import { useToast } from '../../context/ToastContext'
 import Navbar from '../../components/Navbar/Navbar'
 import { OPCOES_MOLHO, OPCOES_PIRIPIRI, OPCOES_SAL } from '../../data/menuData'
+import { Button } from '../../components/ui'
 import styles from './Customize.module.css'
 
 export default function Customize() {
@@ -15,7 +16,11 @@ export default function Customize() {
   const { selectedDish, customizations, orderItems } = state
 
   const editIndex = location.state?.editIndex ?? null
-  const [quantity, setQuantity] = useState(1)
+  // Quantidade inicial: 1 para novo item, ou a do item em edição (sync no mount).
+  const [quantity, setQuantity] = useState(() => {
+    if (editIndex === null) return 1
+    return Math.max(1, orderItems[editIndex]?.quantity ?? 1)
+  })
   const [extrasDisponiveis, setExtrasDisponiveis] = useState([])
   const [pratoDoDiaId, setPratoDoDiaId] = useState(null)
 
@@ -32,15 +37,6 @@ export default function Customize() {
   useEffect(() => {
     if (!selectedDish) navigate('/menu')
   }, [selectedDish, navigate])
-
-  useEffect(() => {
-    if (editIndex === null) {
-      setQuantity(1)
-      return
-    }
-    const item = orderItems[editIndex]
-    setQuantity(Math.max(1, item?.quantity ?? 1))
-  }, [editIndex, orderItems])
 
   if (!selectedDish) return null
 
@@ -108,8 +104,8 @@ export default function Customize() {
         {/* Prato seleccionado */}
         <div className={styles.pratoSeleccionado}>
           {selectedDish.imagem?.url
-            ? <img src={selectedDish.imagem.url} alt={selectedDish.nome} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} />
-            : <span className={styles.pratoEmoji}>🍽️</span>
+            ? <img src={selectedDish.imagem.url} alt={selectedDish.nome} className={styles.pratoImg} />
+            : <span className={styles.pratoImgFallback} />
           }
           <div>
             <h1 className={styles.pratoNome}>{selectedDish.nome}</h1>
@@ -128,7 +124,7 @@ export default function Customize() {
 
           {/* ── Personalização Gratuita ── */}
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>✅ Personalização Gratuita</h2>
+            <h2 className={styles.cardTitle}>Personalização gratuita</h2>
 
             {/* Molho — exclusivo */}
             <div className={styles.grupo}>
@@ -194,7 +190,7 @@ export default function Customize() {
 
           {/* ── Extras Pagos ── */}
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>⭐ Extras Pagos</h2>
+            <h2 className={styles.cardTitle}>Extras pagos</h2>
 
             {extrasDisponiveis.length === 0 ? (
               <p className={styles.semExtras}>Sem extras disponíveis para este prato</p>
@@ -237,18 +233,18 @@ export default function Customize() {
           </div>
         )}
 
-        <div className={styles.extrasTotal}>
-          <span>Quantidade</span>
-          <strong>{quantity}x</strong>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button type="button" className={styles.btnAdicionar} style={{ width: 'auto', padding: '8px 12px' }} onClick={() => setQuantity((q) => Math.max(1, q - 1))}>-</button>
-            <button type="button" className={styles.btnAdicionar} style={{ width: 'auto', padding: '8px 12px' }} onClick={() => setQuantity((q) => q + 1)}>+</button>
+        <div className={styles.quantidade}>
+          <span className={styles.quantidadeLabel}>Quantidade</span>
+          <div className={styles.qtd}>
+            <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))} aria-label="Menos um">−</button>
+            <span>{quantity}</span>
+            <button type="button" onClick={() => setQuantity((q) => q + 1)} aria-label="Mais um">+</button>
           </div>
         </div>
 
-        <button className={styles.btnAdicionar} onClick={handleAdicionar}>
-          {editIndex !== null ? '✏️ Guardar alterações' : `Adicionar ao pedido · ${totalPrato * quantity} MZN`}
-        </button>
+        <Button size="large" fullWidth onClick={handleAdicionar}>
+          {editIndex !== null ? 'Guardar alterações' : `Adicionar ao pedido · ${totalPrato * quantity} MT`}
+        </Button>
 
       </main>
     </div>

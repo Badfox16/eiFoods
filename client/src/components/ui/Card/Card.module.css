@@ -1,0 +1,45 @@
+.card {
+  position: relative;
+  background: var(--color-surface);
+  border: 1.5px solid var(--linha);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  transition: border-color var(--dur-base) var(--ease-standard),
+              transform var(--dur-base) var(--ease-out);
+}
+
+.board {
+  background: var(--panela);
+  border-color: #000;
+  color: var(--giz);
+}
+
+.sunken {
+  background: var(--xima-2);
+  border-color: var(--linha);
+}
+
+.outline {
+  background: transparent;
+  border-color: var(--linha-forte);
+}
+
+.interactive { cursor: pointer; }
+.interactive:hover { transform: translateY(-2px); border-color: var(--tinta-1); }
+.interactive:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+/* Filete sólido de realce à esquerda (não gradiente) */
+.accent_piri,
+.accent_matapa,
+.accent_acafrao { padding-left: calc(var(--space-lg) + 4px); }
+.accent_piri::before,
+.accent_matapa::before,
+.accent_acafrao::before {
+  content: '';
+  position: absolute;
+  top: -1.5px; bottom: -1.5px; left: -1.5px;
+  width: 4px;
+}
+.accent_piri::before    { background: var(--piri); }
+.accent_matapa::before  { background: var(--matapa); }
+.accent_acafrao::before { background: var(--acafrao); }

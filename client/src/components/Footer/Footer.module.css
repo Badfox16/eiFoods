@@ -1,7 +1,23 @@
 .footer {
-  background-color: #0F1A0C;
-  color: rgba(255,255,255,0.75);
+  position: relative;
+  background: var(--panela);
+  color: rgba(247, 244, 236, 0.72);
   font-family: var(--font-body);
+}
+
+/* Banda geométrica tipo capulana no topo (blocos sólidos, sem gradiente) */
+.footer::before {
+  content: '';
+  display: block;
+  height: 6px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--piri) 0, var(--piri) 20px,
+      var(--acafrao) 20px, var(--acafrao) 40px,
+      var(--matapa-2) 40px, var(--matapa-2) 60px,
+      var(--xima) 60px, var(--xima) 80px
+    );
 }
 
 /* ── Grid principal ── */
@@ -27,33 +43,32 @@
   gap: var(--space-sm);
 }
 
-.logo {
-  height: 40px;
-  width: 40px;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  filter: brightness(0.9);
+.logoMark {
+  width: 18px;
+  height: 18px;
+  background: var(--piri);
+  flex-shrink: 0;
 }
 
 .logoNome {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  letter-spacing: -0.02em;
+  font-size: 1.35rem;
+  font-weight: var(--weight-black);
+  color: var(--giz);
+  letter-spacing: var(--tracking-tight);
 }
 
 .tagline {
   font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: rgba(255,255,255,0.9);
-  line-height: 1.4;
+  font-size: 1.05rem;
+  font-weight: var(--weight-semibold);
+  color: rgba(247,244,236,0.92);
+  line-height: 1.3;
 }
 
 .descricao {
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.5);
+  font-size: 0.86rem;
+  color: rgba(247,244,236,0.5);
   line-height: 1.7;
   max-width: 320px;
 }
@@ -62,17 +77,15 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  color: #25D366;
-  font-size: 0.88rem;
-  font-weight: 600;
-  font-family: var(--font-display);
-  transition: color var(--transition);
+  color: var(--acafrao);
+  font-size: 0.9rem;
+  font-weight: var(--weight-semibold);
+  font-family: var(--font-mono);
+  transition: color var(--dur-fast);
   margin-top: var(--space-xs);
 }
 
-.whatsappLink:hover {
-  color: #2EEA74;
-}
+.whatsappLink:hover { color: var(--giz); }
 
 /* ── Colunas ── */
 .coluna {
@@ -142,13 +155,14 @@
 }
 
 .metodoBadge {
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: white;
-  padding: 5px 12px;
-  border-radius: var(--radius-full);
-  letter-spacing: 0.03em;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: var(--weight-medium);
+  color: rgba(247,244,236,0.85);
+  padding: 5px 10px;
+  border: 1px solid rgba(247,244,236,0.28);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.02em;
 }
 
 /* ── Localização ── */

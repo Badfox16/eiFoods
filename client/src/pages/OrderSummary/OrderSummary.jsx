@@ -1,46 +1,28 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useOrder } from '../../context/useOrder'
 import Navbar from '../../components/Navbar/Navbar'
+import { Button, MenuLine } from '../../components/ui'
 import styles from './OrderSummary.module.css'
 
 const TAXA_ENTREGA = 50
 const TAXA_FORA_DO_DIA = 50
 
-function IconEditar() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-    </svg>
-  )
-}
-
-function IconRemover() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6"/>
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-      <path d="M10 11v6M14 11v6"/>
-      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-    </svg>
-  )
-}
-
-function IconSeta() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/>
-      <polyline points="12 5 19 12 12 19"/>
-    </svg>
-  )
+function resumoTags(item) {
+  const pagos = Array.isArray(item.customizations.paid)
+    ? item.customizations.paid.map((e) => e.nome)
+    : item.customizations.paid?.nome ? [item.customizations.paid.nome] : []
+  return [
+    ...item.customizations.free,
+    item.customizations.salt !== 'Normal' && `sal ${item.customizations.salt.toLowerCase()}`,
+    ...pagos,
+  ].filter(Boolean).join(' · ')
 }
 
 export default function OrderSummary() {
   const navigate = useNavigate()
   const { state, dispatch } = useOrder()
   const { orderItems } = state
-  const [metaExpandida, setMetaExpandida] = useState({})
 
   useEffect(() => {
     if (orderItems.length === 0) navigate('/menu')
@@ -50,29 +32,22 @@ export default function OrderSummary() {
 
   const totalItens = orderItems.reduce((acc, item) => acc + Math.max(1, item.quantity ?? 1), 0)
   const subtotal = orderItems.reduce((acc, item) => acc + (item.total * Math.max(1, item.quantity ?? 1)), 0)
-  const itensForaDoDia = orderItems.reduce((acc, item) => {
-    if (!item.isForaDoDia) return acc
-    return acc + Math.max(1, item.quantity ?? 1)
-  }, 0)
+  const itensForaDoDia = orderItems.reduce((acc, item) => item.isForaDoDia ? acc + Math.max(1, item.quantity ?? 1) : acc, 0)
   const taxaForaDoDia = itensForaDoDia * TAXA_FORA_DO_DIA
   const total = subtotal + TAXA_ENTREGA + taxaForaDoDia
 
-  function handleRemover(index) {
-    dispatch({ type: 'REMOVE_ITEM', payload: index })
-  }
-
-  function handleEditar(index) {
+  function editar(index) {
     const item = orderItems[index]
     dispatch({ type: 'SELECT_DISH', payload: item.prato })
     dispatch({ type: 'SET_CUSTOMIZATION', payload: item.customizations })
     navigate('/customize', { state: { editIndex: index } })
   }
 
-  function handleQuantidade(index, delta) {
-    const current = Math.max(1, orderItems[index]?.quantity ?? 1)
-    const next = current + delta
-    if (next < 1) return
-    dispatch({ type: 'UPDATE_ITEM_QUANTITY', payload: { index, quantity: next } })
+  function quantidade(index, delta) {
+    const atual = Math.max(1, orderItems[index]?.quantity ?? 1)
+    const proximo = atual + delta
+    if (proximo < 1) return
+    dispatch({ type: 'UPDATE_ITEM_QUANTITY', payload: { index, quantity: proximo } })
   }
 
   return (
@@ -80,163 +55,62 @@ export default function OrderSummary() {
       <Navbar />
 
       <main className={styles.main}>
-
-        {/* Breadcrumb / título */}
-        <div className={styles.pageHeader}>
-          <button className={styles.voltar} onClick={() => navigate('/menu')}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-            </svg>
-            Continuar a encomendar
-          </button>
-          <h1 className={styles.title}>
-            O seu carrinho
-            <span className={styles.titleBadge}>{totalItens}</span>
-          </h1>
+        <div className={styles.header}>
+          <button className={styles.voltar} onClick={() => navigate('/menu')}>← Continuar a escolher</button>
+          <h1 className={styles.title}>O meu pedido <span className={styles.count}>{totalItens}</span></h1>
         </div>
 
         <div className={styles.layout}>
-
-          {/* Coluna esquerda — itens */}
-          <div className={styles.colunaItens}>
-            <ul className={styles.lista}>
-              {orderItems.map((item, index) => {
-                const paidNomes = Array.isArray(item.customizations.paid)
-                  ? item.customizations.paid.map(e => e.nome)
-                  : item.customizations.paid?.nome ? [item.customizations.paid.nome] : []
-                const tags = [
-                  ...item.customizations.free,
-                  item.customizations.salt !== 'Normal' && item.customizations.salt,
-                  ...paidNomes,
-                ].filter(Boolean)
-                const precisaToggle = tags.length > 4 || tags.some((t) => String(t).length > 22)
-                const mostrarTudo = Boolean(metaExpandida[index])
-                const tagsVisiveis = mostrarTudo ? tags : tags.slice(0, 4)
-
-                return (
-                  <li key={index} className={styles.item}>
-                    <div className={styles.itemImagemWrap}>
-                      {item.prato.imagem ? (
-                        <img
-                          src={item.prato.imagem?.url ?? item.prato.imagem}
-                          alt={item.prato.nome}
-                          className={styles.itemImagem}
-                        />
-                      ) : (
-                        <div className={styles.itemImagemFallback} />
-                      )}
-                    </div>
-
-                    <div className={styles.itemCorpo}>
-                      <div className={styles.itemCabecalho}>
-                        <p className={styles.itemNome}>{item.prato.nome}</p>
-                        <p className={styles.itemPreco}>{item.total * Math.max(1, item.quantity ?? 1)} MZN</p>
-                      </div>
-
-                      <div className={styles.itemQtd}>
-                        <button className={styles.qtdBtn} onClick={() => handleQuantidade(index, -1)}>-</button>
-                        <span>{Math.max(1, item.quantity ?? 1)}x</span>
-                        <button className={styles.qtdBtn} onClick={() => handleQuantidade(index, 1)}>+</button>
-                      </div>
-
-                      {tags.length > 0 && (
-                        <div className={styles.itemTags}>
-                          {tagsVisiveis.map((tag, tagIndex) => (
-                            <span key={`${tag}-${tagIndex}`} className={styles.itemTag}>{tag}</span>
-                          ))}
-                          {precisaToggle && (
-                            <button
-                              type="button"
-                              className={styles.itemTagsToggle}
-                              onClick={() => setMetaExpandida((prev) => ({ ...prev, [index]: !prev[index] }))}
-                            >
-                              {mostrarTudo ? 'Ver menos' : 'Ver mais'}
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      {tags.length === 0 && (
-                        <p className={styles.itemSemPersonalizacao}>Sem personalização</p>
-                      )}
-                    </div>
-
-                    <div className={styles.itemAcoes}>
-                      <button
-                        className={styles.btnEditar}
-                        onClick={() => handleEditar(index)}
-                        title="Editar personalização"
-                      >
-                        <IconEditar />
-                      </button>
-                      <button
-                        className={styles.btnRemover}
-                        onClick={() => handleRemover(index)}
-                        title="Remover item"
-                      >
-                        <IconRemover />
-                      </button>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
-
-            <button className={styles.btnAdicionarMais} onClick={() => navigate('/menu')}>
-              + Adicionar outro prato
-            </button>
-          </div>
-
-          {/* Coluna direita — resumo */}
-          <div className={styles.colunaResumo}>
-            <div className={styles.resumoCard}>
-              <h2 className={styles.resumoTitulo}>Resumo</h2>
-
-              <div className={styles.resumoLinhas}>
-                <div className={styles.resumoLinha}>
-                  <span className={styles.resumoLabel}>Subtotal ({totalItens} {totalItens === 1 ? 'item' : 'itens'})</span>
-                  <span className={styles.resumoValor}>{subtotal} MZN</span>
-                </div>
-                <div className={styles.resumoLinha}>
-                  <span className={styles.resumoLabel}>Taxa de entrega</span>
-                  <span className={styles.resumoValor}>{TAXA_ENTREGA} MZN</span>
-                </div>
-                {itensForaDoDia > 0 && (
-                  <div className={styles.resumoLinha}>
-                    <span className={styles.resumoLabel}>Taxa prato fora do dia ({itensForaDoDia} {itensForaDoDia === 1 ? 'item' : 'itens'})</span>
-                    <span className={styles.resumoValor}>{taxaForaDoDia} MZN</span>
+          {/* Itens */}
+          <div className={styles.itens}>
+            {orderItems.map((item, index) => {
+              const tags = resumoTags(item)
+              const qty = Math.max(1, item.quantity ?? 1)
+              return (
+                <div key={index} className={styles.item}>
+                  <div className={styles.itemImgWrap}>
+                    {item.prato.imagem
+                      ? <img src={item.prato.imagem?.url ?? item.prato.imagem} alt={item.prato.nome} className={styles.itemImg} />
+                      : <div className={styles.itemImgFallback} />}
                   </div>
-                )}
-              </div>
-
-              <div className={styles.resumoTotal}>
-                <span className={styles.resumoTotalLabel}>Total</span>
-                <span className={styles.resumoTotalValor}>{total} MZN</span>
-              </div>
-
-              <button
-                className={styles.btnConfirmar}
-                onClick={() => navigate('/delivery')}
-              >
-                Finalizar pedido
-                <IconSeta />
-              </button>
-
-              <div className={styles.resumoEntregaInfo}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span>Entrega prevista para as 12h no seu local de trabalho</span>
-              </div>
-            </div>
-
-            <div className={styles.segurancaInfo}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-              <span>Pedido confirmado via WhatsApp após o pagamento</span>
-            </div>
+                  <div className={styles.itemCorpo}>
+                    <div className={styles.itemTopo}>
+                      <span className={styles.itemNome}>{item.prato.nome}</span>
+                      <span className={styles.itemPreco}>{item.total * qty}<span>MT</span></span>
+                    </div>
+                    <p className={styles.itemTags}>{tags || 'Sem personalização'}{item.isForaDoDia ? ' · fora do dia' : ''}</p>
+                    <div className={styles.itemAcoes}>
+                      <div className={styles.qtd}>
+                        <button onClick={() => quantidade(index, -1)} aria-label="Menos um">−</button>
+                        <span>{qty}</span>
+                        <button onClick={() => quantidade(index, 1)} aria-label="Mais um">+</button>
+                      </div>
+                      <button className={styles.acaoLink} onClick={() => editar(index)}>Editar</button>
+                      <button className={styles.acaoLink} onClick={() => dispatch({ type: 'REMOVE_ITEM', payload: index })}>Remover</button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+            <button className={styles.adicionar} onClick={() => navigate('/menu')}>+ Adicionar outro prato</button>
           </div>
 
+          {/* Talão */}
+          <aside className={styles.talao}>
+            <span className={styles.talaoTitulo}>Talão</span>
+            <div className={styles.talaoLinhas}>
+              <MenuLine name={`Subtotal · ${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`} price={subtotal} />
+              <MenuLine name="Taxa de entrega" price={TAXA_ENTREGA} />
+              {itensForaDoDia > 0 && (
+                <MenuLine name={`Fora do dia · ${itensForaDoDia}`} price={taxaForaDoDia} />
+              )}
+            </div>
+            <div className={styles.talaoTotal}>
+              <MenuLine name="Total" price={total} strong />
+            </div>
+            <Button fullWidth size="large" onClick={() => navigate('/delivery')}>Dados de entrega</Button>
+            <p className={styles.nota}>Entrega às 12h no teu local de trabalho. Confirmamos por WhatsApp.</p>
+          </aside>
         </div>
       </main>
     </div>

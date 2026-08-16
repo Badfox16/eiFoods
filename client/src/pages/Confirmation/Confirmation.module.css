@@ -1,225 +1,86 @@
-.page {
-  min-height: 100vh;
-  background-color: var(--color-bg);
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── Main ── */
+.page { min-height: 100vh; background: var(--xima); }
 .main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-2xl) var(--space-lg);
-  animation: fadeUp 0.4s ease both;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Card ── */
-.card {
-  background-color: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-2xl);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--color-border);
   max-width: 520px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-lg);
-  text-align: center;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
 }
 
-.icone {
-  font-size: 4rem;
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+/* ── Talão ── */
+.talao {
+  position: relative;
+  background: var(--color-surface);
+  border: 2px solid var(--panela);
+  border-radius: var(--radius-md);
+  padding: var(--space-2xl) var(--space-xl) var(--space-xl);
 }
 
-@keyframes popIn {
-  from { transform: scale(0); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+/* Carimbo de "Registado" */
+.carimbo {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  transform: rotate(-8deg);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--matapa);
+  border: 2.5px solid var(--matapa);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  opacity: 0.9;
 }
 
 .titulo {
   font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  color: var(--tinta-1);
+  margin: 0 0 var(--space-sm);
+  max-width: 12ch;
+}
+.sub {
+  font-size: var(--text-sm);
+  color: var(--tinta-2);
+  line-height: var(--leading-normal);
+  margin: 0 0 var(--space-lg);
 }
 
-.subtitulo {
-  color: var(--color-text-secondary);
-  font-size: 1rem;
-  margin-top: calc(var(--space-sm) * -1);
-}
-
-/* ── Info rows ── */
-.infoRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  background-color: var(--color-primary-light);
-  padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-full);
-  font-size: 0.95rem;
-  color: var(--color-text-primary);
-  width: 100%;
-  justify-content: center;
-}
-
-.divider {
-  width: 100%;
-  height: 1px;
-  background-color: var(--color-border);
-}
-
-/* ── Resumo ── */
-.resumo {
-  width: 100%;
+.meta {
+  border-top: 2px dashed var(--linha-forte);
+  border-bottom: 2px dashed var(--linha-forte);
+  padding: var(--space-md) 0;
+  margin-bottom: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
-
-.resumoLabel {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  text-align: left;
-  margin-bottom: var(--space-xs);
-}
-
-.resumoItem {
+.metaLinha {
   display: flex;
   justify-content: space-between;
-  font-size: 0.92rem;
-  color: var(--color-text-secondary);
-  padding: var(--space-xs) 0;
+  font-size: var(--text-sm);
+  color: var(--tinta-2);
+}
+.metaVal { font-family: var(--font-mono); font-weight: var(--weight-medium); color: var(--tinta-1); }
+
+.linhas > * { border-bottom: 1px solid var(--linha); }
+.linhas > *:last-child { border-bottom: none; }
+.total {
+  border-top: 2px dashed var(--linha-forte);
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+  margin-bottom: var(--space-lg);
 }
 
-.resumoItemWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: var(--space-xs) 0;
-  border-bottom: 1px dashed var(--color-border);
-}
-
-.resumoItemWrap:last-of-type {
-  border-bottom: none;
-}
-
-.resumoItemMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  text-align: left;
-}
-
-.totalRow {
-  display: flex;
-  justify-content: space-between;
-  padding-top: var(--space-sm);
-  border-top: 1px solid var(--color-border);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.totalValor {
-  color: var(--color-primary);
-  font-size: 1.1rem;
-}
-
-/* ── Mensagem ── */
 .obrigado {
-  font-size: 0.95rem;
-  color: var(--color-text-secondary);
-}
-
-/* ── Botões ── */
-.btnWhatsapp {
-  display: block;
-  width: 100%;
-  padding: var(--space-md);
-  border-radius: var(--radius-full);
-  background-color: #25D366;
-  color: white;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition);
-  text-align: center;
+  font-size: var(--text-md);
+  color: var(--tinta-1);
+  margin: 0 0 var(--space-lg);
 }
 
-.btnWhatsapp:hover {
-  background-color: #20BA5A;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.btnNovo {
-  width: 100%;
-  padding: var(--space-md);
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: 2px solid var(--color-primary);
-  color: var(--color-primary);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btnNovo:hover {
-  background-color: var(--color-primary-light);
-  transform: translateY(-2px);
-}
-
-/* ── Responsivo ── */
-@media (max-width: 768px) {
-  .card {
-    padding: var(--space-xl);
-  }
-
-  .titulo {
-    font-size: 1.5rem;
-  }
-
-  .main {
-    padding: var(--space-lg) var(--space-md);
-  }
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: var(--space-lg);
-  }
-
-  .icone {
-    font-size: 3rem;
-  }
-
-  .titulo {
-    font-size: 1.3rem;
-  }
-
-  .subtitulo,
-  .infoRow,
-  .resumoItem {
-    font-size: 0.85rem;
-  }
+@media (max-width: 560px) {
+  .main { padding: var(--space-xl) var(--space-lg); }
 }

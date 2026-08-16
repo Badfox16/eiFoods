@@ -5,7 +5,7 @@ Monorepo com 3 pacotes: **server** (Bun + Express + Mongoose/MongoDB), **client*
 (React 19 + Vite, público) e **admin** (React 19 + TS + Vite). `shared/` contém
 tipos, constantes e validadores partilhados.
 
-> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16 (Fase 3 concluída).
+> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16 (Fases 3 e 5 concluídas).
 
 ---
 
@@ -97,12 +97,22 @@ menu com `exclusivo:true` (já existente na Fase 1) exigem esse tier.
 - [x] Admin (`pages/Streak`): editor da escada (`GET/PUT /streak/config`, reset) + tabela de clientes por sequência (`GET /streak/clientes`).
 - [ ] _Follow-up_: proteger rotas admin (`PUT /streak/config`, `/streak/clientes`) — hoje o painel admin não tem auth (dívida transversal, não específica desta fase).
 
-## Fase 5 — Reestruturação visual do client
+## Fase 5 — Reestruturação visual do client ✅
 
-- [ ] Aplicar design tokens da Fase 0 a todas as páginas do client.
-- [ ] Rever hierarquia, motion e microinterações (menu, checkout, streak, planos).
-- [ ] Componentização reutilizável (Button, Card, Badge, etc.) alinhada com o admin.
-- [ ] Passagem de acessibilidade e responsividade (breakpoints já em `shared/constants.ts`).
+**Concluída** (branch `feat/fase-5-redesign-client`). Direção de arte
+**"Quadro & Papel"**: o ecrã lê-se como o quadro de giz de uma tasca e o pedido
+como um talão. Paleta ancorada na mesa moçambicana (panela/xima/piri-piri/
+matapa/açafrão); tipografia Fraunces (display) + Hanken Grotesk (texto) +
+Spline Sans Mono (preços/talão). Sem gradientes decorativos, glass, blobs,
+emoji-ícone nem pill por defeito — regras registadas em memória do projeto.
+
+- [x] Novos tokens (`styles/tokens.css`): paleta, tipografia e raios contidos; aliases retro-compatíveis para migração automática.
+- [x] Biblioteca de componentes reutilizável (`components/ui/`): Button, Card, Badge, Input, Spinner + **MenuLine** (assinatura: linha de quadro/talão) e **Stamp** (cartão de selos).
+- [x] Casca global refeita (Navbar barra-quadro, Footer com banda capulana) + Auth.
+- [x] Páginas de valor: Home (o quadro de hoje), Sequência (cartão de selos), Planos (tabela).
+- [x] Fluxo de pedido em linguagem de talão: Menu, Customize, OrderSummary, Delivery, Checkout, Confirmation (talão carimbado). Sorteio/Empresa em token-sweep.
+- [x] Acessibilidade (foco visível, reduced-motion, aria) e responsividade mobile-first.
+- [ ] _Follow-up_: `ToastContext.jsx` tem aviso pré-existente de lint (`react-refresh/only-export-components`), fora do âmbito desta fase.
 
 ## Fase 6 — Polimento & consolidação
 

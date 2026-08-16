@@ -1,0 +1,29 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.small  { font-size: 0.66rem; padding: 4px 8px; }
+.medium { font-size: var(--text-xs); padding: 5px 10px; }
+
+.neutral { background: var(--xima-2); color: var(--tinta-2); }
+.primary { background: #E1E7D3; color: var(--matapa); }
+.accent  { background: #F6DFD0; color: var(--piri-dark); }
+.gold    { background: #F5E4BE; color: var(--acafrao-dark); }
+.success { background: #E1E7D3; color: var(--matapa); }
+.warning { background: #F5E4BE; color: var(--acafrao-dark); }
+.danger  { background: #F6DED9; color: var(--piri-dark); }
+.info    { background: var(--color-info-light); color: var(--color-info); }
+
+/* Etiquetas sólidas fortes (ex.: aba PREMIUM, EXCLUSIVO) */
+.solidPiri   { background: var(--piri);    color: var(--giz); }
+.solidBoard  { background: var(--panela);  color: var(--giz); }
+.solidAcafrao{ background: var(--acafrao); color: var(--panela); }

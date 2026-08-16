@@ -1,134 +1,39 @@
-.page {
-  min-height: 100vh;
-  background-color: var(--color-bg);
-  display: flex;
-  flex-direction: column;
-}
+.page { min-height: 100vh; background: var(--xima); }
+.main { max-width: 560px; margin: 0 auto; padding: var(--space-2xl) var(--space-xl); }
 
-/* ── Main ── */
-.main {
-  flex: 1;
-  max-width: 560px;
-  width: 100%;
-  margin: 0 auto;
-  padding: var(--space-2xl) var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
-  animation: fadeUp 0.4s ease both;
+.voltar {
+  background: none; border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--piri);
+  cursor: pointer;
+  padding: 0 0 var(--space-md);
 }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.voltar:hover { color: var(--piri-dark); }
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(1.3rem, 4vw, 1.8rem);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  text-align: center;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  color: var(--tinta-1);
+  margin: 0 0 var(--space-xs);
 }
+.sub { font-size: var(--text-sm); color: var(--tinta-2); margin: 0 0 var(--space-xl); }
 
-/* ── Card do formulário ── */
 .card {
-  background-color: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: var(--color-surface);
+  border: 1.5px solid var(--linha);
   border-radius: var(--radius-md);
   padding: var(--space-xl);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
 }
+.card :global(button) { margin-top: var(--space-sm); }
 
-/* ── Campos ── */
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.label {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.input {
-  padding: 12px 16px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  color: var(--color-text-primary);
-  background-color: var(--color-surface);
-  transition: all var(--transition);
-  outline: none;
-}
-
-.input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px var(--color-primary-light);
-  transform: translateY(-1px);
-}
-
-.inputErro {
-  border-color: var(--color-error);
-}
-
-.inputErro:focus {
-  border-color: var(--color-error);
-  box-shadow: 0 0 0 3px rgba(214, 59, 59, 0.12);
-}
-
-.erro {
-  font-size: 0.82rem;
-  color: var(--color-error);
-  font-weight: 500;
-}
-
-/* ── Botão ── */
-.btnConfirmar {
-  background-color: var(--color-accent);
-  color: white;
-  border: none;
-  padding: var(--space-md);
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-  width: 100%;
-  box-shadow: var(--shadow-sm);
-}
-
-.btnConfirmar:hover {
-  background-color: var(--color-accent-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(232,82,16,0.28);
-}
-
-/* ── Responsivo ── */
-@media (max-width: 768px) {
-  .main {
-    padding: var(--space-xl) var(--space-md);
-  }
-}
-
-@media (max-width: 480px) {
-  .main {
-    padding: var(--space-lg) var(--space-md);
-  }
-
-  .card {
-    padding: var(--space-lg);
-  }
-
-  .input {
-    font-size: 0.9rem;
-  }
+@media (max-width: 560px) {
+  .main { padding: var(--space-xl) var(--space-lg); }
+  .card { padding: var(--space-lg); }
 }
