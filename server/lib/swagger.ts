@@ -6,10 +6,14 @@ const spec = {
   openapi: '3.0.3',
   info: {
     title: 'eiFoods API',
-    version: '1.0.0',
+    version: '2.0.0',
     description:
       'REST API para a plataforma de encomenda de refeições eiFoods. ' +
-      'Gere pratos, extras, o prato do dia (agenda semanal) e encomendas.',
+      'Gere pratos, extras, menu do dia, encomendas, identidade do cliente ' +
+      '(telefone+OTP), planos pré-pagos e subscrições, sistema de streak e o ' +
+      'painel de administração autenticado. ' +
+      'Autenticação por cookie httpOnly: `eifoods_session` (cliente) e ' +
+      '`eifoods_admin` (admin). Rotas marcadas "(admin)" exigem a sessão de admin.',
     contact: { name: 'eiFoods' },
   },
   servers: [
@@ -25,10 +29,28 @@ const spec = {
     { name: 'Sorteio', description: 'Gestão do sorteio diário (participantes e resultado)' },
     { name: 'Empresas', description: 'Gestão de empresas, código único e menus exclusivos' },
     { name: 'Auth', description: 'Identidade do cliente por telefone + OTP (sessão em cookie httpOnly)' },
+    { name: 'Admin', description: 'Autenticação do painel de administração (username + password)' },
+    { name: 'Streak', description: 'Sistema de sequência/recompensas (estilo Duolingo) por cliente' },
+    { name: 'Planos', description: 'Planos pré-pagos de refeições (config admin)' },
+    { name: 'Subscrições', description: 'Subscrições dos clientes: compra, comprovativo e confirmação manual' },
   ],
 
   // ── Reusable schemas ──────────────────────────────────────────────────────
   components: {
+    securitySchemes: {
+      cookieAuth: {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'eifoods_session',
+        description: 'Sessão de cliente (JWT httpOnly) emitida por POST /auth/verify-otp.',
+      },
+      adminAuth: {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'eifoods_admin',
+        description: 'Sessão de admin (JWT httpOnly) emitida por POST /admin/login.',
+      },
+    },
     schemas: {
       Cliente: {
         type: 'object',
@@ -246,6 +268,93 @@ const spec = {
           },
           updatedAt: { type: 'string', format: 'date-time' },
           valorRifa: { type: 'number', example: 10, description: 'Valor da rifa em centavos (inteiro)' },
+        },
+      },
+
+      AdminUser: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', example: '66b0aa11c2d3e4f556677889' },
+          username: { type: 'string', example: 'admin' },
+          nome: { type: 'string', example: 'Administrador' },
+        },
+      },
+
+      StreakTier: {
+        type: 'object',
+        properties: {
+          dias: { type: 'integer', example: 7, description: 'Nº de dias úteis consecutivos do marco' },
+          tipo: { type: 'string', enum: ['desconto', 'item_gratis'], example: 'desconto' },
+          valor: { type: 'number', example: 11, description: 'Percentagem de desconto (tipo=desconto) ou 0 (item_gratis)' },
+          descricao: { type: 'string', example: '11% de desconto' },
+        },
+      },
+
+      StreakConfig: {
+        type: 'object',
+        properties: {
+          tiers: { type: 'array', items: { $ref: '#/components/schemas/StreakTier' } },
+        },
+      },
+
+      RecompensaGanha: {
+        type: 'object',
+        properties: {
+          dias: { type: 'integer', example: 21 },
+          descricao: { type: 'string', example: 'Uma dose de batata grátis' },
+          ganhoEm: { type: 'string', format: 'date-time' },
+          cumprida: { type: 'boolean', example: false, description: 'Marcado quando o prémio é entregue' },
+        },
+      },
+
+      ClienteStreak: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string' },
+          telefone: { type: 'string', example: '258841234567' },
+          nome: { type: 'string', example: 'Ana Machava' },
+          streakAtual: { type: 'integer', example: 7 },
+          maiorStreak: { type: 'integer', example: 12 },
+          ultimoDiaPedido: { type: 'string', nullable: true, example: '2026-08-14' },
+          recompensasGanhas: { type: 'array', items: { $ref: '#/components/schemas/RecompensaGanha' } },
+        },
+      },
+
+      Plano: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', example: '66b0bb22c2d3e4f556677aa0' },
+          nome: { type: 'string', example: 'Plano Mensal Premium' },
+          tipo: { type: 'string', enum: ['semanal', 'bissemanal', 'mensal'], example: 'mensal' },
+          numRefeicoes: { type: 'integer', example: 22 },
+          preco: { type: 'number', example: 4500 },
+          validadeDias: { type: 'integer', example: 30 },
+          premium: { type: 'boolean', example: true, description: 'Concede tier premium (desbloqueia exclusivos) enquanto ativo' },
+          descricao: { type: 'string', example: '22 refeições + acesso a pratos exclusivos' },
+          ativo: { type: 'boolean', example: true },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+
+      Subscricao: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string' },
+          clienteId: { description: 'ID do cliente (populado com { _id, telefone, nome } nas rotas admin)', oneOf: [{ type: 'string' }, { type: 'object' }] },
+          planoId: { description: 'ID do plano (populado com { _id, nome, tipo } nas rotas admin)', oneOf: [{ type: 'string' }, { type: 'object' }] },
+          planoNome: { type: 'string', example: 'Plano Mensal Premium' },
+          numRefeicoes: { type: 'integer', example: 22 },
+          preco: { type: 'number', example: 4500 },
+          premium: { type: 'boolean', example: true },
+          refeicoesRestantes: { type: 'integer', example: 18 },
+          estado: { type: 'string', enum: ['pendente_pagamento', 'ativa', 'expirada', 'rejeitada'], example: 'ativa' },
+          comprovativo: { $ref: '#/components/schemas/Imagem' },
+          dataInicio: { type: 'string', format: 'date-time', nullable: true },
+          dataExpiracao: { type: 'string', format: 'date-time', nullable: true },
+          notaAdmin: { type: 'string', example: 'Pagamento confirmado via M-Pesa' },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
         },
       },
 
@@ -1065,10 +1174,343 @@ const spec = {
       get: {
         tags: ['Auth'],
         summary: 'Cliente da sessão atual',
-        description: 'Requer sessão válida (cookie httpOnly).',
+        description: 'Requer sessão válida (cookie httpOnly). Inclui `premium` (tier da Fase 3).',
+        security: [{ cookieAuth: [] }],
         responses: {
-          200: { description: 'Cliente autenticado', content: { 'application/json': { schema: { type: 'object', properties: { cliente: { $ref: '#/components/schemas/Cliente' } } } } } },
+          200: { description: 'Cliente autenticado', content: { 'application/json': { schema: { type: 'object', properties: { cliente: { allOf: [{ $ref: '#/components/schemas/Cliente' }, { type: 'object', properties: { premium: { type: 'boolean', example: false } } }] } } } } } },
           401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    // ── Admin (autenticação do painel) ────────────────────────────────────────
+    '/admin/login': {
+      post: {
+        tags: ['Admin'],
+        summary: 'Iniciar sessão de administrador',
+        description: 'Valida username + password e emite a sessão de admin no cookie httpOnly `eifoods_admin`.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['username', 'password'],
+                properties: {
+                  username: { type: 'string', example: 'admin' },
+                  password: { type: 'string', format: 'password', example: 'admin123' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Sessão de admin iniciada', content: { 'application/json': { schema: { type: 'object', properties: { ok: { type: 'boolean' }, admin: { $ref: '#/components/schemas/AdminUser' } } } } } },
+          400: { description: 'Campos em falta', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Credenciais inválidas', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/admin/logout': {
+      post: {
+        tags: ['Admin'],
+        summary: 'Terminar sessão de administrador',
+        responses: {
+          200: { description: 'Sessão terminada', content: { 'application/json': { schema: { type: 'object', properties: { ok: { type: 'boolean' } } } } } },
+        },
+      },
+    },
+
+    '/admin/me': {
+      get: {
+        tags: ['Admin'],
+        summary: 'Admin da sessão atual',
+        security: [{ adminAuth: [] }],
+        responses: {
+          200: { description: 'Admin autenticado', content: { 'application/json': { schema: { type: 'object', properties: { admin: { $ref: '#/components/schemas/AdminUser' } } } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    // ── Streak ────────────────────────────────────────────────────────────────
+    '/streak/config': {
+      get: {
+        tags: ['Streak'],
+        summary: 'Escada de recompensas (pública)',
+        responses: {
+          200: { description: 'Configuração de streak', content: { 'application/json': { schema: { $ref: '#/components/schemas/StreakConfig' } } } },
+        },
+      },
+      put: {
+        tags: ['Streak'],
+        summary: 'Substituir a escada de recompensas (admin)',
+        security: [{ adminAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { type: 'object', required: ['tiers'], properties: { tiers: { type: 'array', items: { $ref: '#/components/schemas/StreakTier' } } } },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Configuração atualizada', content: { 'application/json': { schema: { $ref: '#/components/schemas/StreakConfig' } } } },
+          400: { description: 'Escalões inválidos', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/streak/config/reset': {
+      post: {
+        tags: ['Streak'],
+        summary: 'Repor a escada para os valores por omissão (admin)',
+        security: [{ adminAuth: [] }],
+        responses: {
+          200: { description: 'Configuração reposta', content: { 'application/json': { schema: { $ref: '#/components/schemas/StreakConfig' } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/streak/me': {
+      get: {
+        tags: ['Streak'],
+        summary: 'Estado de streak do cliente da sessão',
+        security: [{ cookieAuth: [] }],
+        responses: {
+          200: {
+            description: 'Estado de streak + desconto atual e próxima recompensa',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    streakAtual: { type: 'integer', example: 7 },
+                    maiorStreak: { type: 'integer', example: 12 },
+                    ultimoDiaPedido: { type: 'string', nullable: true, example: '2026-08-14' },
+                    descontoAtual: { type: 'number', example: 11 },
+                    proximaRecompensa: { oneOf: [{ $ref: '#/components/schemas/StreakTier' }, { type: 'null' }] },
+                    tiers: { type: 'array', items: { $ref: '#/components/schemas/StreakTier' } },
+                    recompensasGanhas: { type: 'array', items: { $ref: '#/components/schemas/RecompensaGanha' } },
+                  },
+                },
+              },
+            },
+          },
+          401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/streak/clientes': {
+      get: {
+        tags: ['Streak'],
+        summary: 'Clientes ordenados por streak (admin)',
+        security: [{ adminAuth: [] }],
+        responses: {
+          200: { description: 'Lista de clientes por sequência', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/ClienteStreak' } } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    // ── Planos ────────────────────────────────────────────────────────────────
+    '/planos': {
+      get: {
+        tags: ['Planos'],
+        summary: 'Listar planos',
+        description: 'Por omissão devolve apenas os ativos; `?todos=1` inclui inativos (admin).',
+        parameters: [{ name: 'todos', in: 'query', schema: { type: 'string', example: '1' }, description: 'todos=1 inclui planos inativos' }],
+        responses: {
+          200: { description: 'Lista de planos', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/Plano' } } } } },
+        },
+      },
+      post: {
+        tags: ['Planos'],
+        summary: 'Criar plano (admin)',
+        security: [{ adminAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['nome', 'tipo', 'numRefeicoes', 'preco', 'validadeDias'],
+                properties: {
+                  nome: { type: 'string', example: 'Plano Semanal' },
+                  tipo: { type: 'string', enum: ['semanal', 'bissemanal', 'mensal'] },
+                  numRefeicoes: { type: 'integer', example: 5 },
+                  preco: { type: 'number', example: 1100 },
+                  validadeDias: { type: 'integer', example: 7 },
+                  premium: { type: 'boolean', default: false },
+                  descricao: { type: 'string' },
+                  ativo: { type: 'boolean', default: true },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: { description: 'Plano criado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Plano' } } } },
+          400: { description: 'Dados inválidos', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/planos/{id}': {
+      get: {
+        tags: ['Planos'],
+        summary: 'Obter plano por ID',
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+        responses: {
+          200: { description: 'Plano encontrado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Plano' } } } },
+          404: { description: 'Não encontrado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+      put: {
+        tags: ['Planos'],
+        summary: 'Atualizar plano (admin)',
+        security: [{ adminAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/Plano' } } },
+        },
+        responses: {
+          200: { description: 'Plano atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Plano' } } } },
+          400: { description: 'Dados inválidos', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Não encontrado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+      delete: {
+        tags: ['Planos'],
+        summary: 'Desativar plano (admin, soft-delete)',
+        description: 'Marca `ativo: false` para não afetar subscrições históricas.',
+        security: [{ adminAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+        responses: {
+          200: { description: 'Plano desativado', content: { 'application/json': { schema: { type: 'object', properties: { ok: { type: 'boolean' }, plano: { $ref: '#/components/schemas/Plano' } } } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Não encontrado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    // ── Subscrições ───────────────────────────────────────────────────────────
+    '/subscricoes': {
+      post: {
+        tags: ['Subscrições'],
+        summary: 'Comprar plano (cria subscrição pendente)',
+        description: 'Envia `multipart/form-data` com `planoId` e o ficheiro `comprovativo`. Fica em `pendente_pagamento` até o admin confirmar.',
+        security: [{ cookieAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['planoId'],
+                properties: {
+                  planoId: { type: 'string' },
+                  comprovativo: { type: 'string', format: 'binary', description: 'Comprovativo de pagamento (imagem)' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: { description: 'Subscrição criada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Subscricao' } } } },
+          400: { description: 'planoId em falta', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Plano indisponível', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+      get: {
+        tags: ['Subscrições'],
+        summary: 'Listar subscrições (admin)',
+        security: [{ adminAuth: [] }],
+        parameters: [{ name: 'estado', in: 'query', schema: { type: 'string', enum: ['pendente_pagamento', 'ativa', 'expirada', 'rejeitada'] }, description: 'Filtrar por estado' }],
+        responses: {
+          200: { description: 'Lista de subscrições (cliente e plano populados)', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/Subscricao' } } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/subscricoes/me': {
+      get: {
+        tags: ['Subscrições'],
+        summary: 'Subscrições do cliente da sessão',
+        security: [{ cookieAuth: [] }],
+        responses: {
+          200: { description: 'Subscrições do cliente', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/Subscricao' } } } } },
+          401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/subscricoes/{id}/comprovativo': {
+      post: {
+        tags: ['Subscrições'],
+        summary: '(Re)enviar comprovativo de uma subscrição pendente do próprio cliente',
+        security: [{ cookieAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: { type: 'object', required: ['comprovativo'], properties: { comprovativo: { type: 'string', format: 'binary' } } },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Comprovativo atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Subscricao' } } } },
+          400: { description: 'Ficheiro em falta', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Subscrição não encontrada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          409: { description: 'Subscrição já não está pendente', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/subscricoes/{id}/confirmar': {
+      patch: {
+        tags: ['Subscrições'],
+        summary: 'Confirmar pagamento e ativar subscrição (admin)',
+        description: 'Credita `numRefeicoes` e define a janela de validade a partir de agora.',
+        security: [{ adminAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+        requestBody: {
+          content: { 'application/json': { schema: { type: 'object', properties: { notaAdmin: { type: 'string' } } } } },
+        },
+        responses: {
+          200: { description: 'Subscrição ativada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Subscricao' } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Não encontrada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          409: { description: 'Só subscrições pendentes podem ser confirmadas', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    '/subscricoes/{id}/rejeitar': {
+      patch: {
+        tags: ['Subscrições'],
+        summary: 'Rejeitar subscrição pendente (admin)',
+        security: [{ adminAuth: [] }],
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+        requestBody: {
+          content: { 'application/json': { schema: { type: 'object', properties: { notaAdmin: { type: 'string' } } } } },
+        },
+        responses: {
+          200: { description: 'Subscrição rejeitada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Subscricao' } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Não encontrada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          409: { description: 'Só subscrições pendentes podem ser rejeitadas', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
         },
       },
     },
