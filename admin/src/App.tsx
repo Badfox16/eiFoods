@@ -11,6 +11,7 @@ import { PratoDoDia } from './pages/PratoDoDia/PratoDoDia'
 import { MenuDia } from './pages/MenuDia/MenuDia'
 import { SorteioAdmin } from './pages/SorteioAdmin/SorteioAdmin'
 import { Streak } from './pages/Streak/Streak'
+import { Planos } from './pages/Planos/Planos'
 import './App.css'
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
               <Route path="/prato-do-dia" element={<PratoDoDia />} />
               <Route path="/sorteio" element={<SorteioAdmin />} />
               <Route path="/streak" element={<Streak />} />
+              <Route path="/planos" element={<Planos />} />
             </Routes>
           </main>
         </div>

@@ -5,7 +5,7 @@ Monorepo com 3 pacotes: **server** (Bun + Express + Mongoose/MongoDB), **client*
 (React 19 + Vite, público) e **admin** (React 19 + TS + Vite). `shared/` contém
 tipos, constantes e validadores partilhados.
 
-> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-15.
+> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16.
 
 ---
 
@@ -61,14 +61,17 @@ Bloqueia quase tudo o resto. Fazer primeiro. **Concluída** (branch `feat/fase-0
 - [x] **Admin**: nova página **Menu do Dia** (`pages/MenuDia`) + rota + item na sidebar; `PratoDoDia` marcado como legado.
 - [x] **Client `Menu`**: carrega de `menuApi.getHoje()`; item `destaque` assume o papel do antigo "prato do dia".
 
-## Fase 2 — Planos pré-pagos
+## Fase 2 — Planos pré-pagos ✅
 
-- [ ] **Modelo `Plano`** (config admin): tipo (`semanal`=5 refeições/5 dias úteis, `bissemanal`, `mensal`), nº de refeições, preço, validade, ativo.
-- [ ] **Modelo `Subscricao`**: clienteId, planoId, `refeicoesRestantes`, `estado` (`pendente_pagamento` → `ativa` → `expirada`), `comprovativoUrl`, datas.
-- [ ] **Fluxo de compra (client)**: escolher plano → instruções de pagamento (M-Pesa/e-Mola) → upload de comprovativo → estado "aguarda confirmação".
-- [ ] **Admin**: listar subscrições pendentes, ver comprovativo, **confirmar/rejeitar** → ativa e credita refeições.
-- [ ] **Consumo no pedido**: se cliente tem subscrição ativa com saldo, o pedido abate 1 refeição em vez de cobrar.
-- [ ] **Admin `Planos`**: CRUD de planos e preços.
+**Concluída** (branch `feat/fase-2-planos`).
+
+- [x] **Modelo `Plano`** (`server/models/Plano.ts`, config admin): tipo (`semanal`/`bissemanal`/`mensal`), `numRefeicoes`, `preco`, `validadeDias`, `ativo`.
+- [x] **Modelo `Subscricao`** (`server/models/Subscricao.ts`): clienteId, planoId, snapshot do plano, `refeicoesRestantes`, `estado` (`pendente_pagamento` → `ativa` → `expirada`/`rejeitada`), `comprovativo` (Cloudinary), `dataInicio`/`dataExpiracao`.
+- [x] **Fluxo de compra (client)** (`pages/Planos`): escolher plano → instruções de pagamento (M-Pesa/e-Mola) → upload de comprovativo (Cloudinary) → estado "aguarda confirmação"; secção "As minhas subscrições" + saldo ativo. Link "Planos" no Navbar.
+- [x] **Admin** (`pages/Planos`): listar subscrições por estado, ver comprovativo, **confirmar/rejeitar** → ativa, credita refeições e define validade (`PATCH /subscricoes/:id/confirmar|rejeitar`).
+- [x] **Consumo no pedido** (`lib/subscricao.ts` + `POST /orders`): subscrição ativa com saldo → cada **prato base** abate 1 refeição (extras e taxa fora-do-dia continuam cobrados); desconto de streak aplica-se ao valor ainda cobrado. Cobre primeiro os pratos mais caros. Saldo a 0 → `expirada`.
+- [x] **Admin `Planos`**: CRUD de planos e preços (`/api/planos`, soft-delete via `ativo:false`).
+- [ ] _Follow-up_: proteger rotas admin de planos/subscrições (`POST/PUT/DELETE /planos`, `PATCH /subscricoes/*`, `GET /subscricoes`) — mesma dívida transversal de auth do painel admin (ver Fase 4).
 
 ## Fase 3 — Menus / pratos exclusivos (tier premium)
 

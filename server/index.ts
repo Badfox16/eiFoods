@@ -17,6 +17,8 @@ import sorteioRouter from './routes/sorteio.ts'
 import empresasRouter from './routes/empresas.ts'
 import authRouter from './routes/auth.ts'
 import streakRouter from './routes/streak.ts'
+import planosRouter from './routes/planos.ts'
+import subscricoesRouter from './routes/subscricoes.ts'
 import swaggerSpec from './lib/swagger.ts'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -67,6 +69,8 @@ app.use('/api/sorteio', sorteioRouter)
 app.use('/api/empresas', empresasRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/streak', streakRouter)
+app.use('/api/planos', planosRouter)
+app.use('/api/subscricoes', subscricoesRouter)
 
 // ── API Docs (Swagger UI) ────────────────────────────────────────────────────
 

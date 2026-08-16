@@ -368,6 +368,83 @@ export const streakApi = {
     request<ApiClienteStreak[]>('/streak/clientes'),
 }
 
+// ── Planos & Subscrições (Fase 2) ─────────────────────────────────────────────
+
+export type ApiPlanoTipo = 'semanal' | 'bissemanal' | 'mensal'
+
+export interface ApiPlano {
+  _id: string
+  nome: string
+  tipo: ApiPlanoTipo
+  numRefeicoes: number
+  preco: number
+  validadeDias: number
+  descricao: string
+  ativo: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type ApiSubscricaoEstado = 'pendente_pagamento' | 'ativa' | 'expirada' | 'rejeitada'
+
+export interface ApiSubscricao {
+  _id: string
+  /** Populado no admin: { _id, telefone, nome }. */
+  clienteId: string | { _id: string; telefone: string; nome?: string }
+  /** Populado no admin: { _id, nome, tipo }. */
+  planoId: string | { _id: string; nome: string; tipo: ApiPlanoTipo }
+  planoNome: string
+  numRefeicoes: number
+  preco: number
+  refeicoesRestantes: number
+  estado: ApiSubscricaoEstado
+  comprovativo?: { url: string; publicId: string }
+  dataInicio?: string
+  dataExpiracao?: string
+  notaAdmin?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type PlanoInput = {
+  nome: string
+  tipo: ApiPlanoTipo
+  numRefeicoes: number
+  preco: number
+  validadeDias: number
+  descricao?: string
+  ativo?: boolean
+}
+
+export const planosApi = {
+  /** Todos os planos (inclui inativos) para gestão. */
+  list: () =>
+    request<ApiPlano[]>('/planos?todos=1'),
+
+  create: (data: PlanoInput) =>
+    request<ApiPlano>('/planos', json('POST', data)),
+
+  update: (id: string, data: PlanoInput) =>
+    request<ApiPlano>(`/planos/${id}`, json('PUT', data)),
+
+  delete: (id: string) =>
+    request<{ ok: boolean; plano: ApiPlano }>(`/planos/${id}`, { method: 'DELETE' }),
+}
+
+export const subscricoesApi = {
+  /** Lista de subscrições, opcionalmente filtrada por estado. */
+  list: (estado?: ApiSubscricaoEstado) => {
+    const qs = estado ? `?estado=${estado}` : ''
+    return request<ApiSubscricao[]>(`/subscricoes${qs}`)
+  },
+
+  confirmar: (id: string, notaAdmin?: string) =>
+    request<ApiSubscricao>(`/subscricoes/${id}/confirmar`, json('PATCH', { notaAdmin })),
+
+  rejeitar: (id: string, notaAdmin?: string) =>
+    request<ApiSubscricao>(`/subscricoes/${id}/rejeitar`, json('PATCH', { notaAdmin })),
+}
+
 // ── Sorteio ──────────────────────────────────────────────────────────────────
 
 export const sorteioApi = {

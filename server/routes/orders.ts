@@ -8,6 +8,7 @@ import PratoDoDia, { type DiaSemana } from '../models/PratoDoDia'
 import { getMaputoWeekdayNumber } from '../lib/businessTime'
 import { lerSessao } from '../lib/auth'
 import { registrarPedidoStreak } from '../lib/streak'
+import { getSubscricaoAtiva, consumirRefeicoes } from '../lib/subscricao'
 
 const router = Router()
 
@@ -142,6 +143,7 @@ router.post('/', async (req, res, next) => {
           extras: extraDocs.map(e => ({ extraId: e._id, nome: e.nome, preco: e.preco })),
           isForaDoDia,
           foraDoDiaTaxa,
+          pagoComPlano: false,
           total: itemTotal,
         }
       })
@@ -150,10 +152,17 @@ router.post('/', async (req, res, next) => {
     const taxaForaDoDia = foraDoDiaCount * FORA_DO_DIA_TAXA
     const subtotal = orderItems.reduce((sum, i) => sum + i.total, 0)
 
-    // ── Streak: cliente autenticado (opcional) ──
-    // Se houver sessão válida, atualiza o streak (idempotente por dia) e aplica
-    // o desconto correspondente ao total. Pedidos anónimos ignoram este bloco.
+    // ── Cliente autenticado (opcional): plano pré-pago + streak ──
+    // Se houver sessão válida:
+    //  1) Se o cliente tem subscrição ativa com saldo, cada prato base abate 1
+    //     refeição (extras e taxa fora-do-dia continuam a ser cobrados).
+    //  2) Atualiza o streak (idempotente por dia) e aplica o desconto ao valor
+    //     ainda cobrado em dinheiro.
+    // Pedidos anónimos ignoram este bloco.
     let clienteId: string | undefined
+    let subscricaoId: string | undefined
+    let refeicoesConsumidas = 0
+    let valorPlanoCoberto = 0
     let descontoStreakPercent = 0
     let recompensasStreak: { dias: number; descricao: string }[] = []
     const sessao = lerSessao(req)
@@ -161,6 +170,28 @@ router.post('/', async (req, res, next) => {
       const cliente = await Cliente.findById(sessao.sub)
       if (cliente) {
         clienteId = String(cliente._id)
+
+        // ── Consumo de plano pré-pago ──
+        const subscricao = await getSubscricaoAtiva(cliente._id)
+        if (subscricao) {
+          // Cobre primeiro os pratos mais caros (mais valor para o cliente).
+          const idxPorPreco = orderItems
+            .map((_, i) => i)
+            .sort((a, b) => orderItems[b]!.pratoPreco - orderItems[a]!.pratoPreco)
+          for (const i of idxPorPreco) {
+            if (refeicoesConsumidas >= subscricao.refeicoesRestantes) break
+            const item = orderItems[i]!
+            item.pagoComPlano = true
+            valorPlanoCoberto += item.pratoPreco
+            refeicoesConsumidas += 1
+          }
+          if (refeicoesConsumidas > 0) {
+            await consumirRefeicoes(subscricao, refeicoesConsumidas)
+            subscricaoId = String(subscricao._id)
+          }
+        }
+
+        // ── Streak ──
         const resultado = await registrarPedidoStreak(cliente)
         descontoStreakPercent = resultado.descontoPercent
         recompensasStreak = resultado.novasRecompensas
@@ -172,13 +203,16 @@ router.post('/', async (req, res, next) => {
       }
     }
 
-    const descontoStreakValor = Math.round((subtotal * descontoStreakPercent) / 100)
-    const total = Math.max(0, subtotal - descontoStreakValor)
+    // Base a cobrar em dinheiro = bruto − o que o plano cobriu.
+    const baseAposPlano = Math.max(0, subtotal - valorPlanoCoberto)
+    const descontoStreakValor = Math.round((baseAposPlano * descontoStreakPercent) / 100)
+    const total = Math.max(0, baseAposPlano - descontoStreakValor)
 
     const order = await Order.create({
       empresaId,
       empresaCodigo: empresaCodigoResolved,
       clienteId,
+      subscricaoId,
       items: orderItems,
       deliveryDetails: {
         name:     deliveryDetails.name,
@@ -189,6 +223,8 @@ router.post('/', async (req, res, next) => {
       foraDoDiaCount,
       taxaForaDoDia,
       subtotal,
+      refeicoesConsumidas,
+      valorPlanoCoberto,
       descontoStreakPercent,
       descontoStreakValor,
       total,
@@ -211,6 +247,9 @@ router.post('/', async (req, res, next) => {
       ...order.toObject(),
       streak: clienteId
         ? { descontoPercent: descontoStreakPercent, descontoValor: descontoStreakValor, novasRecompensas: recompensasStreak }
+        : null,
+      plano: subscricaoId
+        ? { subscricaoId, refeicoesConsumidas, valorCoberto: valorPlanoCoberto }
         : null,
     })
   } catch (err: unknown) {

@@ -33,6 +33,7 @@ export default function Navbar({ showCta = false }) {
           {/* empresa em standby — link removido do fluxo principal
           <span onClick={() => navigate('/empresa')}>Empresa</span> */}
           <span onClick={() => navigate('/menu')}>Menu</span>
+          <span onClick={() => navigate('/planos')}>Planos</span>
           <span onClick={() => navigate('/sorteio')}>Sorteio</span>
           {isAuthenticated && <span onClick={() => navigate('/streak')}>Sequência 🔥</span>}
           {isAuthenticated
@@ -81,6 +82,7 @@ export default function Navbar({ showCta = false }) {
             {/* empresa em standby — link removido do fluxo principal
             <span onClick={() => handleNavegar('/empresa')}>Empresa</span> */}
             <span onClick={() => handleNavegar('/menu')}>Menu</span>
+            <span onClick={() => handleNavegar('/planos')}>Planos</span>
             <span onClick={() => handleNavegar('/sorteio')}>Sorteio</span>
             {isAuthenticated && <span onClick={() => handleNavegar('/streak')}>Sequência 🔥</span>}
             {isAuthenticated
