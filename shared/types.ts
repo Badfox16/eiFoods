@@ -330,6 +330,61 @@ export interface StreakInfo {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Planos pré-pagos & Subscrições (Fase 2)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type PlanoTipo = 'semanal' | 'bissemanal' | 'mensal'
+
+/** Plano pré-pago configurável no admin. */
+export interface Plano {
+  _id?: string
+  nome: string
+  tipo: PlanoTipo
+  /** Nº de refeições creditadas ao ativar. */
+  numRefeicoes: number
+  /** Preço total do pacote (MZN). */
+  preco: number
+  /** Dias de validade a contar da ativação. */
+  validadeDias: number
+  /** Plano premium: concede tier premium (desbloqueia exclusivos) — Fase 3. */
+  premium?: boolean
+  descricao?: string
+  ativo?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SubscricaoEstado = 'pendente_pagamento' | 'ativa' | 'expirada' | 'rejeitada'
+
+export interface Comprovativo {
+  url: string
+  publicId: string
+}
+
+/** Subscrição de um plano por um cliente. */
+export interface Subscricao {
+  _id?: string
+  /** ObjectId, ou objeto populado no admin ({ telefone, nome }). */
+  clienteId: string | { _id: string; telefone: string; nome?: string }
+  /** ObjectId, ou objeto populado no admin ({ nome, tipo }). */
+  planoId: string | { _id: string; nome: string; tipo: PlanoTipo }
+  /** Snapshot do plano à data da compra. */
+  planoNome: string
+  numRefeicoes: number
+  preco: number
+  /** Snapshot: plano premium (concede tier premium enquanto ativa) — Fase 3. */
+  premium?: boolean
+  refeicoesRestantes: number
+  estado: SubscricaoEstado
+  comprovativo?: Comprovativo
+  dataInicio?: Date | string
+  dataExpiracao?: Date | string
+  notaAdmin?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Utilities
 // ═══════════════════════════════════════════════════════════════════════════
 

@@ -1,0 +1,93 @@
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-xs);
+  color: inherit;
+  font: inherit;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+.clickable:hover { background: var(--xima-2); }
+.clickable:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+.lead {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--tinta-3);
+  align-self: center;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-md);
+  line-height: 1.2;
+  color: var(--tinta-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--tinta-3);
+  line-height: 1.3;
+}
+
+/* Pontilhado que liga o nome ao preço (menu/talão) */
+.leader {
+  flex: 1 1 auto;
+  min-width: 18px;
+  align-self: baseline;
+  height: 0;
+  border-bottom: 2px dotted var(--linha-forte);
+  transform: translateY(-3px);
+}
+
+.price {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-base);
+  color: var(--tinta-1);
+  white-space: nowrap;
+}
+.unit {
+  font-size: 0.7em;
+  color: var(--tinta-3);
+  margin-left: 3px;
+}
+
+.action { flex-shrink: 0; align-self: center; }
+
+/* Total */
+.strong .name { font-size: var(--text-lg); }
+.strong .price {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--brasa);
+}
+.strong .leader { border-bottom-color: var(--tinta-1); }
+
+/* Bloqueado (exclusivo/premium) */
+.locked .name { color: var(--tinta-3); }
+.locked .leader { border-bottom-style: solid; border-bottom-width: 1px; opacity: 0.6; }

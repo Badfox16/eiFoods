@@ -13,7 +13,7 @@
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--ui-text);
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -34,27 +34,27 @@
 
 .label {
   font-weight: 600;
-  color: #374151;
+  color: var(--ui-text-2);
   font-size: 0.875rem;
 }
 
 .input {
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border: 2px solid var(--ui-border);
+  border-radius: var(--radius-lg);
   outline: none;
   transition: all 0.2s ease;
   font-family: inherit;
 }
 
 .input:focus {
-  border-color: #2563eb;
+  border-color: var(--brand-accent);
 }
 
 .hint {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
 }
 
 /* Stats */
@@ -66,14 +66,14 @@
 
 .statItem {
   padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
+  background: var(--ui-sunken);
+  border-radius: var(--radius-lg);
   text-align: center;
 }
 
 .statLabel {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
   margin-bottom: 0.5rem;
   font-weight: 500;
 }
@@ -81,7 +81,7 @@
 .statValue {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--ui-text);
 }
 
 /* About */
@@ -96,18 +96,18 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  background: #f9fafb;
-  border-radius: 8px;
+  background: var(--ui-sunken);
+  border-radius: var(--radius-lg);
 }
 
 .aboutLabel {
   font-weight: 600;
-  color: #6b7280;
+  color: var(--ui-text-3);
   font-size: 0.875rem;
 }
 
 .aboutValue {
-  color: #111827;
+  color: var(--ui-text);
   font-size: 0.875rem;
 }
 
@@ -117,8 +117,8 @@
   bottom: 0;
   left: 280px;
   right: 0;
-  background: white;
-  border-top: 1px solid #e5e7eb;
+  background: var(--ui-surface);
+  border-top: 1px solid var(--ui-border);
   padding: 1.5rem;
   display: flex;
   justify-content: center;

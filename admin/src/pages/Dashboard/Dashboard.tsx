@@ -1,4 +1,4 @@
-import { useAdmin } from '../../context/AdminContext'
+import { useAdmin } from '../../context/useAdmin'
 import { Header, StatCard, Card } from '../../components'
 import { mockStats, mockRevenueData, mockPopularDishes } from '../../data/mockData'
 import { formatPrice } from '../../../../shared/utils'
@@ -59,26 +59,26 @@ export function Dashboard() {
           value={todayOrders}
           icon={<IcoPedidos />}
           trend={{ value: mockStats.ordersChange, label: 'vs ontem' }}
-          color="#2563eb"
+          color="#E2570F"
         />
         <StatCard
           title="Receita Hoje"
           value={formatPrice(todayRevenue)}
           icon={<IcoReceita />}
           trend={{ value: mockStats.revenueChange, label: 'vs ontem' }}
-          color="#16a34a"
+          color="#359420"
         />
         <StatCard
           title="Pedidos Pendentes"
           value={pendingOrders}
           icon={<IcoPendente />}
-          color="#f59e0b"
+          color="#B5790C"
         />
         <StatCard
           title="Pratos Disponíveis"
           value={state.pratos.length}
           icon={<IcoPratos />}
-          color="#8b5cf6"
+          color="#2C5A6B"
         />
       </div>
 

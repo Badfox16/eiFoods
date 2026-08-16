@@ -63,6 +63,27 @@ export const streakApi = {
   config: () => request('/streak/config'),
 }
 
+export const planosApi = {
+  /** Planos ativos disponíveis para compra. */
+  list: () => request('/planos'),
+}
+
+export const subscricoesApi = {
+  /** Subscrições do cliente autenticado (mais recentes primeiro). */
+  me: () => request('/subscricoes/me'),
+
+  /**
+   * Cria uma subscrição pendente. `comprovativo` é um File (opcional).
+   * Enviado como multipart/form-data — não definir Content-Type manualmente.
+   */
+  create: ({ planoId, comprovativo }) => {
+    const fd = new FormData()
+    fd.append('planoId', planoId)
+    if (comprovativo) fd.append('comprovativo', comprovativo)
+    return request('/subscricoes', { method: 'POST', body: fd })
+  },
+}
+
 export const authApi = {
   /** Pede envio de OTP para o telefone. */
   requestOtp: (telefone) => request('/auth/request-otp', json('POST', { telefone })),

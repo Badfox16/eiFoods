@@ -12,7 +12,7 @@ interface StatCardProps {
   color?: string
 }
 
-export function StatCard({ title, value, icon, trend, color = '#2563eb' }: StatCardProps) {
+export function StatCard({ title, value, icon, trend, color = '#E2570F' }: StatCardProps) {
   const isPositive = trend && trend.value > 0
   
   return (

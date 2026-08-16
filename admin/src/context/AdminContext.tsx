@@ -3,27 +3,18 @@
  * Carrega dados da API no mount e expõe funções assíncronas para CRUD.
  */
 
-import { createContext, useContext, useEffect, useReducer, useCallback } from 'react'
+import { useEffect, useReducer, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import {
   pratosApi, extrasApi, scheduleApi, ordersApi, empresasApi,
   type ApiPrato, type ApiExtra, type ApiOrder, type ApiSchedule, type ApiEmpresa,
 } from '../lib/api'
 import type { DishFormData, ExtraFormData, EmpresaFormData, EmpresaMenuFormData } from '../types/admin.types'
+import { AdminContext, type AdminState } from './useAdmin'
 
 // ═══════════════════════════════════════════════════════════════════════════
 // State & Actions
 // ═══════════════════════════════════════════════════════════════════════════
-
-interface AdminState {
-  pratos: ApiPrato[]
-  extras: ApiExtra[]
-  orders: ApiOrder[]
-  empresas: ApiEmpresa[]
-  schedule: ApiSchedule | null
-  loading: boolean
-  error: string | null
-}
 
 type AdminAction =
   | { type: 'SET_LOADING'; payload: boolean }
@@ -44,38 +35,6 @@ type AdminAction =
   | { type: 'UPDATE_EMPRESA'; payload: ApiEmpresa }
   | { type: 'DELETE_EMPRESA'; payload: string }
   | { type: 'SET_SCHEDULE'; payload: ApiSchedule }
-
-interface AdminContextType {
-  state: AdminState
-  // Pratos
-  loadPratos: () => Promise<void>
-  createPrato: (data: DishFormData) => Promise<void>
-  updatePrato: (id: string, data: DishFormData) => Promise<void>
-  deletePrato: (id: string) => Promise<void>
-  toggleDisponivel: (id: string, val: boolean) => Promise<void>
-  // Extras
-  loadExtras: () => Promise<void>
-  createExtra: (data: ExtraFormData) => Promise<void>
-  updateExtra: (id: string, data: Partial<ExtraFormData>) => Promise<void>
-  deleteExtra: (id: string) => Promise<void>
-  // Prato do Dia
-  loadSchedule: () => Promise<void>
-  setDayPrato: (dia: string, pratoId: string | null) => Promise<void>
-  // Orders
-  loadOrders: (status?: string) => Promise<void>
-  updateOrderStatus: (id: string, status: ApiOrder['status']) => Promise<void>
-  deleteOrder: (id: string) => Promise<void>
-  // Empresas
-  loadEmpresas: () => Promise<void>
-  createEmpresa: (data: EmpresaFormData) => Promise<void>
-  updateEmpresa: (id: string, data: Partial<EmpresaFormData>) => Promise<void>
-  deleteEmpresa: (id: string) => Promise<void>
-  regenerateEmpresaCodes: (id: string) => Promise<void>
-  toggleEmpresaCode: (empresaId: string, ativo: boolean) => Promise<void>
-  createEmpresaMenu: (empresaId: string, data: EmpresaMenuFormData) => Promise<void>
-  updateEmpresaMenu: (empresaId: string, menuId: string, data: Partial<EmpresaMenuFormData>) => Promise<void>
-  deleteEmpresaMenu: (empresaId: string, menuId: string) => Promise<void>
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Reducer
@@ -130,12 +89,6 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
     default: return state
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Context
-// ═══════════════════════════════════════════════════════════════════════════
-
-const AdminContext = createContext<AdminContextType | undefined>(undefined)
 
 // ── Helper: build FormData from DishFormData ─────────────────────────────────
 function buildPratoFormData(data: DishFormData): FormData {
@@ -318,10 +271,4 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       {children}
     </AdminContext.Provider>
   )
-}
-
-export function useAdmin() {
-  const ctx = useContext(AdminContext)
-  if (!ctx) throw new Error('useAdmin deve ser usado dentro de <AdminProvider>')
-  return ctx
 }

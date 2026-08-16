@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import Sorteio from '../models/Sorteio'
 import PratoDoDia, { type DiaSemana } from '../models/PratoDoDia'
 import { getMaputoWeekdayNumber, isFridayInMaputo } from '../lib/businessTime'
+import { requireAdmin } from '../lib/adminAuth'
 
 const router = Router()
 
@@ -111,7 +112,7 @@ router.post('/inscricoes', async (req, res, next) => {
 
 // POST /api/sorteio/inscricoes/:id/confirmar
 // Admin confirma pagamento e move inscrição para participante válido
-router.post('/inscricoes/:id/confirmar', async (req, res, next) => {
+router.post('/inscricoes/:id/confirmar', requireAdmin, async (req, res, next) => {
   try {
     const id = req.params['id']
     if (!id) return res.status(400).json({ error: 'ID inválido' })
@@ -141,7 +142,7 @@ router.post('/inscricoes/:id/confirmar', async (req, res, next) => {
 })
 
 // PATCH /api/sorteio/valor-rifa
-router.patch('/valor-rifa', async (req, res, next) => {
+router.patch('/valor-rifa', requireAdmin, async (req, res, next) => {
   try {
     const { valorRifa } = req.body as { valorRifa?: number }
     const valor = Number(valorRifa)
@@ -161,7 +162,7 @@ router.patch('/valor-rifa', async (req, res, next) => {
 
 // DELETE /api/sorteio/inscricoes/:id
 // Admin rejeita/cancela inscrição pendente
-router.delete('/inscricoes/:id', async (req, res, next) => {
+router.delete('/inscricoes/:id', requireAdmin, async (req, res, next) => {
   try {
     const id = req.params['id']
     if (!id) return res.status(400).json({ error: 'ID inválido' })
@@ -176,7 +177,7 @@ router.delete('/inscricoes/:id', async (req, res, next) => {
 })
 
 // POST /api/sorteio/participantes
-router.post('/participantes', async (req, res, next) => {
+router.post('/participantes', requireAdmin, async (req, res, next) => {
   try {
     const { nome, empresa, contacto } = req.body as { nome?: string; empresa?: string; contacto?: string }
 
@@ -204,7 +205,7 @@ router.post('/participantes', async (req, res, next) => {
 })
 
 // DELETE /api/sorteio/participantes/:id
-router.delete('/participantes/:id', async (req, res, next) => {
+router.delete('/participantes/:id', requireAdmin, async (req, res, next) => {
   try {
     const id = req.params['id']
     if (!id) return res.status(400).json({ error: 'ID inválido' })
@@ -224,7 +225,7 @@ router.delete('/participantes/:id', async (req, res, next) => {
 })
 
 // POST /api/sorteio/realizar
-router.post('/realizar', async (_req, res, next) => {
+router.post('/realizar', requireAdmin, async (_req, res, next) => {
   try {
     if (!isFridayInMaputo()) {
       return res.status(400).json({ error: 'O sorteio só pode ser realizado à sexta-feira (Africa/Maputo)' })
@@ -266,7 +267,7 @@ router.post('/realizar', async (_req, res, next) => {
 })
 
 // POST /api/sorteio/reset
-router.post('/reset', async (_req, res, next) => {
+router.post('/reset', requireAdmin, async (_req, res, next) => {
   try {
     const doc = await getOrCreateSorteio()
     doc.vencedorAtual = null

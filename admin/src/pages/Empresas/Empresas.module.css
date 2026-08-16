@@ -26,8 +26,8 @@
 }
 
 .form input {
-	border: 1px solid var(--ui-border, #e5e7eb);
-	border-radius: 8px;
+	border: 1px solid var(--ui-border, var(--ui-border));
+	border-radius: var(--radius-lg);
 	padding: 8px 10px;
 	font-size: 14px;
 }
@@ -49,8 +49,8 @@
 	align-items: center;
 	gap: 6px;
 	padding: 6px 8px;
-	border-radius: 999px;
-	background: var(--ui-bg-soft, #f3f4f6);
+	border-radius: var(--radius-full);
+	background: var(--ui-bg-soft, var(--ui-sunken));
 	font-size: 12px;
 }
 
@@ -66,8 +66,8 @@
 }
 
 .listItem {
-	border: 1px solid var(--ui-border, #e5e7eb);
-	border-radius: 10px;
+	border: 1px solid var(--ui-border, var(--ui-border));
+	border-radius: var(--radius-lg);
 	padding: 10px;
 	display: flex;
 	justify-content: space-between;
@@ -88,8 +88,8 @@
 }
 
 .errorCard {
-	border: 1px solid var(--ui-danger, #dc2626);
-	color: var(--ui-danger, #dc2626);
+	border: 1px solid var(--ui-danger, var(--status-cancelled));
+	color: var(--ui-danger, var(--status-cancelled));
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -110,8 +110,8 @@
 
 .addCodesInput {
 	width: 90px;
-	border: 1px solid var(--ui-border, #e5e7eb);
-	border-radius: 8px;
+	border: 1px solid var(--ui-border, var(--ui-border));
+	border-radius: var(--radius-lg);
 	padding: 8px 10px;
 	font-size: 14px;
 }

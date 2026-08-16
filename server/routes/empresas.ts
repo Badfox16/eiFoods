@@ -1,7 +1,9 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
+import { randomInt } from 'node:crypto'
 import Empresa, { getCurrentDateKey } from '../models/Empresa'
 import Prato from '../models/Prato'
+import { requireAdmin } from '../lib/adminAuth'
 
 const router = Router()
 
@@ -9,7 +11,7 @@ function generateEmployeeCode(): string {
 	const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 	let code = 'EMP-'
 	for (let i = 0; i < 6; i += 1) {
-		code += alphabet[Math.floor(Math.random() * alphabet.length)]
+		code += alphabet[randomInt(alphabet.length)]
 	}
 	return code
 }
@@ -41,7 +43,7 @@ async function ensureAllMenuPratosExist(pratoIds: string[]) {
 }
 
 // GET /api/empresas
-router.get('/', async (_req, res, next) => {
+router.get('/', requireAdmin, async (_req, res, next) => {
 	try {
 		const empresas = await Empresa.find().sort({ createdAt: -1 }).populate('menus.pratoIds')
 		res.json(empresas)
@@ -51,7 +53,7 @@ router.get('/', async (_req, res, next) => {
 })
 
 // GET /api/empresas/:id
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', requireAdmin, async (req, res, next) => {
 	try {
 		const empresa = await Empresa.findById(req.params['id']).populate('menus.pratoIds')
 		if (!empresa) return res.status(404).json({ error: 'Empresa não encontrada' })
@@ -62,7 +64,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // POST /api/empresas
-router.post('/', async (req, res, next) => {
+router.post('/', requireAdmin, async (req, res, next) => {
 	try {
 		const { nome, ativo = true, nrFuncionariosPagos, menuNome = 'Menu principal', pratoIds = [], maxUsosDia = 1 } = req.body as {
 			nome: string
@@ -111,7 +113,7 @@ router.post('/', async (req, res, next) => {
 })
 
 // PUT /api/empresas/:id
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requireAdmin, async (req, res, next) => {
 	try {
 		const { nome, ativo, nrFuncionariosPagos, maxUsosDia, codigoAtivo } = req.body as {
 			nome?: string
@@ -158,7 +160,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE /api/empresas/:id
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requireAdmin, async (req, res, next) => {
 	try {
 		const empresa = await Empresa.findByIdAndDelete(req.params['id'])
 		if (!empresa) return res.status(404).json({ error: 'Empresa não encontrada' })
@@ -169,7 +171,7 @@ router.delete('/:id', async (req, res, next) => {
 })
 
 // POST /api/empresas/:id/regenerate-codes
-router.post('/:id/regenerate-codes', async (req, res, next) => {
+router.post('/:id/regenerate-codes', requireAdmin, async (req, res, next) => {
 	try {
 		const empresa = await Empresa.findById(req.params['id'])
 		if (!empresa) return res.status(404).json({ error: 'Empresa não encontrada' })
@@ -188,7 +190,7 @@ router.post('/:id/regenerate-codes', async (req, res, next) => {
 })
 
 // PATCH /api/empresas/:id/codigo/ativo
-router.patch('/:id/codigo/ativo', async (req, res, next) => {
+router.patch('/:id/codigo/ativo', requireAdmin, async (req, res, next) => {
 	try {
 		const { ativo } = req.body as { ativo: boolean }
 		const empresa = await Empresa.findById(req.params['id'])
@@ -203,7 +205,7 @@ router.patch('/:id/codigo/ativo', async (req, res, next) => {
 })
 
 // POST /api/empresas/:id/menus
-router.post('/:id/menus', async (req, res, next) => {
+router.post('/:id/menus', requireAdmin, async (req, res, next) => {
 	try {
 		const { nome, pratoIds = [], ativo = true } = req.body as {
 			nome: string
@@ -234,7 +236,7 @@ router.post('/:id/menus', async (req, res, next) => {
 })
 
 // PUT /api/empresas/:id/menus/:menuId
-router.put('/:id/menus/:menuId', async (req, res, next) => {
+router.put('/:id/menus/:menuId', requireAdmin, async (req, res, next) => {
 	try {
 		const { nome, pratoIds, ativo } = req.body as {
 			nome?: string
@@ -277,7 +279,7 @@ router.put('/:id/menus/:menuId', async (req, res, next) => {
 })
 
 // DELETE /api/empresas/:id/menus/:menuId
-router.delete('/:id/menus/:menuId', async (req, res, next) => {
+router.delete('/:id/menus/:menuId', requireAdmin, async (req, res, next) => {
 	try {
 		const empresa = await Empresa.findById(req.params['id'])
 		if (!empresa) return res.status(404).json({ error: 'Empresa não encontrada' })

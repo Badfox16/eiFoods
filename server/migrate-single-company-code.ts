@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import { randomInt } from 'node:crypto'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Empresa, { getCurrentDateKey } from './models/Empresa'
@@ -12,7 +13,7 @@ function generateEmployeeCode(): string {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   let code = 'EMP-'
   for (let i = 0; i < 6; i += 1) {
-    code += alphabet[Math.floor(Math.random() * alphabet.length)]
+    code += alphabet[randomInt(alphabet.length)]
   }
   return code
 }

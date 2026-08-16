@@ -17,7 +17,7 @@
 .cardTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--ui-text);
   margin: 0 0 1.5rem 0;
 }
 
@@ -42,7 +42,7 @@
 
 .bar {
   width: 100%;
-  background: linear-gradient(to top, #2563eb, #60a5fa);
+  background: var(--brand-accent);
   border-radius: 4px 4px 0 0;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -50,13 +50,13 @@
 }
 
 .bar:hover {
-  background: linear-gradient(to top, #1d4ed8, #2563eb);
+  background: var(--brand-accent-dark);
   transform: scaleY(1.05);
 }
 
 .chartLabel {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
   font-weight: 600;
 }
 
@@ -72,19 +72,19 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
+  background: var(--ui-sunken);
+  border-radius: var(--radius-lg);
   transition: all 0.2s ease;
 }
 
 .dishRow:hover {
-  background: #f3f4f6;
+  background: var(--ui-sunken);
 }
 
 .dishRank {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--brand-accent);
   min-width: 40px;
   text-align: center;
 }
@@ -92,7 +92,7 @@
 .dishImagem {
   width: 44px;
   height: 44px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -103,13 +103,13 @@
 
 .dishName {
   font-weight: 600;
-  color: #111827;
+  color: var(--ui-text);
   margin-bottom: 0.25rem;
 }
 
 .dishMeta {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
 }
 
 /* Recent Orders */
@@ -124,13 +124,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
+  background: var(--ui-sunken);
+  border-radius: var(--radius-lg);
   transition: all 0.2s ease;
 }
 
 .orderRow:hover {
-  background: #f3f4f6;
+  background: var(--ui-sunken);
 }
 
 .orderInfo {
@@ -139,13 +139,13 @@
 
 .orderId {
   font-weight: 700;
-  color: #111827;
+  color: var(--ui-text);
   margin-bottom: 0.25rem;
 }
 
 .orderCustomer {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--ui-text-3);
 }
 
 .orderMeta {
@@ -156,39 +156,39 @@
 
 .orderTotal {
   font-weight: 600;
-  color: #111827;
+  color: var(--ui-text);
 }
 
 .orderStatus {
   padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
 }
 
 .orderStatus.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: #F5E4BE;
+  color: #8A5A0B;
 }
 
 .orderStatus.preparing {
-  background: #dbeafe;
-  color: #1e40af;
+  background: #D9E6EA;
+  color: var(--brand-accent-dark);
 }
 
 .orderStatus.ready {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--brand-primary-light);
+  color: var(--brand-primary-dark);
 }
 
 .orderStatus.delivered {
-  background: #e5e7eb;
-  color: #374151;
+  background: var(--ui-border);
+  color: var(--ui-text-2);
 }
 
 .orderStatus.cancelled {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #F6DED9;
+  color: #7D2109;
 }
 
 @media (max-width: 768px) {

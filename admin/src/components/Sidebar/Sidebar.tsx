@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
-import { CalendarDays, Flame } from 'lucide-react'
+import { CalendarDays, Flame, Wallet, LogOut } from 'lucide-react'
+import { useAdminAuth } from '../../context/useAdminAuth'
 import styles from './Sidebar.module.css'
 
 function IcoMenuDia() {
@@ -8,6 +9,10 @@ function IcoMenuDia() {
 
 function IcoStreak() {
   return <Flame size={17} strokeWidth={2} />
+}
+
+function IcoPlanos() {
+  return <Wallet size={17} strokeWidth={2} />
 }
 
 function IcoDashboard() {
@@ -110,6 +115,7 @@ const navGroups = [
     items: [
       { path: '/sorteio', label: 'Sorteio', icon: <IcoSorteio /> },
       { path: '/streak',  label: 'Sequência', icon: <IcoStreak /> },
+      { path: '/planos',  label: 'Planos', icon: <IcoPlanos /> },
     ]
   },
   {
@@ -121,6 +127,9 @@ const navGroups = [
 ]
 
 export function Sidebar() {
+  const { admin, logout } = useAdminAuth()
+  const inicial = (admin?.username?.[0] ?? 'A').toUpperCase()
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logo}>
@@ -150,11 +159,20 @@ export function Sidebar() {
       </nav>
 
       <div className={styles.footer}>
-        <div className={styles.userAvatar}>A</div>
+        <div className={styles.userAvatar}>{inicial}</div>
         <div className={styles.userInfo}>
-          <div className={styles.userName}>Admin</div>
-          <div className={styles.userEmail}>admin@marmitafresca.mz</div>
+          <div className={styles.userName}>{admin?.nome || admin?.username || 'Admin'}</div>
+          <div className={styles.userEmail}>@{admin?.username ?? 'admin'}</div>
         </div>
+        <button
+          type="button"
+          className={styles.logoutBtn}
+          onClick={() => { void logout() }}
+          title="Terminar sessão"
+          aria-label="Terminar sessão"
+        >
+          <LogOut size={16} strokeWidth={2} />
+        </button>
       </div>
     </aside>
   )

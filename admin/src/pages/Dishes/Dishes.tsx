@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useAdmin } from '../../context/AdminContext'
+import { useAdmin } from '../../context/useAdmin'
 import { Header, Card, Button } from '../../components'
 import { formatPrice } from '../../../../shared/utils'
 import type { ApiExtra, ApiPrato } from '../../lib/api'
@@ -230,7 +230,6 @@ function DishModal({ dish, extras, onClose, onSave }: DishModalProps) {
     disponivel: dish?.disponivel ?? true,
   })
   const [imageFile, setImageFile] = useState<File | undefined>()
-  const [previewUrl, setPreviewUrl] = useState<string>(dish?.imagem.url ?? '')
   const [selectedExclusiveExtras, setSelectedExclusiveExtras] = useState<string[]>(initialExtras)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -238,17 +237,18 @@ function DishModal({ dish, extras, onClose, onSave }: DishModalProps) {
   const globalExtras = useMemo(() => extras.filter((extra) => extra.global), [extras])
   const exclusiveExtras = useMemo(() => extras.filter((extra) => !extra.global), [extras])
 
+  // Preview derivado: object URL do ficheiro escolhido, ou a imagem atual do prato.
+  const objectUrl = useMemo(
+    () => (imageFile ? URL.createObjectURL(imageFile) : undefined),
+    [imageFile]
+  )
+  const previewUrl = objectUrl ?? dish?.imagem.url ?? ''
+
+  // Revoga o object URL ao trocar de ficheiro / desmontar (evita fuga de memória).
   useEffect(() => {
-    if (!imageFile) {
-      setPreviewUrl(dish?.imagem.url ?? '')
-      return
-    }
-
-    const objectUrl = URL.createObjectURL(imageFile)
-    setPreviewUrl(objectUrl)
-
+    if (!objectUrl) return
     return () => URL.revokeObjectURL(objectUrl)
-  }, [imageFile, dish])
+  }, [objectUrl])
 
   const handleToggleExclusiveExtra = (extraId: string) => {
     setSelectedExclusiveExtras((prev) => (

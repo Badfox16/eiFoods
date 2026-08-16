@@ -1,108 +1,118 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   eiFoods — Design Tokens
+   eiFoods / Marmita Fresca — Design Tokens · "Quadro & Papel"
    ────────────────────────────────────────────────────────────────────────
-   Fonte única de verdade para cor, tipografia, espaçamento, raios, sombras
-   e motion. Todos os valores são CSS custom properties em :root.
+   Direção: o ecrã lê-se como o QUADRO de giz de uma tasca e o pedido como um
+   TALÃO. Cores do logótipo (verde-folha + laranja-brasa) ancoradas na mesa
+   moçambicana (matapa, xima, a panela
+   de ferro, o açafrão), não em gradientes decorativos.
 
-   FILOSOFIA
-   • Personalidade sem ruído: verde-folha vivo (frescura/comida) + laranja
-     brasa (apetite/energia). Cores retiradas do logo, mas com uma escala
-     completa para dar profundidade e hierarquia.
-   • Legibilidade primeiro: texto sobre superfícies claras com contraste
-     AA+; superfícies quentes e neutras (não brancos clínicos).
-   • Consistência: os nomes já usados no client (--color-primary, --space-md,
-     --radius-md, --shadow-*, --transition) são PRESERVADOS com os mesmos
-     valores, para não quebrar páginas existentes. Os tokens novos (escalas
-     numéricas, motion, tipografia) são aditivos.
-
-   Nomenclatura:
-     --color-*     cor        --space-*   espaçamento
-     --font-*      tipografia --radius-*  raio de canto
-     --shadow-*    sombra     --ease-* / --dur-*  motion
+   Regras da direção (fonte de verdade):
+   • Sem gradientes decorativos, glass, blobs. Cor separa-se por BLOCOS sólidos.
+   • Painéis PANELA (escuro, "quadro") vs. áreas XIMA (papel quente).
+   • Botões retangulares (raio pequeno); pill só em filtros/tags.
+   • Elevação por FILETE (hairline) e contraste papel/quadro, não sombra suave.
+   • Tipografia: Fraunces (display), Hanken Grotesk (texto), Spline Sans Mono
+     (preços/talão). Sem Inter, sem emoji-ícone, sem thin-line genérico.
    ══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Marca: Verde (frescura, comida, "ir") ───────────────────────────── */
-  --color-primary:        #359420; /* base — do logo */
-  --color-primary-dark:   #256B16;
+  /* ── Paleta base (comida/mercado) ─────────────────────────────────────── */
+  --panela:    #1C1A17; /* ferro fundido / quadro de giz */
+  --panela-2:  #26231E; /* elevação subtil sobre o quadro */
+  --xima:      #F4ECD8; /* papa de milho — papel/fundo */
+  --xima-2:    #EFE5CC; /* papel um tom mais fundo (sunken) */
+  --giz:       #F7F4EC; /* giz sobre o quadro */
+  --brasa:      #E2570F; /* laranja-brasa — do logótipo — acento/CTA/total */
+  --brasa-dark: #BE440A;
+  --folha:      #359420; /* verde-folha — do logótipo — cor de marca/identidade */
+  --folha-dark: #256B16;
+  --matapa:    #2E5A22; /* verde terroso profundo — fills/estados de sucesso */
+  --matapa-2:  #3E6E2E;
+
+  /* Tintas de texto sobre papel (escala de "panela" esbatida) */
+  --tinta-1: #1C1A17; /* principal */
+  --tinta-2: #55503F; /* secundário */
+  --tinta-3: #857E68; /* terciário / meta */
+  --linha:   #D8CCA8; /* filete sobre papel (hairline) */
+  --linha-forte: #C4B48A;
+
+  /* ── Aliases retro-compatíveis (páginas ainda não reescritas migram) ──── */
+  --color-primary:        var(--folha);
+  --color-primary-dark:   var(--folha-dark);
   --color-primary-darker: #184A0E;
-  --color-primary-light:  #E8F5E3;
-  --color-primary-xlight: #F2FAF0;
-  --color-primary-50:     #F2FAF0;
-  --color-primary-100:    #E8F5E3;
-  --color-primary-300:    #9FD98F;
-  --color-primary-500:    #359420;
-  --color-primary-700:    #256B16;
+  --color-primary-light:  #E1EEDB;
+  --color-primary-xlight: #EEF5EA;
+  --color-primary-50:     #EEF5EA;
+  --color-primary-100:    #E1EEDB;
+  --color-primary-300:    #9FD08F;
+  --color-primary-500:    var(--folha);
+  --color-primary-700:    var(--folha-dark);
   --color-primary-900:    #184A0E;
 
-  /* ── Accent: Laranja-brasa (apetite, energia, CTA quente) ────────────── */
-  --color-accent:        #E85210; /* base — do logo */
-  --color-accent-dark:   #C44008;
-  --color-accent-light:  #FFF1E8;
-  --color-accent-50:     #FFF6F0;
-  --color-accent-100:    #FFF1E8;
-  --color-accent-300:    #FFB183;
-  --color-accent-500:    #E85210;
-  --color-accent-700:    #C44008;
+  --color-accent:        var(--brasa);
+  --color-accent-dark:   var(--brasa-dark);
+  --color-accent-light:  #F6DFD0;
+  --color-accent-50:     #FBEEE6;
+  --color-accent-100:    #F6DFD0;
+  --color-accent-300:    #E39A86;
+  --color-accent-500:    var(--brasa);
+  --color-accent-700:    var(--brasa-dark);
 
-  /* ── Realce secundário: dourado-mel (streaks, prémios, "ganhaste") ───── */
-  --color-gold:       #F2B705;
-  --color-gold-dark:  #C99400;
-  --color-gold-light: #FDF3D0;
+  --color-gold:       var(--folha);
+  --color-gold-dark:  var(--folha-dark);
+  --color-gold-light: #F5E4BE;
 
-  /* ── Neutros quentes (fundo com alma, não branco clínico) ────────────── */
-  --color-bg:            #F6FAF4;
-  --color-bg-warm:       #FBF9F4; /* alternativa neutra-quente para secções */
-  --color-surface:       #FFFFFF;
-  --color-surface-sunken: #F1F6EE;
-  --color-border:        #D8E8D0;
-  --color-border-strong: #BBD3AF;
+  --color-bg:            var(--xima);
+  --color-bg-warm:       var(--xima);
+  --color-surface:       #FBF6E9; /* papel um pouco mais claro para "folhas" */
+  --color-surface-sunken: var(--xima-2);
+  --color-border:        var(--linha);
+  --color-border-strong: var(--linha-forte);
 
-  /* ── Texto ───────────────────────────────────────────────────────────── */
-  --color-text-primary:   #182214;
-  --color-text-secondary: #4E6044;
-  --color-text-muted:     #8A9E82;
-  --color-text-on-primary: #FFFFFF;
-  --color-text-on-accent:  #FFFFFF;
+  --color-text-primary:   var(--tinta-1);
+  --color-text-secondary: var(--tinta-2);
+  --color-text-muted:     var(--tinta-3);
+  --color-text-on-primary: var(--giz);
+  --color-text-on-accent:  var(--giz);
 
-  /* ── Estados ─────────────────────────────────────────────────────────── */
-  --color-success:       #359420;
-  --color-success-light: #E8F5E3;
-  --color-error:         #D63B3B;
-  --color-error-light:   #FDECEC;
-  --color-warning:       #E0A106;
-  --color-warning-light: #FBF1D6;
-  --color-info:          #2F7FB0;
-  --color-info-light:    #E3F1F9;
+  --color-success:       var(--matapa);
+  --color-success-light: #E1E7D3;
+  --color-error:         var(--brasa);
+  --color-error-light:   #F6DED9;
+  --color-warning:       var(--folha-dark);
+  --color-warning-light: #F5E4BE;
+  --color-info:          #2C5A6B;
+  --color-info-light:    #D9E6EA;
 
   /* ── Tipografia ──────────────────────────────────────────────────────── */
-  /* Sora: display com carácter geométrico. DM Sans: corpo neutro e legível. */
-  --font-display: 'Sora', system-ui, sans-serif;
-  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:    'Hanken Grotesk', system-ui, sans-serif;
+  --font-mono:    'Spline Sans Mono', ui-monospace, 'Courier New', monospace;
 
-  /* Escala tipográfica (modular ~1.2) */
-  --text-xs:   0.75rem;   /* 12px */
-  --text-sm:   0.875rem;  /* 14px */
-  --text-base: 1rem;      /* 16px */
-  --text-md:   1.125rem;  /* 18px */
-  --text-lg:   1.375rem;  /* 22px */
-  --text-xl:   1.75rem;   /* 28px */
-  --text-2xl:  2.25rem;   /* 36px */
-  --text-3xl:  3rem;      /* 48px */
+  /* Escala tipográfica (modular ~1.25) */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.4rem;
+  --text-xl:   1.85rem;
+  --text-2xl:  2.5rem;
+  --text-3xl:  3.4rem;
 
   --weight-regular:  400;
   --weight-medium:   500;
   --weight-semibold: 600;
   --weight-bold:     700;
+  --weight-black:    900;
 
-  --leading-tight:   1.15;
+  --leading-tight:   1.1;
   --leading-snug:    1.35;
   --leading-normal:  1.6;
   --tracking-tight:  -0.02em;
   --tracking-normal: 0;
-  --tracking-wide:   0.04em;
+  --tracking-wide:   0.06em;
 
-  /* ── Espaçamento (escala base 4/8) ───────────────────────────────────── */
+  /* ── Espaçamento (base 4/8) ──────────────────────────────────────────── */
   --space-2xs: 2px;
   --space-xs:  4px;
   --space-sm:  8px;
@@ -112,44 +122,45 @@
   --space-2xl: 64px;
   --space-3xl: 96px;
 
-  /* ── Raios de canto ──────────────────────────────────────────────────── */
-  --radius-xs:   4px;
-  --radius-sm:   8px;
-  --radius-md:   12px;
-  --radius-lg:   20px;
-  --radius-xl:   28px;
-  --radius-full: 9999px;
+  /* ── Raios (contidos — nada de "muito arredondado") ──────────────────── */
+  --radius-xs:   2px;
+  --radius-sm:   3px;
+  --radius-md:   4px;
+  --radius-lg:   6px;
+  --radius-xl:   8px;
+  --radius-full: 9999px; /* só para pills semânticos: filtros/tags/selos */
 
-  /* ── Sombras (suaves, verde-neutro para se fundir com o fundo) ───────── */
-  --shadow-sm: 0 1px 3px rgba(24, 34, 20, 0.06);
-  --shadow-md: 0 4px 16px rgba(24, 34, 20, 0.08);
-  --shadow-lg: 0 12px 40px rgba(24, 34, 20, 0.10);
-  --shadow-xl: 0 24px 64px rgba(24, 34, 20, 0.14);
-  /* Elevação com tom de marca — para elementos primários em destaque */
-  --shadow-primary: 0 10px 30px rgba(53, 148, 32, 0.28);
-  --shadow-accent:  0 10px 30px rgba(232, 82, 16, 0.28);
-  /* Foco acessível */
-  --ring-focus: 0 0 0 3px rgba(53, 148, 32, 0.35);
+  /* ── Sombras (usar com muita parcimónia — preferir filete/contraste) ─── */
+  --shadow-sm: 0 1px 0 var(--linha);
+  --shadow-md: 0 2px 0 var(--linha-forte);
+  --shadow-lg: 0 10px 30px rgba(28, 26, 23, 0.16);
+  --shadow-xl: 0 20px 50px rgba(28, 26, 23, 0.22);
+  --shadow-primary: none;
+  --shadow-accent:  none;
 
-  /* ── Motion ──────────────────────────────────────────────────────────── */
-  --dur-fast:   120ms;
-  --dur-base:   220ms;
-  --dur-slow:   360ms;
+  /* Foco acessível (contorno firme, visível sobre papel e quadro) */
+  --ring-focus: 0 0 0 3px rgba(226, 87, 15, 0.45);
+
+  /* ── Motion (só funcional) ───────────────────────────────────────────── */
+  --dur-fast:   110ms;
+  --dur-base:   200ms;
+  --dur-slow:   320ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1); /* leve "bounce" p/ delícia */
-  /* Atalho retro-compatível já usado no client */
+  --ease-spring:   cubic-bezier(0.34, 1.4, 0.64, 1);
   --transition: var(--dur-base) var(--ease-standard);
 
   /* ── Layout ──────────────────────────────────────────────────────────── */
-  --container-max: 1100px;
+  --container-max: 1080px;
   --z-navbar:  100;
   --z-overlay: 900;
   --z-modal:   1000;
   --z-toast:   1100;
+
+  /* ── Assinatura: filete pontilhado do "talão/quadro" ─────────────────── */
+  --leader: radial-gradient(circle, var(--linha-forte) 1px, transparent 1.5px) repeat-x;
 }
 
-/* Respeita quem prefere menos movimento */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-fast: 0ms;

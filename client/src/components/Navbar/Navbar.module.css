@@ -2,146 +2,155 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px var(--space-xl);
-  background-color: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid var(--color-border);
+  gap: var(--space-lg);
+  padding: 0 var(--space-xl);
+  height: 62px;
+  background: var(--panela);
+  color: var(--giz);
+  border-bottom: 2px solid #000;
   position: sticky;
   top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  gap: var(--space-lg);
+  z-index: var(--z-navbar);
 }
 
-/* ── Logo ── */
-.logo {
+/* ── Wordmark ── */
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: none;
+  border: none;
   cursor: pointer;
+  padding: 0;
   flex-shrink: 0;
-  transition: transform var(--transition);
-  z-index: 101;
+  color: var(--giz);
 }
-
-.logo:hover {
-  transform: scale(1.02);
+.wordmarkMark {
+  width: 14px;
+  height: 14px;
+  background: var(--folha);
+  flex-shrink: 0;
 }
-
-.logoImg {
-  height: 48px;
-  width: auto;
-  object-fit: contain;
+.wordmarkText {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  line-height: 1;
+  white-space: nowrap;
 }
+.wordmark:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 
-/* ── Nav Desktop (centrada) ── */
+/* ── Nav Desktop ── */
 .navDesktop {
   display: flex;
-  gap: var(--space-xl);
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
+  gap: var(--space-lg);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
   flex: 1;
   justify-content: center;
 }
-
-.navDesktop span {
-  cursor: pointer;
-  transition: color var(--transition);
+.navItem {
   position: relative;
-  padding: 4px 0;
+  color: rgba(247, 244, 236, 0.72);
+  text-decoration: none;
+  padding: 6px 0;
+  transition: color var(--dur-fast) var(--ease-standard);
 }
-
-.navDesktop span::after {
+.navItem::after {
   content: '';
   position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--color-primary);
-  transition: width var(--transition);
+  bottom: -2px; left: 0;
+  width: 0; height: 2px;
+  background: var(--folha);
+  transition: width var(--dur-base) var(--ease-out);
 }
+.navItem:hover { color: var(--giz); }
+.navItem:hover::after { width: 100%; }
+.navItemActive { color: var(--giz); font-weight: var(--weight-semibold); }
+.navItemActive::after { width: 100%; }
+.navItem:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: 2px; }
 
-.navDesktop span:hover {
-  color: var(--color-primary);
-}
-
-.navDesktop span:hover::after {
-  width: 100%;
-}
-
-/* ── Right Section ── */
+/* ── Right ── */
 .rightSection {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-md);
   flex-shrink: 0;
 }
-
-/* ── Botão CTA "Encomendar agora" ── */
-.ctaBtn {
-  background-color: var(--color-accent);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
+.account { display: inline-flex; align-items: center; gap: var(--space-sm); }
+.accountName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--giz);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.ctaBtn:hover {
-  background-color: var(--color-accent-dark);
-  transform: translateY(-1px);
+.crown {
+  font-size: 0.6rem;
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wide);
+  color: var(--panela);
+  background: var(--folha);
+  padding: 2px 5px;
 }
 
-/* ── Botão Carrinho ── */
+.textBtn {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: rgba(247, 244, 236, 0.8);
+  background: transparent;
+  border: none;
+  padding: 6px 4px;
+  cursor: pointer;
+  transition: color var(--dur-fast);
+}
+.textBtn:hover { color: var(--giz); }
+.textBtn:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+.ctaWrap { display: inline-flex; }
+
+/* ── Carrinho ── */
 .cartBtn {
   position: relative;
-  background: var(--color-primary-light);
-  border: 1.5px solid var(--color-primary);
-  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1.5px solid rgba(247, 244, 236, 0.35);
+  border-radius: var(--radius-sm);
   width: 38px;
   height: 38px;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: border-color var(--dur-fast), background var(--dur-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primary);
+  color: var(--giz);
 }
-
-.cartBtn:hover {
-  background-color: var(--color-primary);
-  color: white;
-  transform: scale(1.05);
-}
-
-/* ── Badge ── */
+.cartBtn:hover { border-color: var(--giz); background: var(--panela-2); }
+.cartBtn:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 .badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background-color: var(--color-accent);
-  color: white;
-  font-family: var(--font-display);
-  font-size: 0.65rem;
-  font-weight: 700;
+  top: -7px; right: -7px;
+  background: var(--brasa);
+  color: var(--giz);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: var(--weight-semibold);
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid white;
-  animation: badgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes badgePop {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  border: 2px solid var(--panela);
 }
 
 /* ── Hamburger ── */
@@ -149,129 +158,94 @@
   display: none;
   flex-direction: column;
   justify-content: space-between;
-  width: 26px;
-  height: 20px;
+  width: 24px;
+  height: 16px;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 101;
 }
-
 .hamburger span {
   width: 100%;
-  height: 3px;
-  background-color: var(--color-text-primary);
-  border-radius: 2px;
-  transition: all 0.3s ease;
+  height: 2.5px;
+  background: var(--giz);
+  transition: all var(--dur-base) var(--ease-standard);
   transform-origin: center;
 }
-
-.hamburgerAberto span:nth-child(1) {
-  transform: translateY(8.5px) rotate(45deg);
-}
-
-.hamburgerAberto span:nth-child(2) {
-  opacity: 0;
-  transform: translateX(-20px);
-}
-
-.hamburgerAberto span:nth-child(3) {
-  transform: translateY(-8.5px) rotate(-45deg);
-}
+.hamburgerAberto span:nth-child(1) { transform: translateY(6.75px) rotate(45deg); }
+.hamburgerAberto span:nth-child(2) { opacity: 0; }
+.hamburgerAberto span:nth-child(3) { transform: translateY(-6.75px) rotate(-45deg); }
 
 /* ── Nav Mobile ── */
 .navMobile {
   display: none;
   position: fixed;
-  top: 68px;
+  top: 62px;
   right: 0;
-  width: 260px;
-  background-color: var(--color-surface);
-  border-left: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-lg);
+  width: 280px;
+  max-width: 84vw;
+  background: var(--panela);
+  border-left: 2px solid #000;
   z-index: 99;
   flex-direction: column;
-  padding: var(--space-md) 0;
-  animation: slideIn 0.25s ease;
+  padding: var(--space-sm) 0;
+  animation: slideIn var(--dur-slow) var(--ease-out);
 }
-
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(100%); }
-  to { opacity: 1; transform: translateX(0); }
+  from { transform: translateX(16px); opacity: 0; }
+  to { transform: none; opacity: 1; }
 }
-
-.navMobile span {
+.navMobileItem {
+  display: block;
+  width: 100%;
+  text-align: left;
   padding: var(--space-md) var(--space-lg);
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: all var(--transition);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: rgba(247, 244, 236, 0.82);
+  text-decoration: none;
+  background: transparent;
+  border: none;
   border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-standard);
 }
-
-.navMobile span:hover {
-  background-color: var(--color-primary-light);
-  border-left-color: var(--color-primary);
-  color: var(--color-primary);
+.navMobileItem:hover,
+.navMobileItemActive {
+  background: var(--panela-2);
+  border-left-color: var(--folha);
+  color: var(--giz);
 }
-
+.navMobileDivider { height: 1px; background: rgba(247,244,236,0.14); margin: var(--space-xs) var(--space-lg); }
 .navMobileCta {
-  color: var(--color-accent) !important;
-  font-weight: 600 !important;
+  margin: var(--space-sm) var(--space-lg);
+  text-align: center;
+  padding: 12px;
+  background: var(--brasa);
+  color: var(--giz);
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 }
-
-.navMobileCta:hover {
-  background-color: var(--color-accent-light) !important;
-  border-left-color: var(--color-accent) !important;
-  color: var(--color-accent) !important;
-}
-
-/* ── Overlay ── */
 .overlay {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background: rgba(28, 26, 23, 0.5);
   z-index: 98;
-  animation: fadeIn 0.25s ease;
+  animation: fadeIn var(--dur-base) ease;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ── Responsivo ── */
-@media (max-width: 768px) {
-  .header {
-    padding: 12px var(--space-lg);
-  }
-
-  .navDesktop {
-    display: none;
-  }
-
-  .ctaBtn {
-    display: none;
-  }
-
-  .hamburger {
-    display: flex;
-  }
-
-  .navMobile,
-  .overlay {
-    display: flex;
-  }
-
-  .cartBtn {
-    width: 36px;
-    height: 36px;
-  }
+@media (max-width: 860px) {
+  .header { padding: 0 var(--space-lg); }
+  .navDesktop { display: none; }
+  .ctaWrap { display: none; }
+  .account { display: none; }
+  .textBtn { display: none; }
+  .hamburger { display: flex; }
+  .navMobile, .overlay { display: flex; }
 }

@@ -1,0 +1,59 @@
+.stamp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--linha-forte);
+  background: transparent;
+  padding: 4px;
+  text-align: center;
+}
+
+.mark {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-base);
+  color: var(--tinta-3);
+  line-height: 1;
+}
+
+.reward {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  line-height: 1.1;
+  color: var(--tinta-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Ganho */
+.earned {
+  border-style: solid;
+  border-color: var(--folha);
+  background: var(--folha);
+}
+.earned .mark { color: var(--panela); }
+.earned .reward { color: var(--panela); opacity: 0.75; }
+
+/* Marco por atingir */
+.milestone {
+  border-style: solid;
+  border-color: var(--brasa);
+}
+.milestone .mark { color: var(--brasa); }
+.milestone .reward { color: var(--brasa-dark); }
+
+/* Marco atingido */
+.milestoneEarned {
+  border-style: solid;
+  border-color: var(--brasa);
+  background: var(--brasa);
+}
+.milestoneEarned .mark { color: var(--giz); }
+.milestoneEarned .reward { color: var(--giz); opacity: 0.85; }
+
+/* Dia de hoje — anel de destaque */
+.today { box-shadow: 0 0 0 3px rgba(198, 54, 47, 0.28); }

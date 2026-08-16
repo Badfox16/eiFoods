@@ -1,0 +1,202 @@
+.page { min-height: 100vh; background: var(--xima); }
+
+/* ── Hero quadro ── */
+.hero {
+  background: var(--panela);
+  color: var(--giz);
+  border-bottom: 2px solid #000;
+}
+.heroInner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
+}
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--folha);
+}
+.heroTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin: var(--space-sm) 0 var(--space-md);
+  max-width: 20ch;
+}
+.heroSub {
+  font-size: var(--text-md);
+  color: rgba(247, 244, 236, 0.72);
+  line-height: var(--leading-normal);
+  max-width: 50ch;
+}
+.saldo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
+  border: 1.5px solid var(--folha);
+}
+.saldoNum {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-black);
+  color: var(--folha);
+  line-height: 1;
+}
+.saldoTexto { font-size: var(--text-sm); color: rgba(247, 244, 236, 0.82); line-height: 1.5; }
+
+/* ── Estados / banners ── */
+.stateBox { display: flex; justify-content: center; padding: var(--space-3xl); }
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
+}
+.errorBanner, .okBanner {
+  border: 1.5px solid;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  font-size: var(--text-sm);
+}
+.errorBanner { border-color: var(--brasa); background: var(--color-error-light); color: var(--brasa-dark); }
+.okBanner { border-color: var(--matapa); background: var(--color-success-light); color: var(--matapa); }
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--tinta-1);
+  letter-spacing: var(--tracking-tight);
+  border-bottom: 2px solid var(--panela);
+  padding-bottom: var(--space-sm);
+  margin: 0 0 var(--space-lg);
+}
+.empty { color: var(--tinta-3); font-size: var(--text-sm); }
+
+/* ── Tabela de planos ── */
+.tabela { display: flex; flex-direction: column; margin-bottom: var(--space-2xl); }
+.linha {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-md);
+  border-bottom: 1px solid var(--linha);
+}
+.linha:last-child { border-bottom: none; }
+.linhaPremium {
+  background: var(--panela);
+  color: var(--giz);
+  border-radius: var(--radius-md);
+  border-bottom: none;
+  padding-top: var(--space-xl);
+}
+.premiumTab {
+  position: absolute;
+  top: 0; left: var(--space-md);
+  transform: translateY(-50%);
+  background: var(--brasa);
+  color: var(--giz);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  padding: 3px 9px;
+}
+.linhaInfo { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.linhaNome {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+.linhaPremium .linhaNome { color: var(--giz); }
+.linhaMeta { font-size: var(--text-sm); color: var(--tinta-2); }
+.linhaPremium .linhaMeta { color: rgba(247, 244, 236, 0.7); }
+.linhaDesc { font-size: var(--text-xs); color: var(--tinta-3); }
+.linhaPremium .linhaDesc { color: rgba(247, 244, 236, 0.55); }
+
+.linhaPreco { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-sm); flex-shrink: 0; }
+.preco {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+.preco span { font-size: 0.6em; color: var(--tinta-3); margin-left: 3px; }
+.linhaPremium .preco span { color: rgba(247, 244, 236, 0.6); }
+
+/* ── Pagamento (recibo) ── */
+.pagamento {
+  border: 2px solid var(--panela);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+.pagHead { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); }
+.pagHead .sectionTitle { border: none; padding: 0; margin: 0 0 var(--space-md); font-size: var(--text-lg); }
+.link {
+  background: none; border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--brasa);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.passos { list-style: none; margin: 0 0 var(--space-lg); padding: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+.passos li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--tinta-2);
+  line-height: var(--leading-snug);
+}
+.passoN {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+  color: var(--brasa);
+}
+.passos strong { color: var(--tinta-1); font-family: var(--font-mono); }
+
+.file { display: flex; flex-direction: column; gap: var(--space-xs); margin-bottom: var(--space-md); }
+.fileLabel { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--tinta-2); }
+.fileName { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--tinta-3); }
+.nota { font-size: var(--text-xs); color: var(--tinta-3); margin-top: var(--space-sm); }
+
+/* ── Subscrições ── */
+.subs {
+  border: 1.5px solid var(--linha);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-xs) var(--space-md);
+}
+.subs > * { border-bottom: 1px solid var(--linha); }
+.subs > *:last-child { border-bottom: none; }
+.estadoTag {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 7px;
+  border: 1px solid var(--linha-forte);
+  color: var(--tinta-2);
+  white-space: nowrap;
+}
+.estado_ativa { color: var(--matapa); border-color: var(--matapa); }
+.estado_pendente_pagamento { color: var(--folha-dark); border-color: var(--folha); }
+.estado_rejeitada { color: var(--brasa-dark); border-color: var(--brasa); }
+
+@media (max-width: 560px) {
+  .heroInner, .container { padding: var(--space-xl) var(--space-lg); }
+  .linha { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
+  .linhaPreco { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
+}

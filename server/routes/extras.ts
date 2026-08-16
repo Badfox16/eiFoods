@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import Extra from '../models/Extra'
 import Prato from '../models/Prato'
+import { requireAdmin } from '../lib/adminAuth'
 
 const router = Router()
 
@@ -40,7 +41,7 @@ router.get('/prato/:pratoId', async (req, res, next) => {
 })
 
 // ── POST /api/extras ─────────────────────────────────────────────────────────
-router.post('/', async (req, res, next) => {
+router.post('/', requireAdmin, async (req, res, next) => {
   try {
     const { nome, preco, global: isGlobal } = req.body as { nome: string; preco: number; global?: boolean }
     const extra = await Extra.create({
@@ -55,7 +56,7 @@ router.post('/', async (req, res, next) => {
 })
 
 // ── PUT /api/extras/:id ──────────────────────────────────────────────────────
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requireAdmin, async (req, res, next) => {
   try {
     const extra = await Extra.findByIdAndUpdate(req.params['id'], req.body, {
       returnDocument: 'after',
@@ -70,7 +71,7 @@ router.put('/:id', async (req, res, next) => {
 
 // ── DELETE /api/extras/:id ───────────────────────────────────────────────────
 // Remove também as referências em Prato.extrasProprios
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requireAdmin, async (req, res, next) => {
   try {
     const extra = await Extra.findByIdAndDelete(req.params['id'])
     if (!extra) return res.status(404).json({ error: 'Extra não encontrado' })

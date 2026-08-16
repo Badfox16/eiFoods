@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto'
 import OtpCode from '../models/OtpCode'
 
 /**
@@ -39,9 +40,9 @@ export function normalizarTelefone(input: string): string | null {
 	return `258${digits}`
 }
 
-/** Gera um código OTP de 6 dígitos (com zeros à esquerda). */
+/** Gera um código OTP de 6 dígitos (com zeros à esquerda). Usa CSPRNG. */
 export function gerarCodigo(): string {
-	return String(Math.floor(Math.random() * 1_000_000)).padStart(6, '0')
+	return String(randomInt(0, 1_000_000)).padStart(6, '0')
 }
 
 export interface RequestOtpResult {

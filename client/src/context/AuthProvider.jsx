@@ -39,13 +39,23 @@ export default function AuthProvider({ children }) {
     }
   }, [])
 
+  /** Recarrega o cliente da sessão (ex.: para refletir o tier premium). */
+  const refresh = useCallback(async () => {
+    const c = await authApi.me()
+    setCliente(c)
+    return c
+  }, [])
+
   const value = {
     cliente,
     loading,
     isAuthenticated: Boolean(cliente),
+    // Tier premium (Fase 3): concedido por uma subscrição premium ativa.
+    premium: Boolean(cliente?.premium),
     requestOtp,
     verifyOtp,
     logout,
+    refresh,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -170,11 +170,33 @@ export interface ApiSorteio {
 
 // ── Request helper ────────────────────────────────────────────────────────────
 
+/** Erro de API com o código HTTP, para tratamento diferenciado (ex.: 401). */
+export class ApiError extends Error {
+  status: number
+  constructor(status: number, message: string) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+  }
+}
+
+/**
+ * Handler global invocado sempre que uma resposta é 401 (sessão de admin
+ * ausente/expirada). O AdminAuthProvider regista-o para forçar o logout e voltar
+ * ao ecrã de login, mesmo que a sessão expire a meio de uma ação.
+ */
+let unauthorizedHandler: (() => void) | null = null
+export function setUnauthorizedHandler(fn: (() => void) | null): void {
+  unauthorizedHandler = fn
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, options)
+  // `credentials: 'include'` envia o cookie httpOnly da sessão de admin.
+  const res = await fetch(`${BASE}${path}`, { credentials: 'include', ...options })
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText })) as { error?: string }
-    throw new Error(body.error ?? `HTTP ${res.status}`)
+    if (res.status === 401) unauthorizedHandler?.()
+    throw new ApiError(res.status, body.error ?? `HTTP ${res.status}`)
   }
   return res.json() as Promise<T>
 }
@@ -368,6 +390,86 @@ export const streakApi = {
     request<ApiClienteStreak[]>('/streak/clientes'),
 }
 
+// ── Planos & Subscrições (Fase 2) ─────────────────────────────────────────────
+
+export type ApiPlanoTipo = 'semanal' | 'bissemanal' | 'mensal'
+
+export interface ApiPlano {
+  _id: string
+  nome: string
+  tipo: ApiPlanoTipo
+  numRefeicoes: number
+  preco: number
+  validadeDias: number
+  /** Plano premium: concede tier premium (desbloqueia exclusivos) — Fase 3. */
+  premium: boolean
+  descricao: string
+  ativo: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type ApiSubscricaoEstado = 'pendente_pagamento' | 'ativa' | 'expirada' | 'rejeitada'
+
+export interface ApiSubscricao {
+  _id: string
+  /** Populado no admin: { _id, telefone, nome }. */
+  clienteId: string | { _id: string; telefone: string; nome?: string }
+  /** Populado no admin: { _id, nome, tipo }. */
+  planoId: string | { _id: string; nome: string; tipo: ApiPlanoTipo }
+  planoNome: string
+  numRefeicoes: number
+  preco: number
+  refeicoesRestantes: number
+  estado: ApiSubscricaoEstado
+  comprovativo?: { url: string; publicId: string }
+  dataInicio?: string
+  dataExpiracao?: string
+  notaAdmin?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type PlanoInput = {
+  nome: string
+  tipo: ApiPlanoTipo
+  numRefeicoes: number
+  preco: number
+  validadeDias: number
+  premium?: boolean
+  descricao?: string
+  ativo?: boolean
+}
+
+export const planosApi = {
+  /** Todos os planos (inclui inativos) para gestão. */
+  list: () =>
+    request<ApiPlano[]>('/planos?todos=1'),
+
+  create: (data: PlanoInput) =>
+    request<ApiPlano>('/planos', json('POST', data)),
+
+  update: (id: string, data: PlanoInput) =>
+    request<ApiPlano>(`/planos/${id}`, json('PUT', data)),
+
+  delete: (id: string) =>
+    request<{ ok: boolean; plano: ApiPlano }>(`/planos/${id}`, { method: 'DELETE' }),
+}
+
+export const subscricoesApi = {
+  /** Lista de subscrições, opcionalmente filtrada por estado. */
+  list: (estado?: ApiSubscricaoEstado) => {
+    const qs = estado ? `?estado=${estado}` : ''
+    return request<ApiSubscricao[]>(`/subscricoes${qs}`)
+  },
+
+  confirmar: (id: string, notaAdmin?: string) =>
+    request<ApiSubscricao>(`/subscricoes/${id}/confirmar`, json('PATCH', { notaAdmin })),
+
+  rejeitar: (id: string, notaAdmin?: string) =>
+    request<ApiSubscricao>(`/subscricoes/${id}/rejeitar`, json('PATCH', { notaAdmin })),
+}
+
 // ── Sorteio ──────────────────────────────────────────────────────────────────
 
 export const sorteioApi = {
@@ -394,4 +496,24 @@ export const sorteioApi = {
 
   updateValorRifa: (valorRifa: number) =>
     request<ApiSorteio>('/sorteio/valor-rifa', json('PATCH', { valorRifa })),
+}
+
+// ── Autenticação do admin (Fase 6) ────────────────────────────────────────────
+
+export interface ApiAdminUser {
+  _id: string
+  username: string
+  nome: string
+}
+
+export const adminAuthApi = {
+  login: (username: string, password: string) =>
+    request<{ ok: true; admin: ApiAdminUser }>('/admin/login', json('POST', { username, password })),
+
+  logout: () =>
+    request<{ ok: true }>('/admin/logout', { method: 'POST' }),
+
+  /** Admin da sessão atual; lança ApiError 401 se não autenticado. */
+  me: () =>
+    request<{ admin: ApiAdminUser }>('/admin/me'),
 }

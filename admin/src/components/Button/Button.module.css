@@ -1,14 +1,15 @@
 .button {
-  border: none;
-  border-radius: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
   font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background var(--transition), border-color var(--transition);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-family: inherit;
 }
 
 .button:disabled {
@@ -16,56 +17,63 @@
   cursor: not-allowed;
 }
 
-/* Variants */
+/* Variants — blocos sólidos, elevação por filete (sem gradientes/sombra suave) */
+/* Ação principal (CTA) = laranja-brasa */
 .primary {
-  background: #2563eb;
-  color: white;
+  background: var(--brand-accent);
+  color: var(--ui-giz);
+  border-color: var(--brand-accent-dark);
 }
 
 .primary:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--brand-accent-dark);
 }
 
+/* Secundário = papel com filete */
 .secondary {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  border-color: var(--ui-border-strong);
 }
 
 .secondary:hover:not(:disabled) {
-  background: #e5e7eb;
+  background: var(--ui-sunken);
 }
 
 .danger {
-  background: #dc2626;
-  color: white;
+  background: var(--status-cancelled);
+  color: var(--ui-giz);
+  border-color: #7D2109;
 }
 
 .danger:hover:not(:disabled) {
-  background: #b91c1c;
+  background: #7D2109;
 }
 
+/* Sucesso = verde-folha/matapa */
 .success {
-  background: #16a34a;
-  color: white;
+  background: var(--brand-primary);
+  color: var(--ui-giz);
+  border-color: var(--brand-primary-dark);
 }
 
 .success:hover:not(:disabled) {
-  background: #15803d;
+  background: var(--brand-primary-dark);
 }
 
 /* Sizes */
 .small {
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 0.9rem;
   font-size: 0.875rem;
 }
 
 .medium {
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.4rem;
   font-size: 1rem;
 }
 
 .large {
-  padding: 1rem 2rem;
+  padding: 0.9rem 1.9rem;
   font-size: 1.125rem;
 }
 

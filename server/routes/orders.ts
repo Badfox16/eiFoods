@@ -4,10 +4,14 @@ import Prato from '../models/Prato'
 import Extra from '../models/Extra'
 import Empresa, { getCurrentDateKey } from '../models/Empresa'
 import Cliente from '../models/Cliente'
+import Menu, { getCurrentMenuDateKey } from '../models/Menu'
 import PratoDoDia, { type DiaSemana } from '../models/PratoDoDia'
 import { getMaputoWeekdayNumber } from '../lib/businessTime'
 import { lerSessao } from '../lib/auth'
+import { requireAdmin } from '../lib/adminAuth'
 import { registrarPedidoStreak } from '../lib/streak'
+import { getSubscricaoAtiva, consumirRefeicoes, isClientePremium } from '../lib/subscricao'
+import { calcularTotaisPedido } from '../lib/pedidoTotais'
 
 const router = Router()
 
@@ -32,6 +36,16 @@ async function getTodayPratoId(): Promise<string | null> {
   const entrada = schedule?.semana.find((d) => d.diaSemana === diaSemana)
   const prato = entrada?.prato as { _id?: string } | null
   return prato?._id ? String(prato._id) : null
+}
+
+/**
+ * IDs dos pratos marcados como `exclusivo` no menu de hoje (Fase 3).
+ * Só clientes com tier premium podem encomendar estes pratos.
+ */
+async function getExclusivosHojeSet(): Promise<Set<string>> {
+  const menu = await Menu.findOne({ data: getCurrentMenuDateKey() })
+  const ids = (menu?.itens ?? []).filter((i) => i.exclusivo).map((i) => String(i.pratoId))
+  return new Set(ids)
 }
 
 // ── POST /api/orders ─────────────────────────────────────────────────────────
@@ -110,6 +124,15 @@ router.post('/', async (req, res, next) => {
     const todayPratoId = await getTodayPratoId()
     let foraDoDiaCount = 0
 
+    // ── Tier premium (Fase 3): acesso a pratos exclusivos ──
+    // Um cliente autenticado com subscrição premium ativa pode encomendar os
+    // pratos marcados como `exclusivo` no menu de hoje. Anónimos e não-premium
+    // são rejeitados. Reutilizamos `clienteDoc`/`clientePremium` mais abaixo.
+    const sessao = lerSessao(req)
+    const clienteDoc = sessao ? await Cliente.findById(sessao.sub) : null
+    const exclusivosHoje = await getExclusivosHojeSet()
+    const clientePremium = clienteDoc ? await isClientePremium(clienteDoc._id) : false
+
     // ── Construir itens com preços do servidor ──
     const orderItems = await Promise.all(
       items.map(async (item) => {
@@ -118,6 +141,13 @@ router.post('/', async (req, res, next) => {
 
         if (allowedPratosSet && !allowedPratosSet.has(String(prato._id))) {
           throw Object.assign(new Error(`Prato ${prato.nome} não está no menu da empresa`), { status: 403 })
+        }
+
+        if (exclusivosHoje.has(String(prato._id)) && !clientePremium) {
+          throw Object.assign(
+            new Error(`${prato.nome} é um prato exclusivo — requer um plano premium ativo`),
+            { status: 403 }
+          )
         }
 
         // Fetch extras and calculate their total
@@ -142,25 +172,36 @@ router.post('/', async (req, res, next) => {
           extras: extraDocs.map(e => ({ extraId: e._id, nome: e.nome, preco: e.preco })),
           isForaDoDia,
           foraDoDiaTaxa,
+          pagoComPlano: false,
           total: itemTotal,
         }
       })
     )
 
     const taxaForaDoDia = foraDoDiaCount * FORA_DO_DIA_TAXA
-    const subtotal = orderItems.reduce((sum, i) => sum + i.total, 0)
 
-    // ── Streak: cliente autenticado (opcional) ──
-    // Se houver sessão válida, atualiza o streak (idempotente por dia) e aplica
-    // o desconto correspondente ao total. Pedidos anónimos ignoram este bloco.
+    // ── Cliente autenticado (opcional): plano pré-pago + streak ──
+    // Se houver sessão válida:
+    //  1) Se o cliente tem subscrição ativa com saldo, cada prato base abate 1
+    //     refeição (extras e taxa fora-do-dia continuam a ser cobrados).
+    //  2) Atualiza o streak (idempotente por dia) e aplica o desconto ao valor
+    //     ainda cobrado em dinheiro.
+    // Pedidos anónimos ignoram este bloco. O cálculo dos totais em si é puro
+    // (ver lib/pedidoTotais.ts) — aqui apenas reunimos os inputs e aplicamos os
+    // efeitos (abater saldo, marcar itens, gravar o cliente).
     let clienteId: string | undefined
+    let subscricaoId: string | undefined
     let descontoStreakPercent = 0
     let recompensasStreak: { dias: number; descricao: string }[] = []
-    const sessao = lerSessao(req)
-    if (sessao) {
-      const cliente = await Cliente.findById(sessao.sub)
+    let subscricao: Awaited<ReturnType<typeof getSubscricaoAtiva>> = null
+    {
+      const cliente = clienteDoc
       if (cliente) {
         clienteId = String(cliente._id)
+
+        subscricao = await getSubscricaoAtiva(cliente._id)
+
+        // ── Streak ──
         const resultado = await registrarPedidoStreak(cliente)
         descontoStreakPercent = resultado.descontoPercent
         recompensasStreak = resultado.novasRecompensas
@@ -172,13 +213,25 @@ router.post('/', async (req, res, next) => {
       }
     }
 
-    const descontoStreakValor = Math.round((subtotal * descontoStreakPercent) / 100)
-    const total = Math.max(0, subtotal - descontoStreakValor)
+    const totais = calcularTotaisPedido(
+      orderItems,
+      subscricao?.refeicoesRestantes ?? 0,
+      descontoStreakPercent
+    )
+    const { subtotal, refeicoesConsumidas, valorPlanoCoberto, descontoStreakValor, total } = totais
+
+    // Aplica os efeitos do consumo de plano: marca os itens cobertos e abate o saldo.
+    if (subscricao && refeicoesConsumidas > 0) {
+      for (const i of totais.itensPagosComPlano) orderItems[i]!.pagoComPlano = true
+      await consumirRefeicoes(subscricao, refeicoesConsumidas)
+      subscricaoId = String(subscricao._id)
+    }
 
     const order = await Order.create({
       empresaId,
       empresaCodigo: empresaCodigoResolved,
       clienteId,
+      subscricaoId,
       items: orderItems,
       deliveryDetails: {
         name:     deliveryDetails.name,
@@ -189,6 +242,8 @@ router.post('/', async (req, res, next) => {
       foraDoDiaCount,
       taxaForaDoDia,
       subtotal,
+      refeicoesConsumidas,
+      valorPlanoCoberto,
       descontoStreakPercent,
       descontoStreakValor,
       total,
@@ -212,6 +267,9 @@ router.post('/', async (req, res, next) => {
       streak: clienteId
         ? { descontoPercent: descontoStreakPercent, descontoValor: descontoStreakValor, novasRecompensas: recompensasStreak }
         : null,
+      plano: subscricaoId
+        ? { subscricaoId, refeicoesConsumidas, valorCoberto: valorPlanoCoberto }
+        : null,
     })
   } catch (err: unknown) {
     const e = err as Error & { status?: number }
@@ -222,7 +280,7 @@ router.post('/', async (req, res, next) => {
 
 // ── GET /api/orders ──────────────────────────────────────────────────────────
 // Query: ?status=pending|preparing|ready|delivered|cancelled
-router.get('/', async (req, res, next) => {
+router.get('/', requireAdmin, async (req, res, next) => {
   try {
     const filter: Record<string, unknown> = {}
     if (req.query['status'] && VALID_STATUSES.includes(req.query['status'] as OrderStatus)) {
@@ -236,7 +294,7 @@ router.get('/', async (req, res, next) => {
 })
 
 // ── GET /api/orders/:id ──────────────────────────────────────────────────────
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', requireAdmin, async (req, res, next) => {
   try {
     const order = await Order.findById(req.params['id'])
     if (!order) return res.status(404).json({ error: 'Encomenda não encontrada' })
@@ -248,7 +306,7 @@ router.get('/:id', async (req, res, next) => {
 
 // ── PATCH /api/orders/:id/status ─────────────────────────────────────────────
 // Body: { status: OrderStatus }
-router.patch('/:id/status', async (req, res, next) => {
+router.patch('/:id/status', requireAdmin, async (req, res, next) => {
   try {
     const { status } = req.body as { status: OrderStatus }
 

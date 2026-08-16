@@ -7,15 +7,11 @@ const ANO = new Date().getFullYear()
 const NAV_LINKS = [
   { label: 'Início', path: '/' },
   { label: 'Menu', path: '/menu' },
-  { label: 'Empresa', path: '/empresa' },
+  { label: 'Planos', path: '/planos' },
   { label: 'Sorteio', path: '/sorteio' },
 ]
 
-const METODOS = [
-  { nome: 'M-Pesa', cor: '#E32B30' },
-  { nome: 'eMola', cor: '#6B2D8B' },
-  { nome: 'Banco', cor: '#1A3D6E' },
-]
+const METODOS = ['M-Pesa', 'eMola', 'Transferência']
 
 export default function Footer() {
   const navigate = useNavigate()
@@ -27,12 +23,12 @@ export default function Footer() {
         {/* ── Brand ── */}
         <div className={styles.brand}>
           <div className={styles.logoWrap}>
-            <img src="/logo.jpg" alt="eiFoods" className={styles.logo} />
-            <span className={styles.logoNome}>eiFoods</span>
+            <span className={styles.logoMark} aria-hidden="true" />
+            <span className={styles.logoNome}>Marmita Fresca</span>
           </div>
-          <p className={styles.tagline}>O seu almoço, onde você trabalha.</p>
+          <p className={styles.tagline}>Marmita fresca, entregue no escritório.</p>
           <p className={styles.descricao}>
-            Refeições frescas preparadas diariamente e entregues no seu local de trabalho em Maputo, Moçambique.
+            Comida preparada no dia e entregue no seu local de trabalho, na Beira.
           </p>
           <a
             href={`https://wa.me/${WHATSAPP}`}
@@ -77,12 +73,10 @@ export default function Footer() {
 
         {/* ── Pagamentos + Localização ── */}
         <div className={styles.coluna}>
-          <h4 className={styles.colunaTitulo}>Métodos de pagamento</h4>
+          <h4 className={styles.colunaTitulo}>Pagamento</h4>
           <div className={styles.metodos}>
             {METODOS.map(m => (
-              <span key={m.nome} className={styles.metodoBadge} style={{ background: m.cor }}>
-                {m.nome}
-              </span>
+              <span key={m} className={styles.metodoBadge}>{m}</span>
             ))}
           </div>
 
@@ -91,7 +85,7 @@ export default function Footer() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
             </svg>
-            <span>Maputo, Moçambique</span>
+            <span>Beira, Moçambique</span>
           </div>
 
           <h4 className={styles.colunaTitulo} style={{ marginTop: 32 }}>Contacto</h4>
@@ -109,7 +103,7 @@ export default function Footer() {
 
       {/* ── Bottom bar ── */}
       <div className={styles.bottom}>
-        <p className={styles.copy}>© {ANO} eiFoods · Todos os direitos reservados</p>
+        <p className={styles.copy}>© {ANO} Marmita Fresca · Todos os direitos reservados</p>
         <div className={styles.legal}>
           <span>Termos de uso</span>
           <span className={styles.legalDot}>·</span>

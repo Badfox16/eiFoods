@@ -1,337 +1,155 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
-import { scheduleApi } from '../../api'
+import { Button, MenuLine, Spinner } from '../../components/ui'
+import { menuApi } from '../../api'
 import styles from './Home.module.css'
 
-const SLIDES = [
-  {
-    imagem: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80',
-    titulo: 'O seu almoço,',
-    destaque: 'onde você trabalha',
-    sub: 'Escolha, personalize e receba a sua refeição no escritório. Fresco, rápido e sem complicações.',
-  },
-  {
-    imagem: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1600&q=80',
-    titulo: 'Refeições preparadas',
-    destaque: 'com ingredientes frescos',
-    sub: 'Selecionamos os melhores ingredientes todos os dias para garantir qualidade e sabor em cada prato.',
-  },
-  {
-    imagem: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1600&q=80',
-    titulo: 'Entregamos',
-    destaque: 'no seu local de trabalho',
-    sub: 'Receba a sua refeição quentinha na secretária, sem sair do escritório nem perder tempo.',
-  },
+const PASSOS = [
+  { n: '01', titulo: 'Escolhe', texto: 'Vê o menu de hoje e escolhe o prato. Ajustas molho, sal e extras.' },
+  { n: '02', titulo: 'Pagas', texto: 'M-Pesa, e-Mola ou plano pré-pago. Envias o comprovativo e confirmamos.' },
+  { n: '03', titulo: 'Recebes', texto: 'Entregamos no teu local de trabalho, na Beira. Encomendas até às 11h.' },
 ]
 
-const PRATO_DO_DIA_FALLBACK = {
-  nome: 'Caril de Frango com Arroz Basmati',
-  descricao: 'Caril aromático preparado com frango fresco, especiarias selecionadas e arroz basmati perfumado. Disponível até às 11h.',
-  preco: 290,
-  imagem: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=80',
+function dataDeHoje() {
+  const t = new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' })
+  return t.charAt(0).toUpperCase() + t.slice(1)
 }
-
-const DESTAQUES = [
-  {
-    titulo: 'Ingredientes Frescos',
-    descricao: 'Selecionamos os melhores ingredientes todos os dias para garantir refeições saudáveis e saborosas.',
-    imagem: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    titulo: 'Entrega no Local de Trabalho',
-    descricao: 'Receba a sua refeição quentinha diretamente na secretária, sem sair do escritório.',
-    imagem: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    titulo: 'Personalização Total',
-    descricao: 'Molho, sal, extras — adapte cada detalhe do seu prato ao seu gosto e necessidades.',
-    imagem: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80',
-  },
-]
-
-const DEPOIMENTOS = [
-  { nome: 'Ana Machava', cargo: 'Gestora de Projetos', texto: 'Comida deliciosa e sempre a horas. O serviço é impecável e as porções são generosas. Recomendo sem hesitar.' },
-  { nome: 'Carlos Sitoe', cargo: 'Engenheiro de Software', texto: 'Adoro poder personalizar o meu prato todos os dias. Nunca me arrependo de nenhuma encomenda.' },
-  { nome: 'Fátima Nhaca', cargo: 'Diretora Comercial', texto: 'O melhor serviço de refeições em Maputo. Qualidade consistente, entrega pontual e atendimento excelente.' },
-]
-
-const INTERVALO_SLIDE = 5000
 
 export default function Home() {
   const navigate = useNavigate()
-  const [slideAtivo, setSlideAtivo] = useState(0)
-  const [transicao, setTransicao] = useState(true)
-  const [pratoDoDia, setPratoDoDia] = useState(null)
-  const [pratoVisivel, setPratoVisivel] = useState(false)
-  const pratoRef = useRef(null)
-
-  const proximoSlide = useCallback(() => {
-    setTransicao(false)
-    setTimeout(() => {
-      setSlideAtivo((prev) => (prev + 1) % SLIDES.length)
-      setTransicao(true)
-    }, 50)
-  }, [])
-
-  useEffect(() => {
-    const timer = setInterval(proximoSlide, INTERVALO_SLIDE)
-    return () => clearInterval(timer)
-  }, [proximoSlide])
+  const [itens, setItens] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let active = true
-
-    async function carregarPratoDoDia() {
-      try {
-        const hoje = await scheduleApi.getHoje()
-        if (active) setPratoDoDia(hoje?.prato ?? null)
-      } catch {
-        if (active) setPratoDoDia(null)
-      }
-    }
-
-    void carregarPratoDoDia()
-
-    const onFocus = () => { void carregarPratoDoDia() }
-    window.addEventListener('focus', onFocus)
-
-    return () => {
-      active = false
-      window.removeEventListener('focus', onFocus)
-    }
+    menuApi.getHoje()
+      .then((menu) => {
+        if (!active) return
+        const lista = (Array.isArray(menu?.itens) ? menu.itens : [])
+          .map((i) => (typeof i.pratoId === 'object' && i.pratoId
+            ? { ...i.pratoId, destaque: Boolean(i.destaque), exclusivo: Boolean(i.exclusivo) }
+            : null))
+          .filter(Boolean)
+        setItens(lista)
+      })
+      .catch(() => {})
+      .finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
   }, [])
 
-  useEffect(() => {
-    const el = pratoRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setPratoVisivel(true); observer.disconnect() } },
-      { threshold: 0.2 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
-  function irParaSlide(idx) {
-    setTransicao(false)
-    setTimeout(() => {
-      setSlideAtivo(idx)
-      setTransicao(true)
-    }, 50)
-  }
-
-  const slide = SLIDES[slideAtivo]
-  const pratoExibido = pratoDoDia ?? PRATO_DO_DIA_FALLBACK
-  const precoPrato = Number(pratoExibido.preco)
-  const precoTexto = Number.isFinite(precoPrato) ? `${precoPrato} MZN` : 'Consulte no menu'
+  const destaque = itens.find((p) => p.destaque) ?? itens[0] ?? null
+  const listaMenu = itens.slice(0, 6)
 
   return (
     <div className={styles.page}>
-
       <Navbar showCta />
 
       <main>
-
-        {/* Hero Slideshow */}
+        {/* ── Hero: O quadro de hoje ── */}
         <section className={styles.hero}>
-          {/* Slides de fundo */}
-          {SLIDES.map((s, idx) => (
-            <div
-              key={idx}
-              className={`${styles.slideBackground} ${idx === slideAtivo ? styles.slideAtivo : ''}`}
-              style={{ backgroundImage: `url('${s.imagem}')` }}
-            />
-          ))}
-
-          <div className={styles.heroOverlay} />
-
-          {/* Conteúdo do slide */}
-          <div className={`${styles.heroContent} ${transicao ? styles.heroContentVisivel : styles.heroContentOculto}`}>
-            <span className={styles.heroBadge}>Menu do dia disponível</span>
-            <h1 className={styles.headline}>
-              {slide.titulo}<br />
-              <span className={styles.highlight}>{slide.destaque}</span>
-            </h1>
-            <p className={styles.subtext}>{slide.sub}</p>
-            <div className={styles.heroBtns}>
-              <button className={styles.ctaAccent} onClick={() => navigate('/menu')}>
-                Ver menu de hoje
-              </button>
-              <button className={styles.ctaOutline} onClick={() => {
-                document.getElementById('como-funciona').scrollIntoView({ behavior: 'smooth' })
-              }}>
-                Como funciona
-              </button>
-            </div>
-          </div>
-
-          {/* Indicadores */}
-          <div className={styles.slideDots}>
-            {SLIDES.map((_, idx) => (
-              <button
-                key={idx}
-                className={`${styles.dot} ${idx === slideAtivo ? styles.dotAtivo : ''}`}
-                onClick={() => irParaSlide(idx)}
-                aria-label={`Slide ${idx + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Stats */}
-          <div className={styles.heroStats}>
-            <div className={styles.statItem}>
-              <span className={styles.statNum}>500+</span>
-              <span className={styles.statLabel}>Clientes diários</span>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.statItem}>
-              <span className={styles.statNum}>4.9</span>
-              <span className={styles.statLabel}>Avaliação média</span>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.statItem}>
-              <span className={styles.statNum}>98%</span>
-              <span className={styles.statLabel}>Entrega pontual</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Banner — Prato do Dia */}
-        <section className={styles.pratoDoDia} ref={pratoRef}>
-          <div className={styles.pratoConteudo}>
-            <div className={`${styles.pratoTexto} ${pratoVisivel ? styles.pratoTextoVisivel : ''}`}>
-              <span className={styles.pratoBadge}>
-                <span className={styles.pratoBadgePulse} />
-                Prato do dia
-              </span>
-              <h2 className={styles.pratoNome}>{pratoExibido.nome}</h2>
-              <p className={styles.pratoDescricao}>{pratoExibido.descricao}</p>
-              <div className={styles.pratoRodape}>
-                <span className={styles.pratoPreco}>{precoTexto}</span>
-                <button className={styles.pratoBtn} onClick={() => navigate('/menu')}>
-                  Encomendar
-                </button>
-              </div>
-            </div>
-            <div className={`${styles.pratoImagemWrap} ${pratoVisivel ? styles.pratoImagemVisivel : ''}`}>
-              <img
-                src={pratoExibido.imagem?.url ?? pratoExibido.imagem}
-                alt={pratoExibido.nome}
-                className={styles.pratoImagem}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Destaques com fotos */}
-        <section className={styles.destaques}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Porquê escolher-nos</h2>
-            <p className={styles.sectionSub}>Qualidade e conveniência em cada refeição</p>
-          </div>
-          <div className={styles.destaquesGrid}>
-            {DESTAQUES.map((d) => (
-              <div key={d.titulo} className={styles.destaqueCard}>
-                <div className={styles.destaqueImagemWrap}>
-                  <img src={d.imagem} alt={d.titulo} className={styles.destaqueImagem} />
-                </div>
-                <div className={styles.destaqueInfo}>
-                  <h3 className={styles.destaqueTitulo}>{d.titulo}</h3>
-                  <p className={styles.destaqueDescricao}>{d.descricao}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Como funciona */}
-        <section id="como-funciona" className={styles.howItWorks}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Como funciona</h2>
-            <p className={styles.sectionSub}>Três passos simples para o seu almoço</p>
-          </div>
-          <div className={styles.steps}>
-            <div className={styles.step}>
-              <div className={styles.stepNumero}>01</div>
-              <h3 className={styles.stepTitulo}>Escolha o prato</h3>
-              <p className={styles.stepTexto}>Consulte o menu do dia e selecione a refeição que mais lhe apetece.</p>
-            </div>
-            <div className={styles.stepConector} />
-            <div className={styles.step}>
-              <div className={styles.stepNumero}>02</div>
-              <h3 className={styles.stepTitulo}>Personalize</h3>
-              <p className={styles.stepTexto}>Ajuste molhos, sal e adicione extras ao seu gosto, sem custo adicional.</p>
-            </div>
-            <div className={styles.stepConector} />
-            <div className={styles.step}>
-              <div className={styles.stepNumero}>03</div>
-              <h3 className={styles.stepTitulo}>Receba no escritório</h3>
-              <p className={styles.stepTexto}>Confirmamos via WhatsApp e entregamos diretamente no seu local de trabalho.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Sorteio teaser */}
-        <section className={styles.sorteioTeaser}>
-          <div className={styles.sorteioTeaserInner}>
-            <div className={styles.sorteioTeaserTexto}>
-              <span className={styles.sorteioTeaserBadge}>Novidade</span>
-              <h2 className={styles.sorteioTeaserTitulo}>Sorteio semanal de refeições</h2>
-              <p className={styles.sorteioTeaserSub}>
-                Todos os clientes registados concorrem automaticamente ao sorteio semanal. Um cliente sortudo recebe o prato do dia gratuitamente.
+          <div className={styles.heroInner}>
+            <div className={styles.heroText}>
+              <span className={styles.kicker}>O quadro de hoje · {dataDeHoje()}</span>
+              <h1 className={styles.headline}>Marmita fresca,<br />entregue no escritório.</h1>
+              <p className={styles.sub}>
+                Para quem trabalha e não dá para ir a casa almoçar: escolhe do menu de
+                hoje, pagas como preferires e recebes no escritório. Até às 11h, na Beira.
               </p>
-              <button className={styles.sorteioTeaserBtn} onClick={() => navigate('/sorteio')}>
-                Ver sorteio ao vivo
-              </button>
+              <div className={styles.heroBtns}>
+                <Button variant="primary" size="large" onClick={() => navigate('/menu')}>
+                  Ver menu de hoje
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="large"
+                  className={styles.heroGhost}
+                  onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  Como funciona
+                </Button>
+              </div>
             </div>
-            <div className={styles.sorteioTeaserVisual}>
-              <img
-                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=700&q=80"
-                alt="Refeição sorteada"
-                className={styles.sorteioTeaserImg}
-              />
-            </div>
+
+            {destaque && (
+              <figure className={styles.heroDish}>
+                <img
+                  src={destaque.imagem?.url ?? destaque.imagem}
+                  alt={destaque.nome}
+                  className={styles.heroDishImg}
+                />
+                <figcaption className={styles.heroDishCap}>
+                  <span className={styles.heroDishTag}>Prato do dia</span>
+                  <span className={styles.heroDishName}>{destaque.nome}</span>
+                  <span className={styles.heroDishPrice}>{destaque.preco}<span>MT</span></span>
+                </figcaption>
+              </figure>
+            )}
           </div>
         </section>
 
-        {/* Depoimentos */}
-        <section className={styles.depoimentos}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>O que dizem os nossos clientes</h2>
-            <p className={styles.sectionSub}>Mais de 500 clientes satisfeitos em Maputo</p>
+        {/* ── Menu de hoje (assinatura: lista de quadro) ── */}
+        <section className={styles.menuHoje}>
+          <div className={styles.sectionHead}>
+            <h2 className={styles.sectionTitle}>Menu de hoje</h2>
+            <button className={styles.verTudo} onClick={() => navigate('/menu')}>Ver tudo</button>
           </div>
-          <div className={styles.depoimentosGrid}>
-            {DEPOIMENTOS.map((d) => (
-              <div key={d.nome} className={styles.depoimento}>
-                <div className={styles.depoimentoStars}>{'★★★★★'}</div>
-                <p className={styles.depoimentoTexto}>"{d.texto}"</p>
-                <div className={styles.depoimentoAutor}>
-                  <div className={styles.depoimentoAvatar}>{d.nome.charAt(0)}</div>
-                  <div>
-                    <p className={styles.depoimentoNome}>{d.nome}</p>
-                    <p className={styles.depoimentoCargo}>{d.cargo}</p>
-                  </div>
-                </div>
+
+          {loading ? (
+            <div className={styles.estado}><Spinner /></div>
+          ) : listaMenu.length === 0 ? (
+            <div className={styles.estado}>
+              <p className={styles.estadoTexto}>O menu de hoje ainda não foi publicado.</p>
+              <p className={styles.estadoSub}>Volta mais logo ou vê os próximos dias no menu.</p>
+            </div>
+          ) : (
+            <div className={styles.board}>
+              {listaMenu.map((p) => (
+                <MenuLine
+                  key={p._id}
+                  name={p.nome}
+                  note={p.descricao}
+                  price={p.preco}
+                  locked={p.exclusivo}
+                  action={p.exclusivo ? <span className={styles.exclusivoTag}>Exclusivo</span> : undefined}
+                  onClick={() => navigate('/menu')}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ── Como funciona ── */}
+        <section id="como-funciona" className={styles.como}>
+          <h2 className={styles.sectionTitle}>Como funciona</h2>
+          <div className={styles.passos}>
+            {PASSOS.map((p) => (
+              <div key={p.n} className={styles.passo}>
+                <span className={styles.passoN}>{p.n}</span>
+                <h3 className={styles.passoTitulo}>{p.titulo}</h3>
+                <p className={styles.passoTexto}>{p.texto}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* CTA final */}
-        <section className={styles.ctaFinal}>
-          <h2 className={styles.ctaFinalTitulo}>Pronto para encomendar?</h2>
-          <p className={styles.ctaFinalSub}>O menu de hoje está disponível até às 11h</p>
-          <button className={styles.ctaFinalBtn} onClick={() => navigate('/menu')}>
-            Ver menu de hoje
+        {/* ── Planos + Sequência ── */}
+        <section className={styles.tiras}>
+          <button className={`${styles.tira} ${styles.tiraBoard}`} onClick={() => navigate('/planos')}>
+            <span className={styles.tiraKicker}>Planos pré-pagos</span>
+            <span className={styles.tiraTitulo}>Compra almoços à frente e poupa.</span>
+            <span className={styles.tiraLink}>Ver tabela de planos →</span>
+          </button>
+          <button className={`${styles.tira} ${styles.tiraPaper}`} onClick={() => navigate('/streak')}>
+            <span className={styles.tiraKicker}>Sequência</span>
+            <span className={styles.tiraTitulo}>Junta um selo a cada dia útil.</span>
+            <span className={styles.tiraLink}>Ver o meu cartão →</span>
           </button>
         </section>
-
       </main>
 
       <Footer />
-
     </div>
   )
 }
