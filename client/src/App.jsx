@@ -12,6 +12,7 @@ import Delivery from './pages/Delivery/Delivery'
 import Checkout from './pages/Checkout/Checkout'
 import Confirmation from './pages/Confirmation/Confirmation'
 import Sorteio from './pages/Sorteio/Sorteio'
+import Streak from './pages/Streak/Streak'
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/sorteio" element={<Sorteio />} />
+            <Route path="/streak" element={<Streak />} />
           </Routes>
           </ToastProvider>
         </OrderProvider>

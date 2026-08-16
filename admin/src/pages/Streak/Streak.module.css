@@ -1,0 +1,164 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-lg);
+  padding: var(--sp-xl);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+}
+.sectionActions {
+  display: flex;
+  gap: var(--sp-sm);
+}
+.sectionTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+
+/* ── Editor da escada ── */
+.tableHead,
+.tierRow {
+  display: grid;
+  grid-template-columns: 80px 130px 100px 1fr 32px;
+  gap: var(--sp-sm);
+  align-items: center;
+}
+.tableHead {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ui-text-3);
+  padding: 0 var(--sp-xs);
+}
+.tierRow {
+  padding: var(--sp-xs);
+  border-radius: var(--radius-sm);
+}
+.tierRow:hover { background: var(--ui-bg); }
+
+.numInput,
+.textInput,
+.select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-size: 0.9rem;
+}
+.numInput:disabled {
+  background: var(--ui-bg);
+  color: var(--ui-text-3);
+  cursor: not-allowed;
+}
+.numInput:focus,
+.textInput:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+}
+
+.rowRemove {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ui-text-3);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.rowRemove:hover {
+  background: var(--brand-accent-light);
+  color: var(--brand-accent-dark);
+}
+
+/* ── Clientes ── */
+.clientList {
+  display: flex;
+  flex-direction: column;
+}
+.clientHead,
+.clientRow {
+  display: grid;
+  grid-template-columns: 1fr 90px 80px 180px;
+  gap: var(--sp-sm);
+  align-items: center;
+}
+.clientHead {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ui-text-3);
+  padding: 0 var(--sp-xs) var(--sp-xs);
+  border-bottom: 1px solid var(--ui-border);
+}
+.clientRow {
+  padding: var(--sp-sm) var(--sp-xs);
+  border-bottom: 1px solid var(--ui-border);
+}
+.clientName {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.clientPhone {
+  font-size: 0.8rem;
+  color: var(--ui-text-3);
+}
+.streakNum {
+  font-weight: 700;
+  color: var(--brand-accent-dark);
+}
+.streakBest {
+  color: var(--ui-text-2);
+}
+.empty {
+  margin: 0;
+  color: var(--ui-text-2);
+}
+
+/* ── Banners ── */
+.errorBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm) var(--sp-md);
+  border-radius: var(--radius-md);
+  background: var(--brand-accent-light);
+  color: var(--brand-accent-dark);
+  font-size: 0.9rem;
+}
+.errorClose {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.okBanner {
+  padding: var(--sp-sm) var(--sp-md);
+  border-radius: var(--radius-md);
+  background: var(--brand-primary-xlight);
+  color: var(--brand-primary-dark);
+  font-size: 0.9rem;
+}

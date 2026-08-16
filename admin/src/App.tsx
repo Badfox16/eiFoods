@@ -10,6 +10,7 @@ import { Settings } from './pages/Settings/Settings'
 import { PratoDoDia } from './pages/PratoDoDia/PratoDoDia'
 import { MenuDia } from './pages/MenuDia/MenuDia'
 import { SorteioAdmin } from './pages/SorteioAdmin/SorteioAdmin'
+import { Streak } from './pages/Streak/Streak'
 import './App.css'
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
               <Route path="/menu-dia" element={<MenuDia />} />
               <Route path="/prato-do-dia" element={<PratoDoDia />} />
               <Route path="/sorteio" element={<SorteioAdmin />} />
+              <Route path="/streak" element={<Streak />} />
             </Routes>
           </main>
         </div>

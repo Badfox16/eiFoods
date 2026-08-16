@@ -1,9 +1,13 @@
 import { NavLink } from 'react-router-dom'
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, Flame } from 'lucide-react'
 import styles from './Sidebar.module.css'
 
 function IcoMenuDia() {
   return <CalendarDays size={17} strokeWidth={2} />
+}
+
+function IcoStreak() {
+  return <Flame size={17} strokeWidth={2} />
 }
 
 function IcoDashboard() {
@@ -105,6 +109,7 @@ const navGroups = [
     label: 'Promoções',
     items: [
       { path: '/sorteio', label: 'Sorteio', icon: <IcoSorteio /> },
+      { path: '/streak',  label: 'Sequência', icon: <IcoStreak /> },
     ]
   },
   {

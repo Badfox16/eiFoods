@@ -34,11 +34,20 @@ export interface IDeliveryDetails {
 export interface IOrder extends Document {
   empresaId?: Types.ObjectId
   empresaCodigo?: string
+  /** Cliente autenticado (opcional — pedidos anónimos continuam a funcionar). */
+  clienteId?: Types.ObjectId
   items: IOrderItem[]
   deliveryDetails: IDeliveryDetails
   status: OrderStatus
   foraDoDiaCount: number
   taxaForaDoDia: number
+  /** Total antes do desconto de streak. */
+  subtotal: number
+  /** Percentagem de desconto de streak aplicada. */
+  descontoStreakPercent: number
+  /** Valor absoluto do desconto de streak. */
+  descontoStreakValor: number
+  /** Total final cobrado (subtotal − desconto de streak). */
   total: number
   createdAt: Date
   updatedAt: Date
@@ -89,11 +98,15 @@ const OrderSchema = new Schema<IOrder>(
   {
     empresaId:       { type: Schema.Types.ObjectId, ref: 'Empresa', required: false },
     empresaCodigo:   { type: String, required: false, trim: true },
+    clienteId:       { type: Schema.Types.ObjectId, ref: 'Cliente', required: false },
     items:           { type: [OrderItemSchema], required: true },
     deliveryDetails: { type: DeliveryDetailsSchema, required: true },
     status:          { type: String, enum: ['pending', 'preparing', 'ready', 'delivered', 'cancelled'], default: 'pending' },
     foraDoDiaCount:  { type: Number, required: true, min: 0, default: 0 },
     taxaForaDoDia:   { type: Number, required: true, min: 0, default: 0 },
+    subtotal:              { type: Number, required: true, min: 0, default: 0 },
+    descontoStreakPercent: { type: Number, required: true, min: 0, default: 0 },
+    descontoStreakValor:   { type: Number, required: true, min: 0, default: 0 },
     total:           { type: Number, required: true, min: 0 },
   },
   { timestamps: true }

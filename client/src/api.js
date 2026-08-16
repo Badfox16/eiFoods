@@ -55,6 +55,14 @@ export const sorteioApi = {
   inscrever: (payload) => request('/sorteio/inscricoes', json('POST', payload)),
 }
 
+export const streakApi = {
+  /** Estado de streak do cliente autenticado (dias, desconto, próxima recompensa). */
+  me: () => request('/streak/me'),
+
+  /** Escada de recompensas (pública). */
+  config: () => request('/streak/config'),
+}
+
 export const authApi = {
   /** Pede envio de OTP para o telefone. */
   requestOtp: (telefone) => request('/auth/request-otp', json('POST', { telefone })),

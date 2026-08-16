@@ -323,6 +323,51 @@ export const empresasApi = {
     request<ApiEmpresaCodigoValidation>(`/empresas/codigo/${encodeURIComponent(code.trim().toUpperCase())}`),
 }
 
+// ── Streak ───────────────────────────────────────────────────────────────────
+
+export interface ApiStreakTier {
+  dias: number
+  tipo: 'desconto' | 'item_gratis'
+  valor: number
+  descricao: string
+}
+
+export interface ApiRecompensaGanha {
+  _id?: string
+  dias: number
+  descricao: string
+  ganhoEm: string
+  cumprida: boolean
+}
+
+export interface ApiClienteStreak {
+  _id: string
+  telefone: string
+  nome?: string
+  streakAtual: number
+  maiorStreak: number
+  ultimoDiaPedido?: string | null
+  recompensasGanhas: ApiRecompensaGanha[]
+}
+
+export const streakApi = {
+  /** Escada de recompensas (config singleton). */
+  getConfig: () =>
+    request<{ tiers: ApiStreakTier[] }>('/streak/config'),
+
+  /** Substitui a escada de recompensas. */
+  saveConfig: (tiers: ApiStreakTier[]) =>
+    request<{ tiers: ApiStreakTier[] }>('/streak/config', json('PUT', { tiers })),
+
+  /** Repõe a escada para os valores por omissão. */
+  resetConfig: () =>
+    request<{ tiers: ApiStreakTier[] }>('/streak/config/reset', json('POST', {})),
+
+  /** Clientes ordenados por streak atual. */
+  clientes: () =>
+    request<ApiClienteStreak[]>('/streak/clientes'),
+}
+
 // ── Sorteio ──────────────────────────────────────────────────────────────────
 
 export const sorteioApi = {

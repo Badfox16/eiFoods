@@ -50,3 +50,17 @@ export function getMaputoWeekdayNumber(date = new Date()): number {
 export function isFridayInMaputo(date = new Date()): boolean {
   return getMaputoWeekdayNumber(date) === 5
 }
+
+/**
+ * Chave de dia (AAAA-MM-DD, Maputo) do dia útil imediatamente anterior a `date`.
+ * Dias úteis = 2ª a sábado; domingo (0) é saltado. Ex.: anterior a 2ª = sábado.
+ * Maputo é UTC+2 sem DST, por isso recuar 24h mantém a hora local e decrementa
+ * a data de calendário de forma segura.
+ */
+export function getPreviousBusinessDayKey(date = new Date()): string {
+  const d = new Date(date)
+  do {
+    d.setUTCDate(d.getUTCDate() - 1)
+  } while (getMaputoWeekdayNumber(d) === 0)
+  return getCurrentDateKeyMaputo(d)
+}
