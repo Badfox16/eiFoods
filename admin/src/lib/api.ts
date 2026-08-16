@@ -379,6 +379,8 @@ export interface ApiPlano {
   numRefeicoes: number
   preco: number
   validadeDias: number
+  /** Plano premium: concede tier premium (desbloqueia exclusivos) — Fase 3. */
+  premium: boolean
   descricao: string
   ativo: boolean
   createdAt: string
@@ -412,6 +414,7 @@ export type PlanoInput = {
   numRefeicoes: number
   preco: number
   validadeDias: number
+  premium?: boolean
   descricao?: string
   ativo?: boolean
 }

@@ -7,6 +7,7 @@ import {
 	limparCookieSessao,
 	requireAuth,
 } from '../lib/auth'
+import { isClientePremium } from '../lib/subscricao'
 
 const router = Router()
 
@@ -91,9 +92,14 @@ router.post('/logout', (_req, res) => {
 	res.json({ ok: true })
 })
 
-// GET /api/auth/me  → cliente da sessão
-router.get('/me', requireAuth, (req, res) => {
-	res.json({ cliente: serializarCliente(req.cliente!) })
+// GET /api/auth/me  → cliente da sessão (+ tier premium, Fase 3)
+router.get('/me', requireAuth, async (req, res, next) => {
+	try {
+		const premium = await isClientePremium(String(req.cliente!._id))
+		res.json({ cliente: { ...serializarCliente(req.cliente!), premium } })
+	} catch (err) {
+		next(err)
+	}
 })
 
 export default router

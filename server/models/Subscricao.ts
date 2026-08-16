@@ -32,6 +32,8 @@ export interface ISubscricao extends Document {
 	planoNome: string
 	numRefeicoes: number
 	preco: number
+	/** Snapshot: era um plano premium? (concede tier premium enquanto ativa — Fase 3) */
+	premium: boolean
 	/** Refeições ainda disponíveis para consumo. */
 	refeicoesRestantes: number
 	estado: SubscricaoEstado
@@ -62,6 +64,7 @@ const SubscricaoSchema = new Schema<ISubscricao>(
 		planoNome: { type: String, required: true, trim: true },
 		numRefeicoes: { type: Number, required: true, min: 1 },
 		preco: { type: Number, required: true, min: 0 },
+		premium: { type: Boolean, default: false },
 		refeicoesRestantes: { type: Number, required: true, min: 0, default: 0 },
 		estado: {
 			type: String,

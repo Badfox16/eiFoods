@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useOrder } from '../../context/useOrder'
+import { useAuth } from '../../context/useAuth'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import { menuApi } from '../../api'
@@ -118,6 +119,7 @@ function SkeletonCard() {
 export default function Menu() {
   const navigate = useNavigate()
   const { state, dispatch } = useOrder()
+  const { premium } = useAuth()
   const { orderItems, selectedEmpresa } = state
   const [pratos, setPratos] = useState([])
   const [loading, setLoading] = useState(true)
@@ -191,7 +193,18 @@ export default function Menu() {
     p.descricao?.toLowerCase().includes(busca.toLowerCase())
   )
 
+  // Exclusivos (tier premium — Fase 3) mostrados numa secção à parte.
+  const pratosNormais = pratosFiltrados.filter((p) => !p.exclusivo)
+  const pratosExclusivos = pratosFiltrados.filter((p) => p.exclusivo)
+  // No slideshow só promovemos exclusivos a quem os pode encomendar.
+  const pratosSlideshow = pratos.filter((p) => premium || !p.exclusivo)
+
   function handleSelecionar(prato) {
+    // Prato exclusivo sem tier premium → encaminhar para os planos.
+    if (prato.exclusivo && !premium) {
+      navigate('/planos')
+      return
+    }
     dispatch({ type: 'SELECT_DISH', payload: prato })
     navigate('/customize')
   }
@@ -218,10 +231,10 @@ export default function Menu() {
       </section>
 
       {/* Slideshow + Search agrupados */}
-      <div className={`${styles.slideshowOuter} ${!loading && !error && pratos.length > 0 ? styles.slideshowOuterActive : ''}`}>
-        {!loading && !error && pratos.length > 0 && (
+      <div className={`${styles.slideshowOuter} ${!loading && !error && pratosSlideshow.length > 0 ? styles.slideshowOuterActive : ''}`}>
+        {!loading && !error && pratosSlideshow.length > 0 && (
           <PratosSlideshow
-            pratos={pratos}
+            pratos={pratosSlideshow}
             pratoDoDia={pratoDoDia}
             onSelecionar={handleSelecionar}
           />
@@ -338,9 +351,9 @@ export default function Menu() {
             </div>
           )}
 
-          {!loading && !error && pratosFiltrados.length > 0 && (
+          {!loading && !error && pratosNormais.length > 0 && (
             <div className={styles.lista}>
-              {pratosFiltrados.map((prato) => {
+              {pratosNormais.map((prato) => {
                 const isHoje = pratoDoDia?._id === prato._id
                 return (
                   <div key={prato._id} className={`${styles.card} ${isHoje ? styles.cardDestaque : ''}`}>
@@ -373,6 +386,67 @@ export default function Menu() {
                 )
               })}
             </div>
+          )}
+
+          {/* ── Secção Exclusivos (tier premium — Fase 3) ── */}
+          {!loading && !error && pratosExclusivos.length > 0 && (
+            <section className={styles.exclusivosSection}>
+              <div className={styles.exclusivosHeader}>
+                <div className={styles.exclusivosTituloWrap}>
+                  <span className={styles.exclusivosIcon}>👑</span>
+                  <h2 className={styles.exclusivosTitulo}>Exclusivos</h2>
+                </div>
+                <p className={styles.exclusivosSub}>
+                  {premium
+                    ? 'Pratos reservados ao seu plano premium'
+                    : 'Disponíveis para clientes com plano premium ativo'}
+                </p>
+              </div>
+
+              <div className={styles.lista}>
+                {pratosExclusivos.map((prato) => {
+                  const bloqueado = !premium
+                  return (
+                    <div
+                      key={prato._id}
+                      className={`${styles.card} ${styles.cardExclusivo} ${bloqueado ? styles.cardBloqueado : ''}`}
+                    >
+                      <span className={styles.cardExclusivoBadge}>
+                        {bloqueado ? '🔒' : '👑'} Exclusivo
+                      </span>
+                      <div className={styles.cardImagemWrap}>
+                        <img
+                          src={prato.imagem?.url ?? prato.imagem}
+                          alt={prato.nome}
+                          className={styles.cardImagem}
+                        />
+                        {bloqueado && <div className={styles.cardLockOverlay} />}
+                      </div>
+                      <div className={styles.cardTexto}>
+                        <p className={styles.cardNome}>{prato.nome}</p>
+                        <p className={styles.cardDescricao}>{prato.descricao}</p>
+                        <span className={styles.cardPreco}>{prato.preco} MZN</span>
+                      </div>
+                      {bloqueado ? (
+                        <button
+                          className={`${styles.btnSelecionar} ${styles.btnDesbloquear}`}
+                          onClick={() => navigate('/planos')}
+                        >
+                          🔓 Desbloquear
+                        </button>
+                      ) : (
+                        <button
+                          className={styles.btnSelecionar}
+                          onClick={() => handleSelecionar(prato)}
+                        >
+                          Selecionar
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
           )}
 
         </main>

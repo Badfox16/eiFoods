@@ -346,6 +346,8 @@ export interface Plano {
   preco: number
   /** Dias de validade a contar da ativação. */
   validadeDias: number
+  /** Plano premium: concede tier premium (desbloqueia exclusivos) — Fase 3. */
+  premium?: boolean
   descricao?: string
   ativo?: boolean
   createdAt?: Date | string
@@ -370,6 +372,8 @@ export interface Subscricao {
   planoNome: string
   numRefeicoes: number
   preco: number
+  /** Snapshot: plano premium (concede tier premium enquanto ativa) — Fase 3. */
+  premium?: boolean
   refeicoesRestantes: number
   estado: SubscricaoEstado
   comprovativo?: Comprovativo

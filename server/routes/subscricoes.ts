@@ -49,6 +49,7 @@ router.post('/', requireAuth, upload.single('comprovativo'), async (req, res, ne
 			planoNome: plano.nome,
 			numRefeicoes: plano.numRefeicoes,
 			preco: plano.preco,
+			premium: plano.premium === true,
 			refeicoesRestantes: 0,
 			estado: 'pendente_pagamento',
 			comprovativo,

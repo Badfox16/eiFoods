@@ -44,6 +44,27 @@ export async function getSubscricaoAtiva(
 }
 
 /**
+ * Tier premium (Fase 3): o cliente é premium enquanto tiver uma subscrição
+ * premium **ativa** (estado `ativa`, dentro da validade). O tier desbloqueia os
+ * pratos marcados como `exclusivo` no menu do dia.
+ *
+ * Nota: como esgotar o saldo passa a subscrição a `expirada`, o tier premium
+ * está atualmente ligado a ter refeições disponíveis. Um plano premium sem
+ * refeições restantes deixa de conceder o tier (comportamento aceite na v1).
+ */
+export async function isClientePremium(
+	clienteId: string | Types.ObjectId,
+	agora = new Date()
+): Promise<boolean> {
+	const candidatas = await Subscricao.find({ clienteId, estado: 'ativa', premium: true })
+	for (const sub of candidatas) {
+		await reconciliarValidade(sub, agora)
+		if (sub.estado === 'ativa') return true
+	}
+	return false
+}
+
+/**
  * Abate `quantidade` refeições da subscrição e persiste. Se o saldo chegar a 0,
  * a subscrição passa a `expirada` (esgotada). Devolve quantas foram efetivamente
  * consumidas (limitado pelo saldo).

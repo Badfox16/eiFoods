@@ -5,7 +5,7 @@ Monorepo com 3 pacotes: **server** (Bun + Express + Mongoose/MongoDB), **client*
 (React 19 + Vite, público) e **admin** (React 19 + TS + Vite). `shared/` contém
 tipos, constantes e validadores partilhados.
 
-> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16.
+> Documento vivo. Marca `[x]` à medida que avançamos. Última revisão: 2026-08-16 (Fase 3 concluída).
 
 ---
 
@@ -73,12 +73,17 @@ Bloqueia quase tudo o resto. Fazer primeiro. **Concluída** (branch `feat/fase-0
 - [x] **Admin `Planos`**: CRUD de planos e preços (`/api/planos`, soft-delete via `ativo:false`).
 - [ ] _Follow-up_: proteger rotas admin de planos/subscrições (`POST/PUT/DELETE /planos`, `PATCH /subscricoes/*`, `GET /subscricoes`) — mesma dívida transversal de auth do painel admin (ver Fase 4).
 
-## Fase 3 — Menus / pratos exclusivos (tier premium)
+## Fase 3 — Menus / pratos exclusivos (tier premium) ✅
 
-- [ ] Flag `exclusivo` + `tierMinimo` no item de menu / prato.
-- [ ] Regra de acesso: cliente vê/pede exclusivos apenas se tier premium (via plano premium) — **tudo configurável no admin**. (Tier via empresa fica em standby.)
-- [ ] UI no client: secção "Exclusivos" com indicação de bloqueio/como desbloquear.
-- [ ] Admin: gerir o que é exclusivo e a que tier pertence.
+**Concluída** (branch `feat/fase-3-exclusivos`). Tier binário: um `Plano` com
+`premium:true` concede o tier enquanto a subscrição estiver **ativa**; itens de
+menu com `exclusivo:true` (já existente na Fase 1) exigem esse tier.
+
+- [x] Flag `exclusivo` no item de menu (Fase 1) + flag `premium` no `Plano`/snapshot na `Subscricao` como fonte do tier. (Tier binário premium/standard — não precisou de `tierMinimo` numérico.)
+- [x] Regra de acesso: helper `isClientePremium` (`lib/subscricao.ts`, subscrição premium ativa dentro da validade); `POST /orders` rejeita (403) quem não é premium ao encomendar exclusivos; `/api/auth/me` devolve `premium`. **Configurável no admin.** (Tier via empresa fica em standby.)
+- [x] UI no client: secção **"Exclusivos"** no menu com cartões bloqueados (cadeado + CTA "Desbloquear" → `/planos`) para não-premium; badge premium na página de Planos.
+- [x] Admin: toggle **Exclusivo (premium)** no Menu do Dia + checkbox **Premium** no editor de planos e badge na lista.
+- [ ] _Follow-up_: o tier premium está ligado a ter refeições no saldo (esgotar o saldo passa a subscrição a `expirada` e retira o tier); avaliar desacoplar tier da validade vs. saldo se for requisito de produto.
 
 ## Fase 4 — Sistema de streak (estilo Duolingo) ✅
 

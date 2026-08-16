@@ -128,14 +128,16 @@ export default function Planos() {
               {planos.map((p) => (
                 <div
                   key={p._id}
-                  className={`${styles.planCard} ${selecionado?._id === p._id ? styles.planCardActive : ''}`}
+                  className={`${styles.planCard} ${selecionado?._id === p._id ? styles.planCardActive : ''} ${p.premium ? styles.planCardPremium : ''}`}
                 >
+                  {p.premium && <span className={styles.planPremiumBadge}>👑 Premium</span>}
                   <span className={styles.planTipo}>{p.tipo}</span>
                   <h3 className={styles.planNome}>{p.nome}</h3>
                   <div className={styles.planPreco}>{fmtMzn(p.preco)}</div>
                   <ul className={styles.planFeats}>
                     <li><strong>{p.numRefeicoes}</strong> refeições</li>
                     <li>Válido {p.validadeDias} dias após ativação</li>
+                    {p.premium && <li>👑 Desbloqueia pratos exclusivos</li>}
                     {p.descricao && <li>{p.descricao}</li>}
                   </ul>
                   <button className={styles.planBtn} onClick={() => escolher(p)}>

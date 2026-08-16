@@ -195,7 +195,7 @@ export function MenuDia() {
                           checked={draft.exclusivo}
                           onChange={() => toggleExclusivo(prato._id)}
                         />
-                        <span>Exclusivo</span>
+                        <span>Exclusivo (premium)</span>
                       </label>
                     </div>
                   )}

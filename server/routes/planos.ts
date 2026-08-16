@@ -53,13 +53,14 @@ router.post('/', async (req, res, next) => {
 		const erro = validarCorpo(req.body)
 		if (erro) return res.status(400).json({ error: erro })
 
-		const { nome, tipo, numRefeicoes, preco, validadeDias, descricao, ativo } = req.body
+		const { nome, tipo, numRefeicoes, preco, validadeDias, descricao, ativo, premium } = req.body
 		const plano = await Plano.create({
 			nome: nome.trim(),
 			tipo,
 			numRefeicoes,
 			preco,
 			validadeDias,
+			premium: premium === true,
 			descricao: typeof descricao === 'string' ? descricao.trim() : '',
 			ativo: ativo !== false,
 		})
@@ -77,7 +78,7 @@ router.put('/:id', async (req, res, next) => {
 		const erro = validarCorpo(req.body)
 		if (erro) return res.status(400).json({ error: erro })
 
-		const { nome, tipo, numRefeicoes, preco, validadeDias, descricao, ativo } = req.body
+		const { nome, tipo, numRefeicoes, preco, validadeDias, descricao, ativo, premium } = req.body
 		const plano = await Plano.findByIdAndUpdate(
 			req.params['id'],
 			{
@@ -86,6 +87,7 @@ router.put('/:id', async (req, res, next) => {
 				numRefeicoes,
 				preco,
 				validadeDias,
+				premium: premium === true,
 				descricao: typeof descricao === 'string' ? descricao.trim() : '',
 				...(typeof ativo === 'boolean' ? { ativo } : {}),
 			},

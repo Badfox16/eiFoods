@@ -4,11 +4,12 @@ import Prato from '../models/Prato'
 import Extra from '../models/Extra'
 import Empresa, { getCurrentDateKey } from '../models/Empresa'
 import Cliente from '../models/Cliente'
+import Menu, { getCurrentMenuDateKey } from '../models/Menu'
 import PratoDoDia, { type DiaSemana } from '../models/PratoDoDia'
 import { getMaputoWeekdayNumber } from '../lib/businessTime'
 import { lerSessao } from '../lib/auth'
 import { registrarPedidoStreak } from '../lib/streak'
-import { getSubscricaoAtiva, consumirRefeicoes } from '../lib/subscricao'
+import { getSubscricaoAtiva, consumirRefeicoes, isClientePremium } from '../lib/subscricao'
 
 const router = Router()
 
@@ -33,6 +34,16 @@ async function getTodayPratoId(): Promise<string | null> {
   const entrada = schedule?.semana.find((d) => d.diaSemana === diaSemana)
   const prato = entrada?.prato as { _id?: string } | null
   return prato?._id ? String(prato._id) : null
+}
+
+/**
+ * IDs dos pratos marcados como `exclusivo` no menu de hoje (Fase 3).
+ * Só clientes com tier premium podem encomendar estes pratos.
+ */
+async function getExclusivosHojeSet(): Promise<Set<string>> {
+  const menu = await Menu.findOne({ data: getCurrentMenuDateKey() })
+  const ids = (menu?.itens ?? []).filter((i) => i.exclusivo).map((i) => String(i.pratoId))
+  return new Set(ids)
 }
 
 // ── POST /api/orders ─────────────────────────────────────────────────────────
@@ -111,6 +122,15 @@ router.post('/', async (req, res, next) => {
     const todayPratoId = await getTodayPratoId()
     let foraDoDiaCount = 0
 
+    // ── Tier premium (Fase 3): acesso a pratos exclusivos ──
+    // Um cliente autenticado com subscrição premium ativa pode encomendar os
+    // pratos marcados como `exclusivo` no menu de hoje. Anónimos e não-premium
+    // são rejeitados. Reutilizamos `clienteDoc`/`clientePremium` mais abaixo.
+    const sessao = lerSessao(req)
+    const clienteDoc = sessao ? await Cliente.findById(sessao.sub) : null
+    const exclusivosHoje = await getExclusivosHojeSet()
+    const clientePremium = clienteDoc ? await isClientePremium(clienteDoc._id) : false
+
     // ── Construir itens com preços do servidor ──
     const orderItems = await Promise.all(
       items.map(async (item) => {
@@ -119,6 +139,13 @@ router.post('/', async (req, res, next) => {
 
         if (allowedPratosSet && !allowedPratosSet.has(String(prato._id))) {
           throw Object.assign(new Error(`Prato ${prato.nome} não está no menu da empresa`), { status: 403 })
+        }
+
+        if (exclusivosHoje.has(String(prato._id)) && !clientePremium) {
+          throw Object.assign(
+            new Error(`${prato.nome} é um prato exclusivo — requer um plano premium ativo`),
+            { status: 403 }
+          )
         }
 
         // Fetch extras and calculate their total
@@ -165,9 +192,8 @@ router.post('/', async (req, res, next) => {
     let valorPlanoCoberto = 0
     let descontoStreakPercent = 0
     let recompensasStreak: { dias: number; descricao: string }[] = []
-    const sessao = lerSessao(req)
-    if (sessao) {
-      const cliente = await Cliente.findById(sessao.sub)
+    {
+      const cliente = clienteDoc
       if (cliente) {
         clienteId = String(cliente._id)
 

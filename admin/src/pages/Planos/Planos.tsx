@@ -32,6 +32,7 @@ const emptyForm: PlanoInput = {
   numRefeicoes: 5,
   preco: 0,
   validadeDias: 7,
+  premium: false,
   descricao: '',
   ativo: true,
 }
@@ -95,6 +96,7 @@ export function Planos() {
       numRefeicoes: p.numRefeicoes,
       preco: p.preco,
       validadeDias: p.validadeDias,
+      premium: p.premium,
       descricao: p.descricao,
       ativo: p.ativo,
     })
@@ -244,6 +246,14 @@ export function Planos() {
           <label className={styles.checkField}>
             <input
               type="checkbox"
+              checked={form.premium ?? false}
+              onChange={(e) => setForm({ ...form, premium: e.target.checked })}
+            />
+            <span>Premium (desbloqueia pratos exclusivos)</span>
+          </label>
+          <label className={styles.checkField}>
+            <input
+              type="checkbox"
               checked={form.ativo ?? true}
               onChange={(e) => setForm({ ...form, ativo: e.target.checked })}
             />
@@ -276,7 +286,10 @@ export function Planos() {
             {planos.map((p) => (
               <div key={p._id} className={styles.planoRow}>
                 <div className={styles.planoName}>
-                  <span>{p.nome}</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                    {p.nome}
+                    {p.premium && <Badge variant="warning">👑 Premium</Badge>}
+                  </span>
                   <span className={styles.planoSub}>{p.tipo}{p.descricao ? ` · ${p.descricao}` : ''}</span>
                 </div>
                 <span>{p.numRefeicoes}</span>

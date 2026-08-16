@@ -24,6 +24,11 @@ export interface IPlano extends Document {
 	preco: number
 	/** Dias de validade a contar da ativação. */
 	validadeDias: number
+	/**
+	 * Plano premium (Fase 3): uma subscrição ativa deste plano concede ao cliente
+	 * o tier premium, que desbloqueia pratos exclusivos no menu do dia.
+	 */
+	premium: boolean
 	descricao: string
 	ativo: boolean
 	createdAt: Date
@@ -37,6 +42,7 @@ const PlanoSchema = new Schema<IPlano>(
 		numRefeicoes: { type: Number, required: true, min: 1 },
 		preco: { type: Number, required: true, min: 0 },
 		validadeDias: { type: Number, required: true, min: 1 },
+		premium: { type: Boolean, default: false },
 		descricao: { type: String, trim: true, default: '' },
 		ativo: { type: Boolean, default: true },
 	},

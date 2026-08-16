@@ -92,6 +92,24 @@
   border-color: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary), var(--shadow-sm);
 }
+.planCardPremium {
+  position: relative;
+  border-color: #C9A227;
+  background: linear-gradient(180deg, rgba(201,162,39,0.06), var(--color-surface));
+}
+.planPremiumBadge {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: linear-gradient(135deg, #B8860B, #E6BE3A);
+  color: #fff;
+  font-size: var(--text-xs, 0.72rem);
+  font-weight: var(--weight-bold, 700);
+  letter-spacing: var(--tracking-wide);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(184,134,11,0.35);
+}
 .planTipo {
   font-size: var(--text-sm);
   text-transform: uppercase;
