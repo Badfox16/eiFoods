@@ -84,7 +84,7 @@
 .strong .price {
   font-size: var(--text-lg);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
 }
 .strong .leader { border-bottom-color: var(--tinta-1); }
 

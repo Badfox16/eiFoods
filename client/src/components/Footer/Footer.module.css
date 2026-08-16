@@ -13,8 +13,8 @@
   background:
     repeating-linear-gradient(
       90deg,
-      var(--piri) 0, var(--piri) 20px,
-      var(--acafrao) 20px, var(--acafrao) 40px,
+      var(--brasa) 0, var(--brasa) 20px,
+      var(--folha) 20px, var(--folha) 40px,
       var(--matapa-2) 40px, var(--matapa-2) 60px,
       var(--xima) 60px, var(--xima) 80px
     );
@@ -46,7 +46,7 @@
 .logoMark {
   width: 18px;
   height: 18px;
-  background: var(--piri);
+  background: var(--folha);
   flex-shrink: 0;
 }
 
@@ -77,7 +77,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  color: var(--acafrao);
+  color: var(--folha);
   font-size: 0.9rem;
   font-weight: var(--weight-semibold);
   font-family: var(--font-mono);

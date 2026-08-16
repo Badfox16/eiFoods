@@ -60,9 +60,9 @@ export default function Delivery() {
             error={errors.name}
           />
           <Input
-            label="Empresa"
+            label="Local de trabalho (opcional)"
             name="company"
-            placeholder="Nome da empresa (opcional)"
+            placeholder="Ex.: nome do escritório"
             value={form.company}
             onChange={handleChange}
           />

@@ -24,11 +24,11 @@ export default function Footer() {
         <div className={styles.brand}>
           <div className={styles.logoWrap}>
             <span className={styles.logoMark} aria-hidden="true" />
-            <span className={styles.logoNome}>eiFoods</span>
+            <span className={styles.logoNome}>Marmita Fresca</span>
           </div>
           <p className={styles.tagline}>Marmita fresca, entregue no escritório.</p>
           <p className={styles.descricao}>
-            Comida preparada no dia e entregue no seu local de trabalho, em Maputo.
+            Comida preparada no dia e entregue no seu local de trabalho, na Beira.
           </p>
           <a
             href={`https://wa.me/${WHATSAPP}`}
@@ -85,7 +85,7 @@ export default function Footer() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
             </svg>
-            <span>Maputo, Moçambique</span>
+            <span>Beira, Moçambique</span>
           </div>
 
           <h4 className={styles.colunaTitulo} style={{ marginTop: 32 }}>Contacto</h4>
@@ -103,7 +103,7 @@ export default function Footer() {
 
       {/* ── Bottom bar ── */}
       <div className={styles.bottom}>
-        <p className={styles.copy}>© {ANO} eiFoods · Todos os direitos reservados</p>
+        <p className={styles.copy}>© {ANO} Marmita Fresca · Todos os direitos reservados</p>
         <div className={styles.legal}>
           <span>Termos de uso</span>
           <span className={styles.legalDot}>·</span>

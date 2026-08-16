@@ -6,11 +6,11 @@
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
   cursor: pointer;
   padding: 0 0 var(--space-md);
 }
-.btnVoltar:hover { color: var(--piri-dark); }
+.btnVoltar:hover { color: var(--brasa-dark); }
 
 /* ── Prato selecionado ── */
 .pratoSeleccionado {
@@ -32,7 +32,7 @@
   margin: 0;
 }
 .pratoPreco { font-family: var(--font-mono); font-size: var(--text-sm); color: rgba(247,244,236,0.8); margin: 2px 0 0; }
-.extraPreco { color: var(--acafrao); }
+.extraPreco { color: var(--folha); }
 .extraPreco strong { color: var(--giz); }
 
 /* ── Grid ── */
@@ -76,17 +76,17 @@
   cursor: pointer;
   transition: border-color var(--dur-fast), background var(--dur-fast);
 }
-.checkboxItem input, .radioItem input { accent-color: var(--piri); }
+.checkboxItem input, .radioItem input { accent-color: var(--brasa); }
 .checkboxItem:hover, .radioItem:hover { border-color: var(--tinta-1); }
 .checkboxItemActivo, .radioItemActivo {
-  border-color: var(--piri);
+  border-color: var(--brasa);
   background: var(--color-accent-light);
-  color: var(--piri-dark);
+  color: var(--brasa-dark);
   font-weight: var(--weight-semibold);
 }
 .checkboxItemExtra { justify-content: space-between; width: 100%; }
 .extraNome { flex: 1; }
-.extraPrecoBadge { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--acafrao-dark); }
+.extraPrecoBadge { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--folha-dark); }
 
 .semExtras { font-size: var(--text-sm); color: var(--tinta-3); }
 .extrasTotal {

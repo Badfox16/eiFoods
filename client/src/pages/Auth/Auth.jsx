@@ -98,7 +98,7 @@ export default function Auth() {
             <div className={styles.asideInner}>
               <div className={styles.brand}>
                 <span className={styles.brandMark} aria-hidden="true" />
-                <span className={styles.brandName}>eiFoods</span>
+                <span className={styles.brandName}>Marmita Fresca</span>
               </div>
               <h2 className={styles.asideTitulo}>Marmita fresca, entregue no escritório.</h2>
               <ul className={styles.beneficios}>

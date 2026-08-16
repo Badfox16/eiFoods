@@ -21,7 +21,7 @@
   font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
-  color: var(--acafrao);
+  color: var(--folha);
 }
 .heroCount { display: flex; align-items: baseline; gap: var(--space-md); margin: var(--space-sm) 0; }
 .heroNum {
@@ -89,7 +89,7 @@
   letter-spacing: var(--tracking-wide);
   color: var(--tinta-3);
 }
-.nextDays { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--piri); }
+.nextDays { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--brasa); }
 .nextDesc {
   font-family: var(--font-display);
   font-size: var(--text-lg);
@@ -98,7 +98,7 @@
   margin: var(--space-xs) 0 var(--space-md);
 }
 .track { height: 8px; background: var(--xima-2); border: 1px solid var(--linha); overflow: hidden; }
-.trackFill { height: 100%; background: var(--acafrao); transition: width var(--dur-slow) var(--ease-out); }
+.trackFill { height: 100%; background: var(--folha); transition: width var(--dur-slow) var(--ease-out); }
 
 .sectionTitle {
   font-family: var(--font-display);
@@ -137,8 +137,8 @@
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--piri-dark);
-  border: 1px solid var(--piri);
+  color: var(--brasa-dark);
+  border: 1px solid var(--brasa);
   padding: 3px 7px;
 }
 .estadoOk { color: var(--matapa); border-color: var(--matapa); }

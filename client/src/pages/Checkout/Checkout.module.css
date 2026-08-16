@@ -31,7 +31,7 @@
 .passoFeito { color: var(--tinta-2); }
 .passoFeito .passoN { background: var(--matapa); border-color: var(--matapa); color: var(--giz); }
 .passoAtivo { color: var(--tinta-1); font-weight: var(--weight-semibold); }
-.passoAtivo .passoN { background: var(--piri); border-color: var(--piri); color: var(--giz); }
+.passoAtivo .passoN { background: var(--brasa); border-color: var(--brasa); color: var(--giz); }
 
 .layout {
   display: grid;
@@ -63,14 +63,14 @@
   transition: border-color var(--dur-fast);
 }
 .metodo:hover { border-color: var(--linha-forte); }
-.metodoAtivo { border-color: var(--piri); border-width: 2px; }
+.metodoAtivo { border-color: var(--brasa); border-width: 2px; }
 .radio {
   width: 16px; height: 16px;
   border: 2px solid var(--linha-forte);
   border-radius: 50%;
   flex-shrink: 0;
 }
-.metodoAtivo .radio { border-color: var(--piri); background: radial-gradient(circle, var(--piri) 0 45%, transparent 48%); }
+.metodoAtivo .radio { border-color: var(--brasa); background: radial-gradient(circle, var(--brasa) 0 45%, transparent 48%); }
 .metodoTexto { display: flex; flex-direction: column; }
 .metodoNome { font-family: var(--font-display); font-size: var(--text-md); font-weight: var(--weight-semibold); color: var(--tinta-1); }
 .metodoDesc { font-size: var(--text-sm); color: var(--tinta-3); }
@@ -100,14 +100,14 @@
 }
 .instrucoesNumero { font-family: var(--font-mono); font-size: var(--text-md); font-weight: var(--weight-semibold); color: var(--tinta-1); }
 .instrucoesValor { text-align: right; }
-.instrucoesMontante { font-family: var(--font-mono); font-size: var(--text-lg); font-weight: var(--weight-semibold); color: var(--piri); }
+.instrucoesMontante { font-family: var(--font-mono); font-size: var(--text-lg); font-weight: var(--weight-semibold); color: var(--brasa); }
 .instrucoesMontante span { font-size: 0.6em; color: var(--tinta-3); margin-left: 3px; }
 .instrucoesTxt { font-size: var(--text-sm); color: var(--tinta-2); line-height: var(--leading-normal); margin: 0; }
 
 .erroApi {
-  border: 1.5px solid var(--piri);
+  border: 1.5px solid var(--brasa);
   background: var(--color-error-light);
-  color: var(--piri-dark);
+  color: var(--brasa-dark);
   border-radius: var(--radius-md);
   padding: var(--space-md);
   font-size: var(--text-sm);

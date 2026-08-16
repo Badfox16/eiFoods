@@ -20,7 +20,7 @@
   display: inline-block;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--acafrao);
+  color: var(--folha);
   letter-spacing: 0.02em;
   margin-bottom: var(--space-md);
 }
@@ -69,7 +69,7 @@
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
-  color: var(--acafrao);
+  color: var(--folha);
 }
 .heroDishName {
   font-family: var(--font-display);
@@ -114,12 +114,12 @@
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.verTudo:hover { color: var(--piri-dark); }
+.verTudo:hover { color: var(--brasa-dark); }
 
 /* Lista de quadro (assinatura) */
 .board { display: flex; flex-direction: column; }
@@ -131,8 +131,8 @@
   font-size: 0.66rem;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
-  color: var(--acafrao-dark);
-  border: 1px solid var(--acafrao);
+  color: var(--folha-dark);
+  border: 1px solid var(--folha);
   padding: 3px 7px;
 }
 
@@ -155,12 +155,12 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xl);
 }
-.passo { border-top: 3px solid var(--piri); padding-top: var(--space-md); }
+.passo { border-top: 3px solid var(--brasa); padding-top: var(--space-md); }
 .passoN {
   font-family: var(--font-mono);
   font-size: var(--text-lg);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
 }
 .passoTitulo {
   font-family: var(--font-display);
@@ -199,8 +199,8 @@
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
 }
-.tiraBoard .tiraKicker { color: var(--acafrao); }
-.tiraPaper .tiraKicker { color: var(--piri); }
+.tiraBoard .tiraKicker { color: var(--folha); }
+.tiraPaper .tiraKicker { color: var(--brasa); }
 .tiraTitulo {
   font-family: var(--font-display);
   font-size: var(--text-lg);
@@ -209,7 +209,7 @@
 }
 .tiraLink { font-size: var(--text-sm); font-weight: var(--weight-semibold); margin-top: var(--space-xs); }
 .tiraBoard .tiraLink { color: var(--giz); }
-.tiraPaper .tiraLink { color: var(--piri); }
+.tiraPaper .tiraLink { color: var(--brasa); }
 
 /* ── Responsivo ── */
 @media (max-width: 820px) {

@@ -16,7 +16,7 @@
   font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
-  color: var(--acafrao);
+  color: var(--folha);
 }
 .heroTitle {
   font-family: var(--font-display);
@@ -39,13 +39,13 @@
   gap: var(--space-md);
   margin-top: var(--space-xl);
   padding: var(--space-md) var(--space-lg);
-  border: 1.5px solid var(--acafrao);
+  border: 1.5px solid var(--folha);
 }
 .saldoNum {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: var(--weight-black);
-  color: var(--acafrao);
+  color: var(--folha);
   line-height: 1;
 }
 .saldoTexto { font-size: var(--text-sm); color: rgba(247, 244, 236, 0.82); line-height: 1.5; }
@@ -64,7 +64,7 @@
   margin-bottom: var(--space-lg);
   font-size: var(--text-sm);
 }
-.errorBanner { border-color: var(--piri); background: var(--color-error-light); color: var(--piri-dark); }
+.errorBanner { border-color: var(--brasa); background: var(--color-error-light); color: var(--brasa-dark); }
 .okBanner { border-color: var(--matapa); background: var(--color-success-light); color: var(--matapa); }
 
 .sectionTitle {
@@ -102,7 +102,7 @@
   position: absolute;
   top: 0; left: var(--space-md);
   transform: translateY(-50%);
-  background: var(--piri);
+  background: var(--brasa);
   color: var(--giz);
   font-family: var(--font-mono);
   font-size: 0.66rem;
@@ -145,7 +145,7 @@
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -163,7 +163,7 @@
   flex-shrink: 0;
   font-family: var(--font-mono);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
 }
 .passos strong { color: var(--tinta-1); font-family: var(--font-mono); }
 
@@ -192,8 +192,8 @@
   white-space: nowrap;
 }
 .estado_ativa { color: var(--matapa); border-color: var(--matapa); }
-.estado_pendente_pagamento { color: var(--acafrao-dark); border-color: var(--acafrao); }
-.estado_rejeitada { color: var(--piri-dark); border-color: var(--piri); }
+.estado_pendente_pagamento { color: var(--folha-dark); border-color: var(--folha); }
+.estado_rejeitada { color: var(--brasa-dark); border-color: var(--brasa); }
 
 @media (max-width: 560px) {
   .heroInner, .container { padding: var(--space-xl) var(--space-lg); }

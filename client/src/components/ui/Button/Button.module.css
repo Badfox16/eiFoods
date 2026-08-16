@@ -1,6 +1,6 @@
 .button {
-  --btn-bg: var(--piri);
-  --btn-bg-hover: var(--piri-dark);
+  --btn-bg: var(--brasa);
+  --btn-bg-hover: var(--brasa-dark);
   --btn-fg: var(--giz);
   --btn-border: transparent;
 
@@ -31,8 +31,8 @@
 
 /* ── Variantes ── */
 .primary {
-  --btn-bg: var(--piri);
-  --btn-bg-hover: var(--piri-dark);
+  --btn-bg: var(--brasa);
+  --btn-bg-hover: var(--brasa-dark);
   --btn-fg: var(--giz);
 }
 .dark {
@@ -52,8 +52,8 @@
   --btn-fg: var(--tinta-1);
 }
 .danger {
-  --btn-bg: var(--piri);
-  --btn-bg-hover: var(--piri-dark);
+  --btn-bg: var(--brasa);
+  --btn-bg-hover: var(--brasa-dark);
   --btn-fg: var(--giz);
 }
 

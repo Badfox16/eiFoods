@@ -9,7 +9,7 @@ import styles from './Home.module.css'
 const PASSOS = [
   { n: '01', titulo: 'Escolhe', texto: 'Vê o menu de hoje e escolhe o prato. Ajustas molho, sal e extras.' },
   { n: '02', titulo: 'Pagas', texto: 'M-Pesa, e-Mola ou plano pré-pago. Envias o comprovativo e confirmamos.' },
-  { n: '03', titulo: 'Recebes', texto: 'Entregamos no teu local de trabalho, em Maputo. Encomendas até às 11h.' },
+  { n: '03', titulo: 'Recebes', texto: 'Entregamos no teu local de trabalho, na Beira. Encomendas até às 11h.' },
 ]
 
 function dataDeHoje() {
@@ -54,8 +54,8 @@ export default function Home() {
               <span className={styles.kicker}>O quadro de hoje · {dataDeHoje()}</span>
               <h1 className={styles.headline}>Marmita fresca,<br />entregue no escritório.</h1>
               <p className={styles.sub}>
-                Escolhe do menu de hoje, pagas como preferires e recebes no teu local
-                de trabalho. Encomendas até às 11h, em Maputo.
+                Para quem trabalha e não dá para ir a casa almoçar: escolhe do menu de
+                hoje, pagas como preferires e recebes no escritório. Até às 11h, na Beira.
               </p>
               <div className={styles.heroBtns}>
                 <Button variant="primary" size="large" onClick={() => navigate('/menu')}>

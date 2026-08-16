@@ -6,11 +6,11 @@
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
   cursor: pointer;
   padding: 0 0 var(--space-md);
 }
-.voltar:hover { color: var(--piri-dark); }
+.voltar:hover { color: var(--brasa-dark); }
 
 .title {
   font-family: var(--font-display);

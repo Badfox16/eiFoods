@@ -36,7 +36,7 @@ export default function Navbar({ showCta = false }) {
       <header className={styles.header}>
         <button className={styles.wordmark} onClick={() => irPara('/')} aria-label="Ir para o início">
           <span className={styles.wordmarkMark} aria-hidden="true" />
-          <span className={styles.wordmarkText}>eiFoods</span>
+          <span className={styles.wordmarkText}>Marmita Fresca</span>
         </button>
 
         <nav className={styles.navDesktop}>

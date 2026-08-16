@@ -28,7 +28,7 @@
 	background: var(--color-surface);
 	color: var(--tinta-1);
 }
-.form input:focus { outline: none; border-color: var(--piri); box-shadow: var(--ring-focus); }
+.form input:focus { outline: none; border-color: var(--brasa); box-shadow: var(--ring-focus); }
 
 .form button {
 	border: none;
@@ -36,14 +36,14 @@
 	padding: 11px var(--space-md);
 	font-family: var(--font-body);
 	font-weight: var(--weight-semibold);
-	background: var(--piri);
+	background: var(--brasa);
 	color: var(--giz);
 	cursor: pointer;
 }
-.form button:hover { background: var(--piri-dark); }
+.form button:hover { background: var(--brasa-dark); }
 
 .error {
-	color: var(--piri-dark);
+	color: var(--brasa-dark);
 	font-size: var(--text-sm);
 	margin: 0;
 }
@@ -96,14 +96,14 @@
 .card button {
 	border: none;
 	border-radius: var(--radius-sm);
-	background: var(--piri);
+	background: var(--brasa);
 	color: var(--giz);
 	font-family: var(--font-body);
 	font-weight: var(--weight-semibold);
 	padding: 8px 12px;
 	cursor: pointer;
 }
-.card button:hover { background: var(--piri-dark); }
+.card button:hover { background: var(--brasa-dark); }
 
 @media (max-width: 700px) {
 	.card {

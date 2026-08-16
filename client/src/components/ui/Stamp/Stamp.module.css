@@ -32,8 +32,8 @@
 /* Ganho */
 .earned {
   border-style: solid;
-  border-color: var(--acafrao);
-  background: var(--acafrao);
+  border-color: var(--folha);
+  background: var(--folha);
 }
 .earned .mark { color: var(--panela); }
 .earned .reward { color: var(--panela); opacity: 0.75; }
@@ -41,16 +41,16 @@
 /* Marco por atingir */
 .milestone {
   border-style: solid;
-  border-color: var(--piri);
+  border-color: var(--brasa);
 }
-.milestone .mark { color: var(--piri); }
-.milestone .reward { color: var(--piri-dark); }
+.milestone .mark { color: var(--brasa); }
+.milestone .reward { color: var(--brasa-dark); }
 
 /* Marco atingido */
 .milestoneEarned {
   border-style: solid;
-  border-color: var(--piri);
-  background: var(--piri);
+  border-color: var(--brasa);
+  background: var(--brasa);
 }
 .milestoneEarned .mark { color: var(--giz); }
 .milestoneEarned .reward { color: var(--giz); opacity: 0.85; }

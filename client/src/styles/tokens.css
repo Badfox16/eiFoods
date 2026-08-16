@@ -2,7 +2,8 @@
    eiFoods / Marmita Fresca — Design Tokens · "Quadro & Papel"
    ────────────────────────────────────────────────────────────────────────
    Direção: o ecrã lê-se como o QUADRO de giz de uma tasca e o pedido como um
-   TALÃO. Cor ancorada na mesa moçambicana (piri-piri, matapa, xima, a panela
+   TALÃO. Cores do logótipo (verde-folha + laranja-brasa) ancoradas na mesa
+   moçambicana (matapa, xima, a panela
    de ferro, o açafrão), não em gradientes decorativos.
 
    Regras da direção (fonte de verdade):
@@ -21,12 +22,12 @@
   --xima:      #F4ECD8; /* papa de milho — papel/fundo */
   --xima-2:    #EFE5CC; /* papel um tom mais fundo (sunken) */
   --giz:       #F7F4EC; /* giz sobre o quadro */
-  --piri:      #C6362F; /* malagueta — acento primário / CTA / total */
-  --piri-dark: #A72A24;
-  --matapa:    #2F4A2A; /* folha de mandioca — verde terroso */
-  --matapa-2:  #3E5A34;
-  --acafrao:   #E0A22B; /* curcuma — fidelidade / premium */
-  --acafrao-dark: #B87F12;
+  --brasa:      #E2570F; /* laranja-brasa — do logótipo — acento/CTA/total */
+  --brasa-dark: #BE440A;
+  --folha:      #359420; /* verde-folha — do logótipo — cor de marca/identidade */
+  --folha-dark: #256B16;
+  --matapa:    #2E5A22; /* verde terroso profundo — fills/estados de sucesso */
+  --matapa-2:  #3E6E2E;
 
   /* Tintas de texto sobre papel (escala de "panela" esbatida) */
   --tinta-1: #1C1A17; /* principal */
@@ -36,29 +37,29 @@
   --linha-forte: #C4B48A;
 
   /* ── Aliases retro-compatíveis (páginas ainda não reescritas migram) ──── */
-  --color-primary:        var(--matapa);
-  --color-primary-dark:   #24391F;
-  --color-primary-darker: #1A2B16;
-  --color-primary-light:  #E6E9D8;
-  --color-primary-xlight: #EFF0E4;
-  --color-primary-50:     #EFF0E4;
-  --color-primary-100:    #E6E9D8;
-  --color-primary-300:    #A9BE98;
-  --color-primary-500:    var(--matapa);
-  --color-primary-700:    #24391F;
-  --color-primary-900:    #1A2B16;
+  --color-primary:        var(--folha);
+  --color-primary-dark:   var(--folha-dark);
+  --color-primary-darker: #184A0E;
+  --color-primary-light:  #E1EEDB;
+  --color-primary-xlight: #EEF5EA;
+  --color-primary-50:     #EEF5EA;
+  --color-primary-100:    #E1EEDB;
+  --color-primary-300:    #9FD08F;
+  --color-primary-500:    var(--folha);
+  --color-primary-700:    var(--folha-dark);
+  --color-primary-900:    #184A0E;
 
-  --color-accent:        var(--piri);
-  --color-accent-dark:   var(--piri-dark);
+  --color-accent:        var(--brasa);
+  --color-accent-dark:   var(--brasa-dark);
   --color-accent-light:  #F6DFD0;
   --color-accent-50:     #FBEEE6;
   --color-accent-100:    #F6DFD0;
   --color-accent-300:    #E39A86;
-  --color-accent-500:    var(--piri);
-  --color-accent-700:    var(--piri-dark);
+  --color-accent-500:    var(--brasa);
+  --color-accent-700:    var(--brasa-dark);
 
-  --color-gold:       var(--acafrao);
-  --color-gold-dark:  var(--acafrao-dark);
+  --color-gold:       var(--folha);
+  --color-gold-dark:  var(--folha-dark);
   --color-gold-light: #F5E4BE;
 
   --color-bg:            var(--xima);
@@ -76,9 +77,9 @@
 
   --color-success:       var(--matapa);
   --color-success-light: #E1E7D3;
-  --color-error:         var(--piri);
+  --color-error:         var(--brasa);
   --color-error-light:   #F6DED9;
-  --color-warning:       var(--acafrao-dark);
+  --color-warning:       var(--folha-dark);
   --color-warning-light: #F5E4BE;
   --color-info:          #2C5A6B;
   --color-info-light:    #D9E6EA;
@@ -138,7 +139,7 @@
   --shadow-accent:  none;
 
   /* Foco acessível (contorno firme, visível sobre papel e quadro) */
-  --ring-focus: 0 0 0 3px rgba(198, 54, 47, 0.45);
+  --ring-focus: 0 0 0 3px rgba(226, 87, 15, 0.45);
 
   /* ── Motion (só funcional) ───────────────────────────────────────────── */
   --dur-fast:   110ms;

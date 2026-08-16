@@ -40,6 +40,6 @@
   top: -1.5px; bottom: -1.5px; left: -1.5px;
   width: 4px;
 }
-.accent_piri::before    { background: var(--piri); }
+.accent_piri::before    { background: var(--brasa); }
 .accent_matapa::before  { background: var(--matapa); }
-.accent_acafrao::before { background: var(--acafrao); }
+.accent_acafrao::before { background: var(--folha); }

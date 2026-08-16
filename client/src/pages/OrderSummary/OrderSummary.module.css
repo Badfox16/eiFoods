@@ -7,11 +7,11 @@
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  color: var(--piri);
+  color: var(--brasa);
   cursor: pointer;
   padding: 0 0 var(--space-sm);
 }
-.voltar:hover { color: var(--piri-dark); }
+.voltar:hover { color: var(--brasa-dark); }
 .title {
   display: flex;
   align-items: center;
@@ -28,7 +28,7 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--giz);
-  background: var(--piri);
+  background: var(--brasa);
   padding: 2px 8px;
 }
 
@@ -89,7 +89,7 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.acaoLink:hover { color: var(--piri); }
+.acaoLink:hover { color: var(--brasa); }
 
 .adicionar {
   margin-top: var(--space-xs);

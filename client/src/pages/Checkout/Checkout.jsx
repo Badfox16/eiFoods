@@ -76,7 +76,7 @@ export default function Checkout() {
     const id = await criarPedidoSeNecessario()
     const ref = id ? `#${id.slice(-8).toUpperCase()}` : ''
     const msg = encodeURIComponent(
-      `Ola eiFoods. Efetuei o pagamento do meu pedido.\n\n` +
+      `Ola Marmita Fresca. Efetuei o pagamento do meu pedido.\n\n` +
       `Pedido: ${ref}\nNome: ${deliveryDetails.name}\nLocal: ${deliveryDetails.location}\n` +
       `Metodo: ${metodoSelecionado?.nome}\nTotal: ${total} MT\n\nSegue o comprovativo em anexo.`
     )

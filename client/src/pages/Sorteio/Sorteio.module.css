@@ -1,694 +1,212 @@
 .page {
   min-height: 100vh;
-  background-color: var(--color-bg);
   display: flex;
   flex-direction: column;
+  background: var(--xima);
 }
 
-/* ── Header da página ── */
-.main {
-  flex: 1;
-  padding: var(--space-2xl) var(--space-xl);
-  max-width: 1200px;
+/* ── Hero quadro ── */
+.hero { background: var(--panela); color: var(--giz); border-bottom: 2px solid #000; }
+.heroInner {
+  max-width: var(--container-max);
   margin: 0 auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xl);
+  padding: var(--space-2xl) var(--space-xl);
 }
-
-.pageHeader {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.pageBadge {
-  display: inline-block;
-  background-color: var(--color-accent);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 5px 14px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--tracking-wide);
+  color: var(--folha);
 }
-
-.pageTitulo {
+.heroTitle {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 700;
-  color: var(--color-text-primary);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin: var(--space-sm) 0 var(--space-md);
+}
+.heroSub {
+  font-size: var(--text-md);
+  color: rgba(247, 244, 236, 0.72);
+  line-height: var(--leading-normal);
+  max-width: 54ch;
 }
 
-.pageSub {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  max-width: 560px;
-  line-height: 1.65;
-}
+.stateBox { flex: 1; display: flex; justify-content: center; align-items: center; padding: var(--space-3xl); }
 
-.adminNotice {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  padding: 6px 12px;
+/* ── Layout ── */
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
 }
-
-.participarCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.participarTitulo {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: var(--color-text-primary);
-}
-
-.participarLista {
-  margin: 0;
-  padding-left: 1.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-}
-
-.btnParticipar {
-  align-self: flex-start;
-  margin-top: var(--space-xs);
-  background: var(--color-accent);
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.88rem;
-  padding: 10px 16px;
-  border-radius: var(--radius-full);
-  transition: all var(--transition);
-}
-
-.btnParticipar:hover {
-  background: var(--color-accent-dark);
-  transform: translateY(-1px);
-}
-
-.inscricaoForm {
-  margin-top: var(--space-sm);
-  border-top: 1px solid var(--color-border);
-  padding-top: var(--space-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.inscricaoTitulo {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.inscricaoGrid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-sm);
-}
-
-.inscricaoInput {
-  min-height: 38px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 8px 10px;
-  font-size: 0.88rem;
-  color: var(--color-text-primary);
-  background: var(--color-bg);
-  outline: none;
-}
-
-.inscricaoInput:focus {
-  border-color: var(--color-primary);
-}
-
-.btnInscrever {
-  align-self: flex-start;
-  border: none;
-  border-radius: var(--radius-full);
-  background: var(--color-primary);
-  color: white;
-  padding: 9px 16px;
-  font-size: 0.84rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btnInscrever:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.inscricaoMsg {
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--color-text-secondary);
-}
-
-/* ── Layout principal ── */
-.conteudo {
-  display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 340px;
   gap: var(--space-xl);
   align-items: start;
 }
+.main { min-width: 0; display: flex; flex-direction: column; gap: var(--space-lg); }
 
-/* ── Painel Esquerdo ── */
-.painelEsquerdo {
+/* ── Prémio ── */
+.premio {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-2xs);
+  padding: var(--space-lg);
+  border: 2px solid var(--folha);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
-
-/* ── Card do prato ── */
-.pratoCard {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-}
-
-.pratoImagemWrap {
-  position: relative;
-  width: 280px;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.pratoImagem {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.pratoImagemLabel {
-  position: absolute;
-  top: var(--space-md);
-  left: var(--space-md);
-  background-color: var(--color-primary);
-  color: white;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
+.premioLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-wide);
+  color: var(--folha-dark);
 }
-
-.pratoInfo {
-  padding: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  flex: 1;
-}
-
-.pratoNome {
+.premioNome {
   font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1.2;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--tinta-1);
 }
+.premioValor { font-family: var(--font-mono); font-size: var(--text-lg); color: var(--brasa); }
+.premioValor span { font-size: 0.6em; color: var(--tinta-3); margin-left: 3px; }
 
-.pratoDescricao {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
+/* ── Resultado ── */
+.resultado {
+  padding: var(--space-lg);
+  border: 2px solid var(--panela);
+  border-radius: var(--radius-md);
+  background: var(--panela);
+  color: var(--giz);
 }
-
-.pratoMeta {
-  display: flex;
-  gap: var(--space-xl);
-  margin-top: auto;
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-border);
+.resultadoLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--folha);
 }
-
-.pratoMetaItem {
+.vencedor {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  margin: var(--space-sm) 0;
 }
-
-.pratoMetaLabel {
-  font-size: 0.72rem;
-  font-family: var(--font-display);
+.vencedorRef { font-family: var(--font-mono); font-size: var(--text-sm); color: rgba(247,244,236,0.7); }
+.vencedorNome { font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--weight-bold); }
+.vencedorMeta { font-size: var(--text-sm); color: rgba(247,244,236,0.6); }
+.vencedorTag {
+  align-self: flex-start;
+  margin-top: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-muted);
+  letter-spacing: var(--tracking-wide);
+  color: var(--panela);
+  background: var(--folha);
+  padding: 3px 8px;
 }
+.resultadoVazio { font-size: var(--text-md); color: rgba(247,244,236,0.85); margin: var(--space-sm) 0; }
+.resultadoData { font-size: var(--text-xs); color: rgba(247,244,236,0.5); margin: 0; }
 
-.pratoMetaValor {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-/* ── Máquina de sorteio ── */
-.maquina {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
+/* ── Participantes ── */
+.participantesHead {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.maquinaLabel {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
-}
-
-.tambor {
-  width: 100%;
-  min-height: 130px;
-  border-radius: var(--radius-md);
-  background-color: var(--color-primary-xlight);
-  border: 2px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-lg);
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-  overflow: hidden;
-}
-
-.tamborAtivo {
-  border-color: var(--color-primary);
-  background-color: var(--color-primary-light);
-  animation: pulso 0.4s ease infinite alternate;
-}
-
-@keyframes pulso {
-  from { box-shadow: 0 0 0 0 rgba(53,148,32,0.10); }
-  to   { box-shadow: 0 0 0 8px rgba(53,148,32,0.10); }
-}
-
-.tamborResultado {
-  border-color: var(--color-accent);
-  background: var(--color-surface-sunken);
-  animation: revelacao 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-}
-
-@keyframes revelacao {
-  from { transform: scale(0.92); opacity: 0.4; }
-  to   { transform: scale(1);    opacity: 1; }
-}
-
-.tamborPlaceholder {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  text-align: center;
-  font-family: var(--font-display);
-}
-
-.tamborRef {
-  font-size: 0.8rem;
-  font-family: var(--font-display);
-  color: var(--color-primary);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
-.tamborNome {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  text-align: center;
-  line-height: 1.1;
-}
-
-.tamborEmpresa {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  font-family: var(--font-display);
-}
-
-.btnSortear {
-  background-color: var(--color-accent);
-  color: white;
-  border: none;
-  padding: 16px 48px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all var(--transition);
-  width: 100%;
-  letter-spacing: 0.03em;
-}
-
-.btnSortear:hover:not(:disabled) {
-  background-color: var(--color-accent-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(232,82,16,0.30);
-}
-
-.btnSortear:disabled {
-  background-color: var(--color-text-muted);
-  cursor: not-allowed;
-  transform: none;
-}
-
-.acoesFinal {
-  display: flex;
-  gap: var(--space-md);
-  width: 100%;
-}
-
-.btnReiniciar {
-  flex: 1;
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  border: 1.5px solid var(--color-border);
-  padding: 12px 20px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btnReiniciar:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background-color: var(--color-primary-light);
-}
-
-.btnMenu {
-  flex: 1;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btnMenu:hover {
-  background-color: var(--color-primary-dark);
-  transform: translateY(-2px);
-}
-
-/* ── Banner do vencedor ── */
-.vencedorBanner {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xl);
-  animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  box-shadow: 0 12px 40px rgba(232,82,16,0.25);
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(20px) scale(0.96); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.vencedorTrofeu {
-  color: var(--acafrao);
-  flex-shrink: 0;
-}
-
-.vencedorInfo {
-  flex: 1;
-}
-
-.vencedorLabel {
-  font-size: 0.72rem;
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.75);
-  margin-bottom: 4px;
-}
-
-.vencedorNome {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: white;
-  line-height: 1.1;
-}
-
-.vencedorDetalhe {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.75);
-  margin-top: 4px;
-}
-
-.vencedorPremio {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.vencedorPremioLabel {
-  font-size: 0.72rem;
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgba(255,255,255,0.75);
-  margin-bottom: 4px;
-}
-
-.vencedorPremioValor {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--acafrao);
-  line-height: 1;
-}
-
-.vencedorPremioNome {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.75);
-  margin-top: 4px;
-  max-width: 180px;
-  text-align: right;
-}
-
-/* ── Painel Direito — lista ── */
-.painelDireito {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 80px;
-}
-
-.listaHeader {
-  display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  padding: var(--space-lg) var(--space-xl);
-  border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-primary-xlight);
-}
-
-.listaTitulo {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.listaContagem {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  background-color: var(--color-primary-light);
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-}
-
-.lista {
-  list-style: none;
-  max-height: 540px;
-  overflow-y: auto;
-}
-
-.lista::-webkit-scrollbar {
-  width: 4px;
-}
-
-.lista::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.lista::-webkit-scrollbar-thumb {
-  background-color: var(--color-border);
-  border-radius: 2px;
-}
-
-.listaItem {
-  display: flex;
-  align-items: center;
   gap: var(--space-md);
-  padding: 12px var(--space-xl);
-  border-bottom: 1px solid var(--color-border);
-  transition: all 0.15s ease;
+  border-bottom: 2px solid var(--panela);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-sm);
 }
-
-.listaItem:last-child {
-  border-bottom: none;
-}
-
-.listaItemAtivo {
-  background-color: var(--color-primary-light);
-  border-left: 3px solid var(--color-primary);
-}
-
-.listaItemVencedor {
-  background: linear-gradient(90deg, var(--color-accent-light) 0%, var(--color-surface) 100%);
-  border-left: 3px solid var(--color-accent);
-}
-
-.listaRef {
+.sectionTitle {
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  min-width: 42px;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--tinta-1);
+  margin: 0;
 }
-
-.listaInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
+.contagem { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--tinta-3); }
+.lista {
+  border: 1.5px solid var(--linha);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-xs) var(--space-md);
 }
-
-.listaNome {
-  font-family: var(--font-display);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.listaEmpresa {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-}
-
-.listaVencedorTag {
-  font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 700;
+.lista > * { border-bottom: 1px solid var(--linha); }
+.lista > *:last-child { border-bottom: none; }
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: white;
-  background-color: var(--color-accent);
-  padding: 3px 8px;
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-  animation: badgePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  color: var(--giz);
+  background: var(--folha);
+  padding: 3px 7px;
 }
+.vazio { font-size: var(--text-sm); color: var(--tinta-3); padding: var(--space-md) 0; }
 
-@keyframes badgePop {
-  from { transform: scale(0); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+/* ── Aside participar ── */
+.aside {
+  position: sticky;
+  top: calc(62px + var(--space-md));
+  border: 2px solid var(--panela);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-lg);
 }
+.aside .sectionTitle { border-bottom: 2px solid var(--panela); padding-bottom: var(--space-sm); margin-bottom: var(--space-md); }
+.passos { list-style: none; margin: 0 0 var(--space-md); padding: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+.passos li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--tinta-2);
+  line-height: var(--leading-snug);
+}
+.passoN { flex-shrink: 0; font-family: var(--font-mono); font-weight: var(--weight-semibold); color: var(--brasa); }
+.passos strong { font-family: var(--font-mono); color: var(--tinta-1); }
+
+.form { display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-lg); }
+.formTitulo {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--tinta-1);
+  margin: 0;
+}
+.aviso { font-size: var(--text-xs); color: var(--brasa-dark); margin: 0; }
+.msg { font-size: var(--text-sm); color: var(--tinta-2); line-height: var(--leading-snug); margin: 0; }
+
+.verMenu {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-md);
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--brasa);
+  cursor: pointer;
+}
+.verMenu:hover { color: var(--brasa-dark); }
 
 /* ── Responsivo ── */
-@media (max-width: 1024px) {
-  .conteudo {
-    grid-template-columns: 1fr;
-  }
-
-  .painelDireito {
-    position: static;
-  }
-
-  .lista {
-    max-height: 320px;
-  }
+@media (max-width: 820px) {
+  .grid { grid-template-columns: 1fr; }
+  .aside { position: static; }
 }
-
-@media (max-width: 768px) {
-  .main {
-    padding: var(--space-xl) var(--space-lg);
-    gap: var(--space-xl);
-  }
-
-  .pratoCard {
-    flex-direction: column;
-  }
-
-  .pratoImagemWrap {
-    width: 100%;
-    height: 220px;
-  }
-
-  .vencedorBanner {
-    flex-direction: column;
-    text-align: center;
-    gap: var(--space-md);
-  }
-
-  .vencedorPremio {
-    text-align: center;
-  }
-
-  .vencedorPremioNome {
-    text-align: center;
-    max-width: none;
-  }
-
-  .inscricaoGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .acoesFinal {
-    flex-direction: column;
-  }
+@media (max-width: 560px) {
+  .heroInner, .container { padding: var(--space-xl) var(--space-lg); }
 }

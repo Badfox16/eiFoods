@@ -28,15 +28,16 @@
 .wordmarkMark {
   width: 14px;
   height: 14px;
-  background: var(--piri);
+  background: var(--folha);
   flex-shrink: 0;
 }
 .wordmarkText {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-md);
   font-weight: var(--weight-black);
   letter-spacing: var(--tracking-tight);
   line-height: 1;
+  white-space: nowrap;
 }
 .wordmark:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 
@@ -62,7 +63,7 @@
   position: absolute;
   bottom: -2px; left: 0;
   width: 0; height: 2px;
-  background: var(--acafrao);
+  background: var(--folha);
   transition: width var(--dur-base) var(--ease-out);
 }
 .navItem:hover { color: var(--giz); }
@@ -97,7 +98,7 @@
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   color: var(--panela);
-  background: var(--acafrao);
+  background: var(--folha);
   padding: 2px 5px;
 }
 
@@ -137,7 +138,7 @@
 .badge {
   position: absolute;
   top: -7px; right: -7px;
-  background: var(--piri);
+  background: var(--brasa);
   color: var(--giz);
   font-family: var(--font-mono);
   font-size: 0.66rem;
@@ -213,7 +214,7 @@
 .navMobileItem:hover,
 .navMobileItemActive {
   background: var(--panela-2);
-  border-left-color: var(--acafrao);
+  border-left-color: var(--folha);
   color: var(--giz);
 }
 .navMobileDivider { height: 1px; background: rgba(247,244,236,0.14); margin: var(--space-xs) var(--space-lg); }
@@ -221,7 +222,7 @@
   margin: var(--space-sm) var(--space-lg);
   text-align: center;
   padding: 12px;
-  background: var(--piri);
+  background: var(--brasa);
   color: var(--giz);
   font-family: var(--font-body);
   font-weight: var(--weight-semibold);

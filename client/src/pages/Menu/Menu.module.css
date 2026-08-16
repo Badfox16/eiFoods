@@ -15,7 +15,7 @@
 .kicker {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--acafrao);
+  color: var(--folha);
   letter-spacing: 0.02em;
 }
 .titulo {
@@ -43,7 +43,7 @@
   outline: none;
 }
 .buscaInput::placeholder { color: rgba(247,244,236,0.45); }
-.buscaInput:focus { border-color: var(--acafrao); }
+.buscaInput:focus { border-color: var(--folha); }
 .buscaLimpar {
   position: absolute;
   right: 8px;
@@ -83,7 +83,7 @@
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
   color: var(--giz);
-  background: var(--piri);
+  background: var(--brasa);
   padding: 2px 6px;
 }
 
@@ -112,13 +112,13 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--giz);
-  background: var(--acafrao-dark);
+  background: var(--folha-dark);
   border: none;
   border-radius: var(--radius-sm);
   padding: 7px 12px;
   cursor: pointer;
 }
-.desbloquear:hover { background: var(--acafrao); color: var(--panela); }
+.desbloquear:hover { background: var(--folha); color: var(--panela); }
 
 .estado {
   display: flex;
@@ -159,7 +159,7 @@
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
   color: var(--giz);
-  background: var(--piri);
+  background: var(--brasa);
   padding: 2px 7px;
 }
 .talaoVazio { font-size: var(--text-sm); color: var(--tinta-3); padding: var(--space-md) 0; }
@@ -180,7 +180,7 @@
   cursor: pointer;
   padding: 0 2px;
 }
-.remover:hover { color: var(--piri); }
+.remover:hover { color: var(--brasa); }
 
 /* ── Responsivo ── */
 @media (max-width: 820px) {
