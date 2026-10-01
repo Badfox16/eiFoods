@@ -46,16 +46,27 @@ export default function AuthProvider({ children }) {
     return c
   }, [])
 
+  /** Atualiza o perfil (nome) e guarda o cliente devolvido pela API. */
+  const updateNome = useCallback(async (nome) => {
+    const c = await authApi.updateMe(nome)
+    setCliente(c)
+    return c
+  }, [])
+
   const value = {
     cliente,
     loading,
     isAuthenticated: Boolean(cliente),
     // Tier premium (Fase 3): concedido por uma subscrição premium ativa.
     premium: Boolean(cliente?.premium),
+    // Categoria de plano premium ativa (Fase 7): 'premium_fit_starter' |
+    // 'premium_muscle' | null. Determina qual cardápio o Menu mostra.
+    categoriaAtiva: cliente?.categoriaAtiva ?? null,
     requestOtp,
     verifyOtp,
     logout,
     refresh,
+    updateNome,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

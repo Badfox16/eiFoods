@@ -4,71 +4,63 @@
   justify-content: space-between;
   gap: var(--space-lg);
   padding: 0 var(--space-xl);
-  height: 62px;
-  background: var(--panela);
-  color: var(--giz);
-  border-bottom: 2px solid #000;
+  height: 68px;
+  background: var(--giz);
+  color: var(--tinta-1);
+  border-bottom: 1.5px solid var(--linha);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: var(--z-navbar);
 }
 
-/* ── Wordmark ── */
+/* ── Wordmark (logótipo real) ── */
 .wordmark {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  color: var(--giz);
+  border-radius: var(--radius-sm);
 }
-.wordmarkMark {
-  width: 14px;
-  height: 14px;
-  background: var(--folha);
-  flex-shrink: 0;
-}
-.wordmarkText {
-  font-family: var(--font-display);
-  font-size: var(--text-md);
-  font-weight: var(--weight-black);
-  letter-spacing: var(--tracking-tight);
-  line-height: 1;
-  white-space: nowrap;
+.wordmarkLogo {
+  height: 46px;
+  width: auto;
+  display: block;
 }
 .wordmark:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 
 /* ── Nav Desktop ── */
 .navDesktop {
   display: flex;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   flex: 1;
   justify-content: center;
 }
 .navItem {
   position: relative;
-  color: rgba(247, 244, 236, 0.72);
+  color: var(--tinta-2);
   text-decoration: none;
-  padding: 6px 0;
+  padding: 6px 2px;
   transition: color var(--dur-fast) var(--ease-standard);
 }
 .navItem::after {
   content: '';
   position: absolute;
-  bottom: -2px; left: 0;
-  width: 0; height: 2px;
-  background: var(--folha);
+  bottom: -4px; left: 0;
+  width: 0; height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-brand);
   transition: width var(--dur-base) var(--ease-out);
 }
-.navItem:hover { color: var(--giz); }
+.navItem:hover { color: var(--folha-dark); }
 .navItem:hover::after { width: 100%; }
-.navItemActive { color: var(--giz); font-weight: var(--weight-semibold); }
+.navItemActive { color: var(--brasa-dark); }
 .navItemActive::after { width: 100%; }
 .navItem:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: 2px; }
 
@@ -84,36 +76,45 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  color: var(--giz);
+  color: var(--tinta-1);
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color var(--dur-fast);
 }
+.accountName:hover { color: var(--brasa); }
+.accountName:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: 2px; }
 .crown {
   font-size: 0.6rem;
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
-  color: var(--panela);
-  background: var(--folha);
-  padding: 2px 5px;
+  color: var(--giz);
+  background: var(--gradient-brasa);
+  padding: 3px 7px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-accent);
 }
 
 .textBtn {
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  color: rgba(247, 244, 236, 0.8);
+  color: var(--tinta-2);
   background: transparent;
   border: none;
   padding: 6px 4px;
   cursor: pointer;
   transition: color var(--dur-fast);
 }
-.textBtn:hover { color: var(--giz); }
+.textBtn:hover { color: var(--brasa); }
 .textBtn:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 
 .ctaWrap { display: inline-flex; }
@@ -121,36 +122,37 @@
 /* ── Carrinho ── */
 .cartBtn {
   position: relative;
-  background: transparent;
-  border: 1.5px solid rgba(247, 244, 236, 0.35);
-  border-radius: var(--radius-sm);
-  width: 38px;
-  height: 38px;
+  background: var(--xima-2);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
   cursor: pointer;
-  transition: border-color var(--dur-fast), background var(--dur-fast);
+  transition: border-color var(--dur-fast), background var(--dur-fast), transform var(--dur-fast) var(--ease-spring);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--giz);
+  color: var(--tinta-1);
 }
-.cartBtn:hover { border-color: var(--giz); background: var(--panela-2); }
+.cartBtn:hover { border-color: var(--brasa); background: var(--giz); transform: translateY(-1px); }
 .cartBtn:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 .badge {
   position: absolute;
-  top: -7px; right: -7px;
-  background: var(--brasa);
+  top: -5px; right: -5px;
+  background: var(--gradient-brasa);
   color: var(--giz);
   font-family: var(--font-mono);
   font-size: 0.66rem;
   font-weight: var(--weight-semibold);
-  min-width: 18px;
-  height: 18px;
+  min-width: 19px;
+  height: 19px;
   padding: 0 4px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--panela);
+  border: 2px solid var(--giz);
+  box-shadow: var(--shadow-accent);
 }
 
 /* ── Hamburger ── */
@@ -168,7 +170,8 @@
 .hamburger span {
   width: 100%;
   height: 2.5px;
-  background: var(--giz);
+  border-radius: var(--radius-full);
+  background: var(--tinta-1);
   transition: all var(--dur-base) var(--ease-standard);
   transform-origin: center;
 }
@@ -180,12 +183,13 @@
 .navMobile {
   display: none;
   position: fixed;
-  top: 62px;
+  top: 68px;
   right: 0;
   width: 280px;
   max-width: 84vw;
-  background: var(--panela);
-  border-left: 2px solid #000;
+  background: var(--giz);
+  border-left: 1.5px solid var(--linha);
+  box-shadow: var(--shadow-xl);
   z-index: 99;
   flex-direction: column;
   padding: var(--space-sm) 0;
@@ -203,7 +207,7 @@
   font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: var(--weight-medium);
-  color: rgba(247, 244, 236, 0.82);
+  color: var(--tinta-2);
   text-decoration: none;
   background: transparent;
   border: none;
@@ -213,28 +217,29 @@
 }
 .navMobileItem:hover,
 .navMobileItemActive {
-  background: var(--panela-2);
-  border-left-color: var(--folha);
-  color: var(--giz);
+  background: var(--xima-2);
+  border-left-color: var(--brasa);
+  color: var(--tinta-1);
 }
-.navMobileDivider { height: 1px; background: rgba(247,244,236,0.14); margin: var(--space-xs) var(--space-lg); }
+.navMobileDivider { height: 1px; background: var(--linha); margin: var(--space-xs) var(--space-lg); }
 .navMobileCta {
   margin: var(--space-sm) var(--space-lg);
   text-align: center;
   padding: 12px;
-  background: var(--brasa);
+  background: var(--gradient-brasa);
   color: var(--giz);
   font-family: var(--font-body);
   font-weight: var(--weight-semibold);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-accent);
   cursor: pointer;
 }
 .overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(28, 26, 23, 0.5);
+  background: rgba(21, 51, 28, 0.45);
   z-index: 98;
   animation: fadeIn var(--dur-base) ease;
 }

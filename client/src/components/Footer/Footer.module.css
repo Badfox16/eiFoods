@@ -1,23 +1,16 @@
 .footer {
   position: relative;
   background: var(--panela);
-  color: rgba(247, 244, 236, 0.72);
+  color: rgba(255, 255, 255, 0.72);
   font-family: var(--font-body);
 }
 
-/* Banda geométrica tipo capulana no topo (blocos sólidos, sem gradiente) */
+/* Banda de gradiente de marca no topo (o próprio gradiente do logótipo) */
 .footer::before {
   content: '';
   display: block;
-  height: 6px;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      var(--brasa) 0, var(--brasa) 20px,
-      var(--folha) 20px, var(--folha) 40px,
-      var(--matapa-2) 40px, var(--matapa-2) 60px,
-      var(--xima) 60px, var(--xima) 80px
-    );
+  height: 5px;
+  background: var(--gradient-brand);
 }
 
 /* ── Grid principal ── */
@@ -40,22 +33,17 @@
 .logoWrap {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  background: var(--giz);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  width: fit-content;
+  box-shadow: var(--shadow-md);
 }
 
-.logoMark {
-  width: 18px;
-  height: 18px;
-  background: var(--folha);
-  flex-shrink: 0;
-}
-
-.logoNome {
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  font-weight: var(--weight-black);
-  color: var(--giz);
-  letter-spacing: var(--tracking-tight);
+.logoImg {
+  height: 48px;
+  width: auto;
+  display: block;
 }
 
 .tagline {

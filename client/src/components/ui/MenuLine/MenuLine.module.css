@@ -27,6 +27,42 @@
   align-self: center;
 }
 
+/* Miniatura real do prato — zoom suave ao passar o rato/tocar (sem exagero). */
+.thumbWrap {
+  position: relative;
+  flex-shrink: 0;
+  align-self: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--dur-base) var(--ease-out), filter var(--dur-base);
+}
+.clickable:hover .thumb { transform: scale(1.08); }
+.locked .thumb { filter: grayscale(0.7) brightness(0.82); }
+.thumbBadge {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  background: var(--gradient-brasa);
+  color: var(--giz);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-accent);
+  white-space: nowrap;
+}
+
 .body {
   display: flex;
   flex-direction: column;

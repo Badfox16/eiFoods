@@ -1,60 +1,81 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   eiFoods / Marmita Fresca — Design Tokens · "Quadro & Papel"
+   eiFoods / Marmita Fresca — Design Tokens · "Marmita Viva"
    ────────────────────────────────────────────────────────────────────────
-   Direção: o ecrã lê-se como o QUADRO de giz de uma tasca e o pedido como um
-   TALÃO. Cores do logótipo (verde-folha + laranja-brasa) ancoradas na mesa
-   moçambicana (matapa, xima, a panela
-   de ferro, o açafrão), não em gradientes decorativos.
+   Direção (substitui "Quadro & Papel" — feedback direto do cliente: a versão
+   anterior lia-se sóbria/escura de mais face ao logótipo real, que é glossy,
+   gradiente, vivo). Fundo claro (não o quadro escuro), verde + laranja do
+   logótipo aplicados em bloco GENEROSO e em GRADIENTE (não só filete), cantos
+   mais arredondados, elevação por sombra suave em vez de só hairline.
 
-   Regras da direção (fonte de verdade):
-   • Sem gradientes decorativos, glass, blobs. Cor separa-se por BLOCOS sólidos.
-   • Painéis PANELA (escuro, "quadro") vs. áreas XIMA (papel quente).
-   • Botões retangulares (raio pequeno); pill só em filtros/tags.
-   • Elevação por FILETE (hairline) e contraste papel/quadro, não sombra suave.
-   • Tipografia: Fraunces (display), Hanken Grotesk (texto), Spline Sans Mono
-     (preços/talão). Sem Inter, sem emoji-ícone, sem thin-line genérico.
+   Regras da direção:
+   • Fundo base claro/quente (papel), não o quadro escuro — o escuro fica
+     reservado a secções de destaque (rodapé, hero, cartões "stamp").
+   • Gradiente verde→laranja permitido e incentivado em CTAs, heróis, badges
+     de destaque — é literalmente o gradiente do logótipo.
+   • Cantos arredondados (não mais "quase reto"); pill continua para
+     filtros/tags/badges mas também é aceitável em CTAs grandes.
+   • Elevação por sombra suave colorida (verde/laranja) em elementos-chave,
+     hairline continua a servir para separadores de lista (talão/quadro).
+   • Tipografia mantém-se: Fraunces (display), Hanken Grotesk (texto),
+     Spline Sans Mono (preços/talão) — é a parte que já funcionava bem.
    ══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Paleta base (comida/mercado) ─────────────────────────────────────── */
-  --panela:    #1C1A17; /* ferro fundido / quadro de giz */
-  --panela-2:  #26231E; /* elevação subtil sobre o quadro */
-  --xima:      #F4ECD8; /* papa de milho — papel/fundo */
-  --xima-2:    #EFE5CC; /* papel um tom mais fundo (sunken) */
-  --giz:       #F7F4EC; /* giz sobre o quadro */
-  --brasa:      #E2570F; /* laranja-brasa — do logótipo — acento/CTA/total */
-  --brasa-dark: #BE440A;
-  --folha:      #359420; /* verde-folha — do logótipo — cor de marca/identidade */
-  --folha-dark: #256B16;
-  --matapa:    #2E5A22; /* verde terroso profundo — fills/estados de sucesso */
-  --matapa-2:  #3E6E2E;
+  /* ── Paleta base (do logótipo — verde+laranja glossy) ─────────────────── */
+  --folha:      #2FAE3E; /* verde vivo — do logótipo */
+  --folha-light:#7ED957;
+  --folha-dark: #1B7A2A;
+  --folha-deep: #15331C; /* quase-preto esverdeado — secções escuras (rodapé) */
 
-  /* Tintas de texto sobre papel (escala de "panela" esbatida) */
-  --tinta-1: #1C1A17; /* principal */
-  --tinta-2: #55503F; /* secundário */
-  --tinta-3: #857E68; /* terciário / meta */
-  --linha:   #D8CCA8; /* filete sobre papel (hairline) */
-  --linha-forte: #C4B48A;
+  --brasa:      #F2650F; /* laranja-brasa vivo — do logótipo */
+  --brasa-light:#FF9142;
+  --brasa-dark: #C6440A;
+
+  --matapa:    #2E7D32; /* verde terroso — estados de sucesso */
+  --matapa-2:  #3E8E42;
+
+  /* Canvas claro (papel quente) — fundo por omissão agora, não o quadro escuro */
+  --xima:      #FFFBF4;
+  --xima-2:    #FFF3E3; /* sunken / realce laranja muito suave */
+  --xima-3:    #EAF7E9; /* sunken / realce verde muito suave */
+  --giz:       #FFFFFF;
+
+  /* Painel escuro (uso pontual: rodapé, hero, cartões "stamp") */
+  --panela:    var(--folha-deep);
+  --panela-2:  #1E4027;
+
+  /* Tintas de texto sobre papel */
+  --tinta-1: #19291B; /* principal */
+  --tinta-2: #51604E; /* secundário */
+  --tinta-3: #83907E; /* terciário / meta */
+  --linha:   #F0DEC3; /* filete sobre papel (hairline) */
+  --linha-forte: #E3C89A;
+
+  /* Gradientes de marca (o gradiente do próprio logótipo) */
+  --gradient-brand:  linear-gradient(135deg, var(--folha) 0%, var(--brasa) 100%);
+  --gradient-folha:  linear-gradient(140deg, var(--folha-light) 0%, var(--folha) 55%, var(--folha-dark) 100%);
+  --gradient-brasa:  linear-gradient(140deg, var(--brasa-light) 0%, var(--brasa) 55%, var(--brasa-dark) 100%);
+  --gradient-hero:   radial-gradient(120% 140% at 0% 0%, #3FC150 0%, var(--folha) 38%, var(--brasa) 100%);
 
   /* ── Aliases retro-compatíveis (páginas ainda não reescritas migram) ──── */
   --color-primary:        var(--folha);
   --color-primary-dark:   var(--folha-dark);
-  --color-primary-darker: #184A0E;
-  --color-primary-light:  #E1EEDB;
-  --color-primary-xlight: #EEF5EA;
-  --color-primary-50:     #EEF5EA;
-  --color-primary-100:    #E1EEDB;
-  --color-primary-300:    #9FD08F;
+  --color-primary-darker: #0F5A1B;
+  --color-primary-light:  #DCF4DA;
+  --color-primary-xlight: #EFFAEE;
+  --color-primary-50:     #EFFAEE;
+  --color-primary-100:    #DCF4DA;
+  --color-primary-300:    #9FE092;
   --color-primary-500:    var(--folha);
   --color-primary-700:    var(--folha-dark);
-  --color-primary-900:    #184A0E;
+  --color-primary-900:    #0F5A1B;
 
   --color-accent:        var(--brasa);
   --color-accent-dark:   var(--brasa-dark);
-  --color-accent-light:  #F6DFD0;
-  --color-accent-50:     #FBEEE6;
-  --color-accent-100:    #F6DFD0;
-  --color-accent-300:    #E39A86;
+  --color-accent-light:  #FEE4D1;
+  --color-accent-50:     #FFF1E6;
+  --color-accent-100:    #FEE4D1;
+  --color-accent-300:    #FBB583;
   --color-accent-500:    var(--brasa);
   --color-accent-700:    var(--brasa-dark);
 
@@ -64,7 +85,7 @@
 
   --color-bg:            var(--xima);
   --color-bg-warm:       var(--xima);
-  --color-surface:       #FBF6E9; /* papel um pouco mais claro para "folhas" */
+  --color-surface:       var(--giz);
   --color-surface-sunken: var(--xima-2);
   --color-border:        var(--linha);
   --color-border-strong: var(--linha-forte);
@@ -76,11 +97,11 @@
   --color-text-on-accent:  var(--giz);
 
   --color-success:       var(--matapa);
-  --color-success-light: #E1E7D3;
+  --color-success-light: #DFF3DD;
   --color-error:         var(--brasa);
-  --color-error-light:   #F6DED9;
-  --color-warning:       var(--folha-dark);
-  --color-warning-light: #F5E4BE;
+  --color-error-light:   #FEE8DC;
+  --color-warning:       var(--brasa-dark);
+  --color-warning-light: #FEF0D9;
   --color-info:          #2C5A6B;
   --color-info-light:    #D9E6EA;
 
@@ -122,32 +143,32 @@
   --space-2xl: 64px;
   --space-3xl: 96px;
 
-  /* ── Raios (contidos — nada de "muito arredondado") ──────────────────── */
-  --radius-xs:   2px;
-  --radius-sm:   3px;
-  --radius-md:   4px;
-  --radius-lg:   6px;
-  --radius-xl:   8px;
-  --radius-full: 9999px; /* só para pills semânticos: filtros/tags/selos */
+  /* ── Raios (arredondados — "vivo", não "quase reto") ──────────────────── */
+  --radius-xs:   6px;
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-full: 9999px;
 
-  /* ── Sombras (usar com muita parcimónia — preferir filete/contraste) ─── */
-  --shadow-sm: 0 1px 0 var(--linha);
-  --shadow-md: 0 2px 0 var(--linha-forte);
-  --shadow-lg: 0 10px 30px rgba(28, 26, 23, 0.16);
-  --shadow-xl: 0 20px 50px rgba(28, 26, 23, 0.22);
-  --shadow-primary: none;
-  --shadow-accent:  none;
+  /* ── Sombras (suaves e coloridas — elevação real, não só hairline) ────── */
+  --shadow-sm: 0 2px 8px rgba(21, 51, 28, 0.08);
+  --shadow-md: 0 6px 18px rgba(21, 51, 28, 0.10);
+  --shadow-lg: 0 18px 40px rgba(21, 51, 28, 0.14);
+  --shadow-xl: 0 28px 64px rgba(21, 51, 28, 0.20);
+  --shadow-primary: 0 10px 26px rgba(47, 174, 62, 0.30);
+  --shadow-accent:  0 10px 26px rgba(242, 101, 15, 0.32);
 
-  /* Foco acessível (contorno firme, visível sobre papel e quadro) */
-  --ring-focus: 0 0 0 3px rgba(226, 87, 15, 0.45);
+  /* Foco acessível */
+  --ring-focus: 0 0 0 3px rgba(242, 101, 15, 0.45);
 
-  /* ── Motion (só funcional) ───────────────────────────────────────────── */
-  --dur-fast:   110ms;
-  --dur-base:   200ms;
-  --dur-slow:   320ms;
+  /* ── Motion (energia controlada — spring nos CTAs) ───────────────────── */
+  --dur-fast:   130ms;
+  --dur-base:   220ms;
+  --dur-slow:   360ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring:   cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
   --transition: var(--dur-base) var(--ease-standard);
 
   /* ── Layout ──────────────────────────────────────────────────────────── */
@@ -157,7 +178,7 @@
   --z-modal:   1000;
   --z-toast:   1100;
 
-  /* ── Assinatura: filete pontilhado do "talão/quadro" ─────────────────── */
+  /* ── Assinatura: filete pontilhado do "talão/quadro" (mantido) ───────── */
   --leader: radial-gradient(circle, var(--linha-forte) 1px, transparent 1.5px) repeat-x;
 }
 

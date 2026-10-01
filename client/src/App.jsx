@@ -14,6 +14,7 @@ import Confirmation from './pages/Confirmation/Confirmation'
 import Sorteio from './pages/Sorteio/Sorteio'
 import Streak from './pages/Streak/Streak'
 import Planos from './pages/Planos/Planos'
+import Perfil from './pages/Perfil/Perfil'
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="/sorteio" element={<Sorteio />} />
             <Route path="/streak" element={<Streak />} />
             <Route path="/planos" element={<Planos />} />
+            <Route path="/perfil" element={<Perfil />} />
           </Routes>
           </ToastProvider>
         </OrderProvider>

@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useOrder } from '../../context/useOrder'
 import { useAuth } from '../../context/useAuth'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import { Button, Spinner, MenuLine } from '../../components/ui'
-import { menuApi } from '../../api'
+import { menuApi, planoMenuApi } from '../../api'
+import { CATEGORIA_LABEL } from '../../../../shared/constants'
 import styles from './Menu.module.css'
 
 function dataDeHoje() {
@@ -24,33 +25,43 @@ function resumoItem(item) {
   return partes.join(' · ')
 }
 
+const CATEGORIAS_COM_MENU_PROPRIO = new Set(['premium_fit_starter', 'premium_muscle', 'premium_equilibrio'])
+
 export default function Menu() {
   const navigate = useNavigate()
   const { state, dispatch } = useOrder()
-  const { premium } = useAuth()
+  const { premium, categoriaAtiva } = useAuth()
   const { orderItems } = state
+  const menuPremium = CATEGORIAS_COM_MENU_PROPRIO.has(categoriaAtiva)
 
   const [pratos, setPratos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [busca, setBusca] = useState('')
 
+  // Cliente com uma subscrição premium ativa (Fase 7) vê só o cardápio
+  // próprio do seu plano (Fit Starter/Muscle) — não o menu normal do dia.
+  const carregarMenu = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const menu = menuPremium ? await planoMenuApi.get(categoriaAtiva) : await menuApi.getHoje()
+      const lista = (Array.isArray(menu?.itens) ? menu.itens : [])
+        .map((i) => (typeof i.pratoId === 'object' && i.pratoId
+          ? { ...i.pratoId, destaque: menuPremium ? false : Boolean(i.destaque), exclusivo: menuPremium ? false : Boolean(i.exclusivo) }
+          : null))
+        .filter(Boolean)
+      setPratos(lista)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [menuPremium, categoriaAtiva])
+
   useEffect(() => {
-    let active = true
-    menuApi.getHoje()
-      .then((menu) => {
-        if (!active) return
-        const lista = (Array.isArray(menu?.itens) ? menu.itens : [])
-          .map((i) => (typeof i.pratoId === 'object' && i.pratoId
-            ? { ...i.pratoId, destaque: Boolean(i.destaque), exclusivo: Boolean(i.exclusivo) }
-            : null))
-          .filter(Boolean)
-        setPratos(lista)
-      })
-      .catch((e) => { if (active) setError(e.message) })
-      .finally(() => { if (active) setLoading(false) })
-    return () => { active = false }
-  }, [])
+    void carregarMenu()
+  }, [carregarMenu])
 
   const filtrados = pratos.filter((p) =>
     p.nome.toLowerCase().includes(busca.toLowerCase()) ||
@@ -75,8 +86,10 @@ export default function Menu() {
       <section className={styles.topo}>
         <div className={styles.topoInner}>
           <div>
-            <span className={styles.kicker}>O quadro de hoje · {dataDeHoje()}</span>
-            <h1 className={styles.titulo}>Menu de hoje</h1>
+            <span className={styles.kicker}>
+              {menuPremium ? `O teu plano · ${CATEGORIA_LABEL[categoriaAtiva]}` : `O quadro de hoje · ${dataDeHoje()}`}
+            </span>
+            <h1 className={styles.titulo}>{menuPremium ? 'O teu cardápio' : 'Menu de hoje'}</h1>
           </div>
           <div className={styles.busca}>
             <input
@@ -103,7 +116,13 @@ export default function Menu() {
             </div>
           ) : filtrados.length === 0 ? (
             <div className={styles.estado}>
-              <p className={styles.estadoTexto}>{busca ? `Sem resultados para "${busca}".` : 'O menu de hoje ainda não foi publicado.'}</p>
+              <p className={styles.estadoTexto}>
+                {busca
+                  ? `Sem resultados para "${busca}".`
+                  : menuPremium
+                    ? 'O cardápio do teu plano ainda não foi publicado.'
+                    : 'O menu de hoje ainda não foi publicado.'}
+              </p>
               <p className={styles.estadoSub}>{busca ? 'Tenta outra procura.' : 'Volta mais logo.'}</p>
             </div>
           ) : (
@@ -113,10 +132,11 @@ export default function Menu() {
                   {normais.map((p) => (
                     <MenuLine
                       key={p._id}
+                      thumb={p.imagem?.url}
+                      thumbBadge={p.destaque ? 'Hoje' : undefined}
                       name={p.nome}
                       note={p.descricao}
                       price={p.preco}
-                      lead={p.destaque ? <span className={styles.hojeTag}>Hoje</span> : undefined}
                       onClick={() => selecionar(p)}
                     />
                   ))}
@@ -135,6 +155,7 @@ export default function Menu() {
                     {exclusivos.map((p) => (
                       <MenuLine
                         key={p._id}
+                        thumb={p.imagem?.url}
                         name={p.nome}
                         note={p.descricao}
                         price={premium ? p.preco : undefined}

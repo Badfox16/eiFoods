@@ -68,6 +68,11 @@ export const planosApi = {
   list: () => request('/planos'),
 }
 
+export const planoMenuApi = {
+  /** Cardápio de uma categoria premium (Fase 7), com pratos populados. */
+  get: (categoria) => request(`/planos-menu/${categoria}`),
+}
+
 export const subscricoesApi = {
   /** Subscrições do cliente autenticado (mais recentes primeiro). */
   me: () => request('/subscricoes/me'),
@@ -106,4 +111,7 @@ export const authApi = {
       return null
     }
   },
+
+  /** Atualiza o perfil do cliente da sessão (por agora, só o nome). */
+  updateMe: (nome) => request('/auth/me', json('PATCH', { nome })).then((r) => r.cliente),
 }

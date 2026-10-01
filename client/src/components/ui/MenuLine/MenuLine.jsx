@@ -13,9 +13,11 @@ import styles from './MenuLine.module.css'
  *  - note        meta secundária por baixo do nome
  *  - price       valor à direita (renderizado em mono)
  *  - unit        sufixo do valor (ex.: "MT"); default "MT"
- *  - lead        elemento à esquerda (nº, miniatura, marca)
+ *  - lead        elemento à esquerda (nº, miniatura, marca) — ignorado se `thumb` for dado
+ *  - thumb       URL de uma foto do prato; mostra uma miniatura à esquerda
+ *  - thumbBadge  selo pequeno sobre o canto da miniatura (ex.: "Hoje")
  *  - onClick     torna a linha acionável (button)
- *  - locked      estado bloqueado (ex.: prato exclusivo)
+ *  - locked      estado bloqueado (ex.: prato exclusivo) — esbate a miniatura
  *  - strong      linha de total (destaque piri)
  *  - action      elemento à direita em vez do preço
  */
@@ -25,6 +27,8 @@ export function MenuLine({
   price,
   unit = 'MT',
   lead,
+  thumb,
+  thumbBadge,
   onClick,
   locked = false,
   strong = false,
@@ -43,7 +47,14 @@ export function MenuLine({
 
   return (
     <Comp className={classes} onClick={onClick} type={onClick ? 'button' : undefined} {...props}>
-      {lead != null && <span className={styles.lead}>{lead}</span>}
+      {thumb ? (
+        <span className={styles.thumbWrap}>
+          <img src={thumb} alt="" className={styles.thumb} loading="lazy" />
+          {thumbBadge != null && <span className={styles.thumbBadge}>{thumbBadge}</span>}
+        </span>
+      ) : (
+        lead != null && <span className={styles.lead}>{lead}</span>
+      )}
       <span className={styles.body}>
         <span className={styles.name}>{name}</span>
         {note && <span className={styles.note}>{note}</span>}

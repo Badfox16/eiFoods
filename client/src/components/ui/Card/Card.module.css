@@ -2,43 +2,50 @@
   position: relative;
   background: var(--color-surface);
   border: 1.5px solid var(--linha);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
   transition: border-color var(--dur-base) var(--ease-standard),
+              box-shadow var(--dur-base) var(--ease-standard),
               transform var(--dur-base) var(--ease-out);
 }
 
 .board {
-  background: var(--panela);
-  border-color: #000;
+  background: var(--gradient-folha);
+  border-color: var(--folha-dark);
   color: var(--giz);
+  box-shadow: var(--shadow-primary);
 }
 
 .sunken {
   background: var(--xima-2);
   border-color: var(--linha);
+  box-shadow: none;
 }
 
 .outline {
   background: transparent;
   border-color: var(--linha-forte);
+  box-shadow: none;
 }
 
 .interactive { cursor: pointer; }
-.interactive:hover { transform: translateY(-2px); border-color: var(--tinta-1); }
+.interactive:hover { transform: translateY(-3px); border-color: var(--brasa); box-shadow: var(--shadow-lg); }
 .interactive:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 
-/* Filete sólido de realce à esquerda (não gradiente) */
+/* Filete sólido de realce à esquerda — mantém-se sólido, não gradiente, para
+   não competir com o gradiente já usado nos CTAs/heróis. */
 .accent_piri,
 .accent_matapa,
-.accent_acafrao { padding-left: calc(var(--space-lg) + 4px); }
+.accent_acafrao { padding-left: calc(var(--space-lg) + 5px); }
 .accent_piri::before,
 .accent_matapa::before,
 .accent_acafrao::before {
   content: '';
   position: absolute;
   top: -1.5px; bottom: -1.5px; left: -1.5px;
-  width: 4px;
+  width: 5px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
 .accent_piri::before    { background: var(--brasa); }
 .accent_matapa::before  { background: var(--matapa); }

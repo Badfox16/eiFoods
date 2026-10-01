@@ -23,8 +23,7 @@ export default function Footer() {
         {/* ── Brand ── */}
         <div className={styles.brand}>
           <div className={styles.logoWrap}>
-            <span className={styles.logoMark} aria-hidden="true" />
-            <span className={styles.logoNome}>Marmita Fresca</span>
+            <img src="/logo.jpg" alt="Marmita Fresca" className={styles.logoImg} />
           </div>
           <p className={styles.tagline}>Marmita fresca, entregue no escritório.</p>
           <p className={styles.descricao}>

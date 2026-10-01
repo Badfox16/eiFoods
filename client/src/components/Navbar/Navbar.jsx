@@ -35,8 +35,7 @@ export default function Navbar({ showCta = false }) {
     <>
       <header className={styles.header}>
         <button className={styles.wordmark} onClick={() => irPara('/')} aria-label="Ir para o início">
-          <span className={styles.wordmarkMark} aria-hidden="true" />
-          <span className={styles.wordmarkText}>Marmita Fresca</span>
+          <img src="/logo.jpg" alt="Marmita Fresca" className={styles.wordmarkLogo} />
         </button>
 
         <nav className={styles.navDesktop}>
@@ -53,10 +52,10 @@ export default function Navbar({ showCta = false }) {
         <div className={styles.rightSection}>
           {isAuthenticated ? (
             <div className={styles.account}>
-              <span className={styles.accountName}>
+              <button className={styles.accountName} onClick={() => irPara('/perfil')}>
                 {premium && <span className={styles.crown} title="Cliente premium">PREMIUM</span>}
-                {cliente?.nome || 'Conta'}
-              </span>
+                {cliente?.nome || 'O meu perfil'}
+              </button>
               <button className={styles.textBtn} onClick={() => { logout(); setMenuAberto(false) }}>
                 Sair
               </button>
@@ -114,13 +113,22 @@ export default function Navbar({ showCta = false }) {
               </NavLink>
             ))}
             {isAuthenticated && (
-              <NavLink
-                to="/streak"
-                className={({ isActive }) => `${styles.navMobileItem} ${isActive ? styles.navMobileItemActive : ''}`}
-                onClick={() => setMenuAberto(false)}
-              >
-                Sequência
-              </NavLink>
+              <>
+                <NavLink
+                  to="/streak"
+                  className={({ isActive }) => `${styles.navMobileItem} ${isActive ? styles.navMobileItemActive : ''}`}
+                  onClick={() => setMenuAberto(false)}
+                >
+                  Sequência
+                </NavLink>
+                <NavLink
+                  to="/perfil"
+                  className={({ isActive }) => `${styles.navMobileItem} ${isActive ? styles.navMobileItemActive : ''}`}
+                  onClick={() => setMenuAberto(false)}
+                >
+                  O meu perfil
+                </NavLink>
+              </>
             )}
 
             <div className={styles.navMobileDivider} />

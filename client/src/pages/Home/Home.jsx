@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
@@ -39,8 +39,27 @@ export default function Home() {
     return () => { active = false }
   }, [])
 
-  const destaque = itens.find((p) => p.destaque) ?? itens[0] ?? null
   const listaMenu = itens.slice(0, 6)
+
+  // ── Slider do hero: destaque primeiro, depois até 4 pratos com foto ──
+  const slides = useMemo(() => {
+    const comFoto = itens.filter((p) => p.imagem?.url)
+    const destaque = comFoto.find((p) => p.destaque)
+    const resto = comFoto.filter((p) => p !== destaque)
+    return [destaque, ...resto].filter(Boolean).slice(0, 5)
+  }, [itens])
+
+  const [slideIndex, setSlideIndex] = useState(0)
+  const [pausado, setPausado] = useState(false)
+
+  useEffect(() => {
+    if (slides.length < 2 || pausado) return undefined
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    const id = setInterval(() => setSlideIndex((i) => (i + 1) % slides.length), 4500)
+    return () => clearInterval(id)
+  }, [slides.length, pausado])
+
+  const slideAtual = slides.length ? slides[slideIndex % slides.length] : null
 
   return (
     <div className={styles.page}>
@@ -72,18 +91,40 @@ export default function Home() {
               </div>
             </div>
 
-            {destaque && (
-              <figure className={styles.heroDish}>
-                <img
-                  src={destaque.imagem?.url ?? destaque.imagem}
-                  alt={destaque.nome}
-                  className={styles.heroDishImg}
-                />
-                <figcaption className={styles.heroDishCap}>
-                  <span className={styles.heroDishTag}>Prato do dia</span>
-                  <span className={styles.heroDishName}>{destaque.nome}</span>
-                  <span className={styles.heroDishPrice}>{destaque.preco}<span>MT</span></span>
+            {slideAtual && (
+              <figure
+                className={styles.heroDish}
+                onMouseEnter={() => setPausado(true)}
+                onMouseLeave={() => setPausado(false)}
+              >
+                <div className={styles.heroDishImgStack}>
+                  {slides.map((p, i) => (
+                    <img
+                      key={p._id}
+                      src={p.imagem.url}
+                      alt={p.nome}
+                      className={`${styles.heroDishImg} ${i === slideIndex % slides.length ? styles.heroDishImgActive : ''}`}
+                      loading={i === 0 ? undefined : 'lazy'}
+                    />
+                  ))}
+                </div>
+                <figcaption key={slideIndex} className={styles.heroDishCap}>
+                  {slideAtual.destaque && <span className={styles.heroDishTag}>Prato do dia</span>}
+                  <span className={styles.heroDishName}>{slideAtual.nome}</span>
+                  <span className={styles.heroDishPrice}>{slideAtual.preco}<span>MT</span></span>
                 </figcaption>
+                {slides.length > 1 && (
+                  <div className={styles.heroDots}>
+                    {slides.map((p, i) => (
+                      <button
+                        key={p._id}
+                        className={`${styles.heroDot} ${i === slideIndex % slides.length ? styles.heroDotActive : ''}`}
+                        onClick={() => setSlideIndex(i)}
+                        aria-label={`Ver ${p.nome}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </figure>
             )}
           </div>
@@ -108,6 +149,8 @@ export default function Home() {
               {listaMenu.map((p) => (
                 <MenuLine
                   key={p._id}
+                  thumb={p.imagem?.url}
+                  thumbBadge={p.destaque ? 'Hoje' : undefined}
                   name={p.nome}
                   note={p.descricao}
                   price={p.preco}
