@@ -20,6 +20,7 @@ import adminRouter from './routes/admin.ts'
 import streakRouter from './routes/streak.ts'
 import planosRouter from './routes/planos.ts'
 import subscricoesRouter from './routes/subscricoes.ts'
+import planosMenuRouter from './routes/planosMenu.ts'
 import swaggerSpec from './lib/swagger.ts'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -73,6 +74,7 @@ app.use('/api/admin', adminRouter)
 app.use('/api/streak', streakRouter)
 app.use('/api/planos', planosRouter)
 app.use('/api/subscricoes', subscricoesRouter)
+app.use('/api/planos-menu', planosMenuRouter)
 
 // ── API Docs (Swagger UI) ────────────────────────────────────────────────────
 

@@ -1,7 +1,9 @@
 import mongoose, { type Document, type Model, Schema, type Types } from 'mongoose'
+import type { TipoPlano, DuracaoPlano, PrecoUnidade } from './Plano'
 
 /**
- * Subscrição de um plano pré-pago por um cliente (Fase 2).
+ * Subscrição de um plano pré-pago por um cliente (Fase 2; snapshot de
+ * categoria/duração — Fase 7).
  *
  * Ciclo de vida (`estado`):
  *   `pendente_pagamento` → cliente comprou e enviou comprovativo; aguarda admin.
@@ -14,8 +16,11 @@ import mongoose, { type Document, type Model, Schema, type Types } from 'mongoos
  * `refeicoesRestantes` é creditado a partir do snapshot do plano e a janela de
  * validade (`dataInicio`/`dataExpiracao`) é definida.
  *
- * Guardamos snapshots (`planoNome`, `numRefeicoes`, `preco`) para que alterações
- * futuras ao `Plano` não reescrevam subscrições já emitidas.
+ * Guardamos snapshots (`planoNome`, `categoria`, `duracao`, `numRefeicoes`,
+ * `preco`) para que alterações futuras ao `Plano` não reescrevam subscrições
+ * já emitidas. `categoria` (Fase 7) também determina, enquanto a subscrição
+ * estiver ativa, qual `PlanoMenu` o cliente vê no ecrã de Menu (categorias
+ * premium têm um cardápio próprio, separado do menu normal).
  */
 
 export type SubscricaoEstado = 'pendente_pagamento' | 'ativa' | 'expirada' | 'rejeitada'
@@ -30,8 +35,12 @@ export interface ISubscricao extends Document {
 	planoId: Types.ObjectId
 	/** Snapshot do plano no momento da compra (imune a edições posteriores). */
 	planoNome: string
+	/** Snapshot (Fase 7): categoria/duração do plano comprado. */
+	categoria: TipoPlano
+	duracao: DuracaoPlano
 	numRefeicoes: number
 	preco: number
+	precoUnidade: PrecoUnidade
 	/** Snapshot: era um plano premium? (concede tier premium enquanto ativa — Fase 3) */
 	premium: boolean
 	/** Refeições ainda disponíveis para consumo. */
@@ -62,8 +71,17 @@ const SubscricaoSchema = new Schema<ISubscricao>(
 		clienteId: { type: Schema.Types.ObjectId, ref: 'Cliente', required: true, index: true },
 		planoId: { type: Schema.Types.ObjectId, ref: 'Plano', required: true },
 		planoNome: { type: String, required: true, trim: true },
+		categoria: {
+			type: String,
+			enum: ['classico', 'premium_fit_starter', 'premium_muscle', 'premium_equilibrio'],
+			required: true,
+			default: 'classico',
+			index: true,
+		},
+		duracao: { type: String, enum: ['starter', 'plus', 'mensal'], required: true, default: 'starter' },
 		numRefeicoes: { type: Number, required: true, min: 1 },
 		preco: { type: Number, required: true, min: 0 },
+		precoUnidade: { type: String, enum: ['total', 'por_refeicao'], default: 'total' },
 		premium: { type: Boolean, default: false },
 		refeicoesRestantes: { type: Number, required: true, min: 0, default: 0 },
 		estado: {

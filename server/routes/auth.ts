@@ -7,7 +7,7 @@ import {
 	limparCookieSessao,
 	requireAuth,
 } from '../lib/auth'
-import { isClientePremium } from '../lib/subscricao'
+import { isClientePremium, getCategoriaAtiva } from '../lib/subscricao'
 
 const router = Router()
 
@@ -92,11 +92,43 @@ router.post('/logout', (_req, res) => {
 	res.json({ ok: true })
 })
 
-// GET /api/auth/me  → cliente da sessão (+ tier premium, Fase 3)
+/** Cliente serializado + tier premium (Fase 3) + categoria ativa (Fase 7). */
+async function serializarClienteCompleto(cliente: Parameters<typeof serializarCliente>[0] & { _id: unknown }) {
+	const clienteId = String(cliente._id)
+	const [premium, categoriaAtiva] = await Promise.all([
+		isClientePremium(clienteId),
+		getCategoriaAtiva(clienteId),
+	])
+	return { ...serializarCliente(cliente), premium, categoriaAtiva }
+}
+
+// GET /api/auth/me  → cliente da sessão (+ tier premium — Fase 3; categoria ativa — Fase 7)
 router.get('/me', requireAuth, async (req, res, next) => {
 	try {
-		const premium = await isClientePremium(String(req.cliente!._id))
-		res.json({ cliente: { ...serializarCliente(req.cliente!), premium } })
+		res.json({ cliente: await serializarClienteCompleto(req.cliente!) })
+	} catch (err) {
+		next(err)
+	}
+})
+
+// PATCH /api/auth/me  { nome }  → atualiza o perfil do cliente da sessão (Fase 8 — Perfil)
+// Por agora só o nome é editável; o telefone é a identidade da conta (exige
+// novo OTP para mudar, não suportado ainda).
+router.patch('/me', requireAuth, async (req, res, next) => {
+	try {
+		const { nome } = req.body as { nome?: string }
+		if (typeof nome !== 'string' || !nome.trim()) {
+			return res.status(400).json({ error: 'Nome é obrigatório' })
+		}
+		if (nome.trim().length < 2) {
+			return res.status(400).json({ error: 'Nome deve ter pelo menos 2 caracteres' })
+		}
+
+		const cliente = req.cliente!
+		cliente.nome = nome.trim()
+		await cliente.save()
+
+		res.json({ cliente: await serializarClienteCompleto(cliente) })
 	} catch (err) {
 		next(err)
 	}

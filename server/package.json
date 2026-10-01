@@ -9,7 +9,8 @@
     "test": "bun test",
     "seed": "bun seed.ts",
     "migrate:single-company-code": "bun migrate-single-company-code.ts",
-    "migrate:pratodia-to-menu": "bun migrate-pratodia-to-menu.ts"
+    "migrate:pratodia-to-menu": "bun migrate-pratodia-to-menu.ts",
+    "migrate:plano-restructure": "bun migrate-plano-restructure.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

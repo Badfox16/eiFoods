@@ -147,6 +147,62 @@ emoji-ícone nem pill por defeito — regras registadas em memória do projeto.
   em effect). Admin com typecheck + lint + build limpos.
 - [ ] Atualizar Swagger para todas as rotas novas (auth, admin, menu, planos, subscrições, streak).
 
+## Fase 7 — Planos Premium Nutrição (subscrição)
+
+Ajuste pedido pelo cliente à secção Planos existente (Fase 2/3). Estrutura
+final **6 planos** (confirmada pelo esboço do cliente, que só ramifica a
+duração dentro do Clássico — a primeira versão desta fase tinha assumido
+duração × categoria em todas as categorias, 9 planos; corrigido):
+  - **Clássico**: 3 planos — Starter (semanal/5/195 MZN), Plus (quinzenal/15/
+    560 MZN), Mensal (20/720 MZN).
+  - **Premium Fit Starter**, **Premium Muscle** e **Premium Equilíbrio**: 1
+    plano cada, sem variante de duração, 250 MZN — igual nos três ("mesmo
+    preço" no pedido original).
+
+`Plano.tipo` foi renomeado para `duracao` para não colidir com o novo
+`categoria` (tipo de dieta).
+
+- [x] **Modelo `Plano`**: `categoria` (`classico` | `premium_fit_starter` |
+  `premium_muscle` | `premium_equilibrio`) + `duracao` (`starter`=semanal/5 |
+  `plus`=quinzenal/15 | `mensal`=20) — só exposta na UI para `classico`; nos
+  planos premium é um valor técnico fixo (`starter`), não escolhido pelo
+  cliente. `precoUnidade` (`total` | `por_refeicao`) documenta a leitura do
+  preço (default `total`).
+  - **TODO(produto)**: os valores acima são o preço **total** do pacote ou
+    **por refeição**? Assumido `total`; `precoUnidade` deixa a leitura
+    explícita até o cliente confirmar — ver `Plano.ts`, `constants.ts`.
+  - **Resolvido**: os preços de Plus/Mensal/Fit Starter/Muscle começaram como
+    mockup ("Sugestão", botão desativado) e foram adotados como preços reais
+    a pedido do cliente — já não há `preco: null` em nenhum plano ativo.
+- [x] **Objetivo → subplano**: pergunta "Qual é o seu objetivo?" no fluxo
+  Premium Nutrição (Perder peso/Manter peso/Ganhar massa/Alimentação
+  equilibrada) encaminha via `OBJETIVO_PARA_CATEGORIA` (`shared/constants.ts`).
+  Os 4 objetivos mapeiam sempre para um subplano premium — "Manter peso" e
+  "Alimentação equilibrada" partilham `premium_equilibrio` (mesmo perfil
+  nutricional: calorias/macros moderados). Já não há fallback para o
+  Clássico nesta pergunta.
+- [x] **Modelo `PlanoMenu`**: cardápio de pratos por categoria premium (Fit
+  Starter/Muscle/Equilíbrio), separado do menu normal do dia. `classico`
+  reutiliza o `Menu` normal. Rotas `GET/PUT /api/planos-menu/:categoria`.
+- [x] **Integração com o pedido**: `Cliente` autenticado com subscrição ativa
+  de categoria premium vê, no ecrã de Menu, só o `PlanoMenu` dessa categoria
+  (`/api/auth/me` devolve `categoriaAtiva`); `POST /orders` reforça no
+  servidor que só pode encomendar pratos desse cardápio (mesmo padrão do
+  `allowedPratosSet` de empresa).
+- [x] **Client `Planos.jsx`**: assistente tipo → objetivo (se Premium) →
+  duração → pagamento (reaproveita o fluxo de comprovativo já existente).
+  Redesenho visual "Marmita Viva" (ver secção de design abaixo).
+- [x] **Admin**: página **Planos** com abas — Visão geral, Planos (CRUD
+  agrupado por categoria), Subscrições, Menus (gestão de cardápio por
+  categoria, incl. Clássico via menu do dia).
+- [x] **Seed** (`seed.ts`): 6 planos (3 Clássico + Fit Starter + Muscle +
+  Equilíbrio) + cardápios de exemplo (9 pratos novos) + preços reais.
+- [x] **Migração** (`migrate-plano-restructure.ts`, idempotente): backfill de
+  `categoria`/`duracao`/`precoUnidade` em `Plano`/`Subscricao` já existentes
+  a partir do antigo `tipo`. Planos antigos com `premium:true` ficam em
+  `categoria:'classico'` (não há forma segura de inferir Fit Starter vs.
+  Muscle) — o admin pode reclassificar manualmente se necessário.
+
 ---
 
 ## Ordem de execução recomendada

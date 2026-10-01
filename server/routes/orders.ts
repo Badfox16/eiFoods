@@ -5,6 +5,7 @@ import Extra from '../models/Extra'
 import Empresa, { getCurrentDateKey } from '../models/Empresa'
 import Cliente from '../models/Cliente'
 import Menu, { getCurrentMenuDateKey } from '../models/Menu'
+import PlanoMenu from '../models/PlanoMenu'
 import PratoDoDia, { type DiaSemana } from '../models/PratoDoDia'
 import { getMaputoWeekdayNumber } from '../lib/businessTime'
 import { lerSessao } from '../lib/auth'
@@ -127,11 +128,24 @@ router.post('/', async (req, res, next) => {
     // ── Tier premium (Fase 3): acesso a pratos exclusivos ──
     // Um cliente autenticado com subscrição premium ativa pode encomendar os
     // pratos marcados como `exclusivo` no menu de hoje. Anónimos e não-premium
-    // são rejeitados. Reutilizamos `clienteDoc`/`clientePremium` mais abaixo.
+    // são rejeitados.
     const sessao = lerSessao(req)
     const clienteDoc = sessao ? await Cliente.findById(sessao.sub) : null
     const exclusivosHoje = await getExclusivosHojeSet()
     const clientePremium = clienteDoc ? await isClientePremium(clienteDoc._id) : false
+
+    // ── Menu por plano premium (Fase 7) ──
+    // Se o cliente tiver uma subscrição ativa de categoria premium
+    // (premium_fit_starter/premium_muscle), o Menu.jsx só lhe mostra o
+    // `PlanoMenu` dessa categoria — reforçamos isso aqui: só pode encomendar
+    // pratos desse cardápio enquanto a subscrição estiver ativa (mesmo padrão
+    // do `allowedPratosSet` de empresa, acima).
+    const subscricaoAtiva = clienteDoc ? await getSubscricaoAtiva(clienteDoc._id) : null
+    let allowedPratosPremiumSet: Set<string> | null = null
+    if (subscricaoAtiva && subscricaoAtiva.categoria !== 'classico') {
+      const planoMenu = await PlanoMenu.findOne({ categoria: subscricaoAtiva.categoria })
+      allowedPratosPremiumSet = new Set((planoMenu?.itens ?? []).map((i) => String(i.pratoId)))
+    }
 
     // ── Construir itens com preços do servidor ──
     const orderItems = await Promise.all(
@@ -141,6 +155,13 @@ router.post('/', async (req, res, next) => {
 
         if (allowedPratosSet && !allowedPratosSet.has(String(prato._id))) {
           throw Object.assign(new Error(`Prato ${prato.nome} não está no menu da empresa`), { status: 403 })
+        }
+
+        if (allowedPratosPremiumSet && !allowedPratosPremiumSet.has(String(prato._id))) {
+          throw Object.assign(
+            new Error(`${prato.nome} não está no menu do teu plano — escolhe um prato do teu cardápio`),
+            { status: 403 }
+          )
         }
 
         if (exclusivosHoje.has(String(prato._id)) && !clientePremium) {
@@ -193,13 +214,13 @@ router.post('/', async (req, res, next) => {
     let subscricaoId: string | undefined
     let descontoStreakPercent = 0
     let recompensasStreak: { dias: number; descricao: string }[] = []
-    let subscricao: Awaited<ReturnType<typeof getSubscricaoAtiva>> = null
+    // Reutiliza a subscrição já obtida acima (para o scoping do menu premium)
+    // em vez de voltar a consultar a base de dados.
+    let subscricao: Awaited<ReturnType<typeof getSubscricaoAtiva>> = subscricaoAtiva
     {
       const cliente = clienteDoc
       if (cliente) {
         clienteId = String(cliente._id)
-
-        subscricao = await getSubscricaoAtiva(cliente._id)
 
         // ── Streak ──
         const resultado = await registrarPedidoStreak(cliente)

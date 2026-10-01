@@ -31,8 +31,9 @@ const spec = {
     { name: 'Auth', description: 'Identidade do cliente por telefone + OTP (sessão em cookie httpOnly)' },
     { name: 'Admin', description: 'Autenticação do painel de administração (username + password)' },
     { name: 'Streak', description: 'Sistema de sequência/recompensas (estilo Duolingo) por cliente' },
-    { name: 'Planos', description: 'Planos pré-pagos de refeições (config admin)' },
+    { name: 'Planos', description: 'Planos pré-pagos de refeições — categoria (Clássico/Premium Fit Starter/Premium Muscle) × duração (Starter/Plus/Mensal), config admin' },
     { name: 'Subscrições', description: 'Subscrições dos clientes: compra, comprovativo e confirmação manual' },
+    { name: 'Menus Premium', description: 'Cardápio próprio de cada categoria de plano premium (separado do menu normal do dia)' },
   ],
 
   // ── Reusable schemas ──────────────────────────────────────────────────────
@@ -324,13 +325,35 @@ const spec = {
         type: 'object',
         properties: {
           _id: { type: 'string', example: '66b0bb22c2d3e4f556677aa0' },
-          nome: { type: 'string', example: 'Plano Mensal Premium' },
-          tipo: { type: 'string', enum: ['semanal', 'bissemanal', 'mensal'], example: 'mensal' },
-          numRefeicoes: { type: 'integer', example: 22 },
-          preco: { type: 'number', example: 4500 },
-          validadeDias: { type: 'integer', example: 30 },
-          premium: { type: 'boolean', example: true, description: 'Concede tier premium (desbloqueia exclusivos) enquanto ativo' },
-          descricao: { type: 'string', example: '22 refeições + acesso a pratos exclusivos' },
+          nome: { type: 'string', example: 'Premium Muscle — Starter' },
+          categoria: {
+            type: 'string',
+            enum: ['classico', 'premium_fit_starter', 'premium_muscle'],
+            example: 'premium_muscle',
+            description: 'Tipo de dieta. Categorias premium têm cardápio próprio — ver /planos-menu.',
+          },
+          duracao: {
+            type: 'string',
+            enum: ['starter', 'plus', 'mensal'],
+            example: 'starter',
+            description: 'Modalidade (Starter=semanal/5, Plus=quinzenal/15, Mensal=20). Substitui o antigo `tipo`.',
+          },
+          numRefeicoes: { type: 'integer', example: 5 },
+          preco: {
+            type: 'number',
+            nullable: true,
+            example: 195,
+            description: '`null` = preço ainda por definir (mostrar "Preço a confirmar"), ex.: Plus/Mensal antes de decisão de produto.',
+          },
+          precoUnidade: {
+            type: 'string',
+            enum: ['total', 'por_refeicao'],
+            example: 'total',
+            description: 'TODO(produto): não confirmado se os 195 MZN do Starter são o total do pacote ou por refeição.',
+          },
+          validadeDias: { type: 'integer', example: 5 },
+          premium: { type: 'boolean', example: true, description: 'Concede tier premium (desbloqueia exclusivos) enquanto ativo — derivado de `categoria !== classico`' },
+          descricao: { type: 'string', example: 'Ganho de massa: maior teor proteico, mais calorias, mais carboidratos complexos.' },
           ativo: { type: 'boolean', example: true },
           createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
@@ -342,17 +365,39 @@ const spec = {
         properties: {
           _id: { type: 'string' },
           clienteId: { description: 'ID do cliente (populado com { _id, telefone, nome } nas rotas admin)', oneOf: [{ type: 'string' }, { type: 'object' }] },
-          planoId: { description: 'ID do plano (populado com { _id, nome, tipo } nas rotas admin)', oneOf: [{ type: 'string' }, { type: 'object' }] },
-          planoNome: { type: 'string', example: 'Plano Mensal Premium' },
-          numRefeicoes: { type: 'integer', example: 22 },
-          preco: { type: 'number', example: 4500 },
+          planoId: { description: 'ID do plano (populado com { _id, nome, categoria, duracao } nas rotas admin)', oneOf: [{ type: 'string' }, { type: 'object' }] },
+          planoNome: { type: 'string', example: 'Premium Muscle — Starter' },
+          categoria: { type: 'string', enum: ['classico', 'premium_fit_starter', 'premium_muscle'], example: 'premium_muscle' },
+          duracao: { type: 'string', enum: ['starter', 'plus', 'mensal'], example: 'starter' },
+          numRefeicoes: { type: 'integer', example: 5 },
+          preco: { type: 'number', example: 195 },
+          precoUnidade: { type: 'string', enum: ['total', 'por_refeicao'], example: 'total' },
           premium: { type: 'boolean', example: true },
-          refeicoesRestantes: { type: 'integer', example: 18 },
+          refeicoesRestantes: { type: 'integer', example: 3 },
           estado: { type: 'string', enum: ['pendente_pagamento', 'ativa', 'expirada', 'rejeitada'], example: 'ativa' },
           comprovativo: { $ref: '#/components/schemas/Imagem' },
           dataInicio: { type: 'string', format: 'date-time', nullable: true },
           dataExpiracao: { type: 'string', format: 'date-time', nullable: true },
           notaAdmin: { type: 'string', example: 'Pagamento confirmado via M-Pesa' },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+
+      PlanoMenu: {
+        type: 'object',
+        description: 'Cardápio próprio de uma categoria de plano premium (Fase 7) — separado do menu normal do dia.',
+        properties: {
+          _id: { type: 'string' },
+          categoria: { type: 'string', enum: ['premium_fit_starter', 'premium_muscle'], example: 'premium_muscle' },
+          itens: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: { pratoId: { oneOf: [{ type: 'string' }, { $ref: '#/components/schemas/Prato' }] } },
+            },
+          },
+          ativo: { type: 'boolean', example: true },
           createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
         },
@@ -1174,10 +1219,25 @@ const spec = {
       get: {
         tags: ['Auth'],
         summary: 'Cliente da sessão atual',
-        description: 'Requer sessão válida (cookie httpOnly). Inclui `premium` (tier da Fase 3).',
+        description: 'Requer sessão válida (cookie httpOnly). Inclui `premium` (Fase 3) e `categoriaAtiva` (Fase 7).',
         security: [{ cookieAuth: [] }],
         responses: {
-          200: { description: 'Cliente autenticado', content: { 'application/json': { schema: { type: 'object', properties: { cliente: { allOf: [{ $ref: '#/components/schemas/Cliente' }, { type: 'object', properties: { premium: { type: 'boolean', example: false } } }] } } } } } },
+          200: { description: 'Cliente autenticado', content: { 'application/json': { schema: { type: 'object', properties: { cliente: { allOf: [{ $ref: '#/components/schemas/Cliente' }, { type: 'object', properties: { premium: { type: 'boolean', example: false }, categoriaAtiva: { type: 'string', nullable: true, example: null } } }] } } } } } },
+          401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+      patch: {
+        tags: ['Auth'],
+        summary: 'Atualizar o perfil do cliente da sessão (Fase 8)',
+        description: 'Por agora só o nome é editável — o telefone é a identidade da conta.',
+        security: [{ cookieAuth: [] }],
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { type: 'object', required: ['nome'], properties: { nome: { type: 'string', example: 'Ana Machava' } } } } },
+        },
+        responses: {
+          200: { description: 'Perfil atualizado', content: { 'application/json': { schema: { type: 'object', properties: { cliente: { $ref: '#/components/schemas/Cliente' } } } } } },
+          400: { description: 'Nome inválido', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           401: { description: 'Não autenticado', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
         },
       },
@@ -1322,8 +1382,11 @@ const spec = {
       get: {
         tags: ['Planos'],
         summary: 'Listar planos',
-        description: 'Por omissão devolve apenas os ativos; `?todos=1` inclui inativos (admin).',
-        parameters: [{ name: 'todos', in: 'query', schema: { type: 'string', example: '1' }, description: 'todos=1 inclui planos inativos' }],
+        description: 'Por omissão devolve apenas os ativos; `?todos=1` inclui inativos (admin); `?categoria=` filtra por categoria.',
+        parameters: [
+          { name: 'todos', in: 'query', schema: { type: 'string', example: '1' }, description: 'todos=1 inclui planos inativos' },
+          { name: 'categoria', in: 'query', schema: { type: 'string', enum: ['classico', 'premium_fit_starter', 'premium_muscle'] } },
+        ],
         responses: {
           200: { description: 'Lista de planos', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/Plano' } } } } },
         },
@@ -1338,14 +1401,15 @@ const spec = {
             'application/json': {
               schema: {
                 type: 'object',
-                required: ['nome', 'tipo', 'numRefeicoes', 'preco', 'validadeDias'],
+                required: ['nome', 'categoria', 'duracao', 'numRefeicoes', 'validadeDias'],
                 properties: {
-                  nome: { type: 'string', example: 'Plano Semanal' },
-                  tipo: { type: 'string', enum: ['semanal', 'bissemanal', 'mensal'] },
+                  nome: { type: 'string', example: 'Premium Fit Starter — Starter' },
+                  categoria: { type: 'string', enum: ['classico', 'premium_fit_starter', 'premium_muscle'] },
+                  duracao: { type: 'string', enum: ['starter', 'plus', 'mensal'] },
                   numRefeicoes: { type: 'integer', example: 5 },
-                  preco: { type: 'number', example: 1100 },
-                  validadeDias: { type: 'integer', example: 7 },
-                  premium: { type: 'boolean', default: false },
+                  preco: { type: 'number', nullable: true, example: 195, description: 'null = por definir' },
+                  precoUnidade: { type: 'string', enum: ['total', 'por_refeicao'], default: 'total' },
+                  validadeDias: { type: 'integer', example: 5 },
                   descricao: { type: 'string' },
                   ativo: { type: 'boolean', default: true },
                 },
@@ -1511,6 +1575,47 @@ const spec = {
           401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           404: { description: 'Não encontrada', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           409: { description: 'Só subscrições pendentes podem ser rejeitadas', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+    },
+
+    // ── Menus Premium ────────────────────────────────────────────────────────
+    '/planos-menu/{categoria}': {
+      get: {
+        tags: ['Menus Premium'],
+        summary: 'Cardápio de uma categoria premium',
+        description: 'Devolve `{ itens: [], ativo: false, message }` (não 404) se ainda não tiver sido configurado.',
+        parameters: [{ name: 'categoria', in: 'path', required: true, schema: { type: 'string', enum: ['premium_fit_starter', 'premium_muscle'] } }],
+        responses: {
+          200: { description: 'Cardápio da categoria', content: { 'application/json': { schema: { $ref: '#/components/schemas/PlanoMenu' } } } },
+          400: { description: 'Categoria inválida', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+        },
+      },
+      put: {
+        tags: ['Menus Premium'],
+        summary: 'Definir o cardápio de uma categoria (admin)',
+        description: 'Substitui a lista de pratos do cardápio (upsert).',
+        security: [{ adminAuth: [] }],
+        parameters: [{ name: 'categoria', in: 'path', required: true, schema: { type: 'string', enum: ['premium_fit_starter', 'premium_muscle'] } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['itens'],
+                properties: {
+                  itens: { type: 'array', items: { type: 'object', required: ['pratoId'], properties: { pratoId: { type: 'string' } } } },
+                  ativo: { type: 'boolean', default: true },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Cardápio atualizado', content: { 'application/json': { schema: { $ref: '#/components/schemas/PlanoMenu' } } } },
+          400: { description: 'Dados inválidos', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Não autenticado (admin)', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
         },
       },
     },

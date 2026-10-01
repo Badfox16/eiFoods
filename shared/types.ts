@@ -330,23 +330,70 @@ export interface StreakInfo {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Planos pré-pagos & Subscrições (Fase 2)
+// Planos pré-pagos & Subscrições (Fase 2; categorias/duração — Fase 7)
 // ═══════════════════════════════════════════════════════════════════════════
 
+/** @deprecated substituído por DuracaoPlano (mesmos valores, nome mais claro). */
 export type PlanoTipo = 'semanal' | 'bissemanal' | 'mensal'
+
+/**
+ * Modalidade de duração do plano (Fase 7). Renomeado de `tipo` → `duracao`
+ * para não colidir com `categoria` (tipo de dieta: Clássico/Fit Starter/Muscle).
+ * `semanal`/`bissemanal`/`mensal` mantidos como aliases de compatibilidade.
+ */
+export type DuracaoPlano = 'starter' | 'plus' | 'mensal'
+
+/**
+ * Categoria/tipo de plano (Fase 7):
+ *  - `classico`: mesmos pratos e preços do menu normal.
+ *  - `premium_fit_starter`: nutrição para perda de peso (menos calorias, mais
+ *    vegetais, proteína magra, menos fritos). Menu próprio (`PlanoMenu`).
+ *  - `premium_muscle`: nutrição para ganho de massa (mais proteína, calorias,
+ *    carboidratos complexos). Menu próprio (`PlanoMenu`).
+ *  - `premium_equilibrio`: nutrição equilibrada (calorias e macros moderados,
+ *    pratos variados) — subplano para quem quer manter o peso ou simplesmente
+ *    comer de forma equilibrada. Menu próprio (`PlanoMenu`).
+ */
+export type TipoPlano = 'classico' | 'premium_fit_starter' | 'premium_muscle' | 'premium_equilibrio'
+
+/**
+ * Objetivo que o cliente escolhe ao ver o Premium Nutrição — encaminha para o
+ * subplano adequado (ver `OBJETIVO_PARA_CATEGORIA` em constants.ts).
+ */
+export type ObjetivoCliente = 'perder_peso' | 'manter_peso' | 'ganhar_massa' | 'alimentacao_equilibrada'
+
+/**
+ * Unidade do preço do plano. Ambiguidade de produto (ver ROADMAP Fase 7):
+ * "195 MZN" pode ser o preço TOTAL do pacote ou o preço POR REFEIÇÃO — este
+ * campo torna essa leitura explícita em vez de assumir uma das duas.
+ * TODO(produto): confirmar com o cliente qual leitura é a correta.
+ */
+export type PrecoUnidade = 'total' | 'por_refeicao'
 
 /** Plano pré-pago configurável no admin. */
 export interface Plano {
   _id?: string
   nome: string
-  tipo: PlanoTipo
+  /** Categoria/tipo de dieta (Fase 7). */
+  categoria: TipoPlano
+  /** Modalidade de duração (Fase 7; substitui `tipo`). */
+  duracao: DuracaoPlano
   /** Nº de refeições creditadas ao ativar. */
   numRefeicoes: number
-  /** Preço total do pacote (MZN). */
-  preco: number
+  /**
+   * Preço do pacote (MZN). `null` = ainda por definir — a UI deve mostrar
+   * "Preço a confirmar" e desativar a compra (nunca hardcode um valor).
+   */
+  preco: number | null
+  /** O que `preco` representa — ver `PrecoUnidade`. */
+  precoUnidade: PrecoUnidade
   /** Dias de validade a contar da ativação. */
   validadeDias: number
-  /** Plano premium: concede tier premium (desbloqueia exclusivos) — Fase 3. */
+  /**
+   * Plano premium: concede tier premium (desbloqueia exclusivos no menu
+   * normal — Fase 3) e, se `categoria !== 'classico'`, também o menu próprio
+   * da categoria (Fase 7). Derivado de `categoria` ao criar/editar.
+   */
   premium?: boolean
   descricao?: string
   ativo?: boolean
@@ -366,12 +413,16 @@ export interface Subscricao {
   _id?: string
   /** ObjectId, ou objeto populado no admin ({ telefone, nome }). */
   clienteId: string | { _id: string; telefone: string; nome?: string }
-  /** ObjectId, ou objeto populado no admin ({ nome, tipo }). */
-  planoId: string | { _id: string; nome: string; tipo: PlanoTipo }
+  /** ObjectId, ou objeto populado no admin ({ nome, categoria, duracao }). */
+  planoId: string | { _id: string; nome: string; categoria: TipoPlano; duracao: DuracaoPlano }
   /** Snapshot do plano à data da compra. */
   planoNome: string
+  /** Snapshot (Fase 7): categoria/duração do plano comprado. */
+  categoria: TipoPlano
+  duracao: DuracaoPlano
   numRefeicoes: number
   preco: number
+  precoUnidade: PrecoUnidade
   /** Snapshot: plano premium (concede tier premium enquanto ativa) — Fase 3. */
   premium?: boolean
   refeicoesRestantes: number
@@ -380,6 +431,28 @@ export interface Subscricao {
   dataInicio?: Date | string
   dataExpiracao?: Date | string
   notaAdmin?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Menus por plano premium (Fase 7)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/** Categorias que têm menu próprio (Clássico reutiliza o menu normal). */
+export type CategoriaComMenuProprio = 'premium_fit_starter' | 'premium_muscle' | 'premium_equilibrio'
+
+export interface PlanoMenuItem {
+  /** Populado com o prato completo (server popula `itens.pratoId`) */
+  pratoId: Prato | string
+}
+
+/** Menu de pratos dedicado a uma categoria de plano premium (Fase 7). */
+export interface PlanoMenu {
+  _id?: string
+  categoria: CategoriaComMenuProprio
+  itens: PlanoMenuItem[]
+  ativo: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }

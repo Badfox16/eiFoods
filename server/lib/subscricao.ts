@@ -1,4 +1,5 @@
 import Subscricao, { type ISubscricao } from '../models/Subscricao'
+import type { TipoPlano } from '../models/Plano'
 import type { Types } from 'mongoose'
 
 /**
@@ -62,6 +63,23 @@ export async function isClientePremium(
 		if (sub.estado === 'ativa') return true
 	}
 	return false
+}
+
+/**
+ * Categoria de plano ativa do cliente (Fase 7), ou `null` se não tiver
+ * subscrição ativa com saldo, ou se a que tiver for `classico`.
+ *
+ * Determina qual `PlanoMenu` o cliente vê no ecrã de Menu (Menu.jsx) e é
+ * reforçado no servidor em `POST /orders` — um cliente com uma categoria
+ * premium ativa só pode encomendar pratos desse `PlanoMenu`.
+ */
+export async function getCategoriaAtiva(
+	clienteId: string | Types.ObjectId,
+	agora = new Date()
+): Promise<TipoPlano | null> {
+	const sub = await getSubscricaoAtiva(clienteId, agora)
+	if (sub && sub.categoria !== 'classico') return sub.categoria
+	return null
 }
 
 /**

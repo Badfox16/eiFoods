@@ -38,6 +38,9 @@ router.post('/', requireAuth, upload.single('comprovativo'), async (req, res, ne
 
 		const plano = await Plano.findById(planoId)
 		if (!plano || !plano.ativo) return res.status(404).json({ error: 'Plano indisponível' })
+		if (plano.preco === null || plano.preco === undefined) {
+			return res.status(409).json({ error: 'Este plano ainda não tem preço definido' })
+		}
 
 		let comprovativo: { url: string; publicId: string } | undefined
 		if (req.file) {
@@ -48,8 +51,11 @@ router.post('/', requireAuth, upload.single('comprovativo'), async (req, res, ne
 			clienteId: cliente._id,
 			planoId: plano._id,
 			planoNome: plano.nome,
+			categoria: plano.categoria,
+			duracao: plano.duracao,
 			numRefeicoes: plano.numRefeicoes,
 			preco: plano.preco,
+			precoUnidade: plano.precoUnidade,
 			premium: plano.premium === true,
 			refeicoesRestantes: 0,
 			estado: 'pendente_pagamento',
@@ -120,7 +126,7 @@ router.get('/', requireAdmin, async (req, res, next) => {
 
 		const subs = await Subscricao.find(filter)
 			.populate('clienteId', 'telefone nome')
-			.populate('planoId', 'nome tipo')
+			.populate('planoId', 'nome categoria duracao')
 			.sort({ createdAt: -1 })
 		res.json(subs)
 	} catch (err) {
