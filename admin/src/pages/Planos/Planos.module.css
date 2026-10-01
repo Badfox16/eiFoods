@@ -198,3 +198,168 @@
   color: var(--brand-primary-dark);
   font-size: 0.9rem;
 }
+
+/* ── Abas ── */
+.tabBar {
+  display: flex;
+  gap: var(--sp-xs);
+  border-bottom: 1.5px solid var(--ui-border);
+  overflow-x: auto;
+}
+.tabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ui-text-2);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transform: translateY(1.5px);
+}
+.tabBtn:hover { color: var(--ui-text); }
+.tabActive {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
+}
+.tabIcon { display: inline-flex; opacity: 0.85; }
+.tabBadge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--ui-danger, var(--status-cancelled));
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Visão geral ── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--sp-lg);
+}
+.categoriaOverview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--sp-md);
+}
+.categoriaOverviewCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--sp-md);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+}
+.categoriaOverviewNome { font-weight: 700; color: var(--ui-text); font-size: 0.92rem; }
+.categoriaOverviewCount { font-size: 0.8rem; color: var(--ui-text-2); }
+
+.fieldHint {
+  font-size: 0.76rem;
+  color: var(--ui-text-3);
+  margin: 2px 0 0;
+}
+
+/* ── Aba Menus (grelha de pratos, partilhada com Menu do Dia) ── */
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-lg);
+  flex-wrap: wrap;
+}
+.label {
+  font-size: 0.78rem;
+  color: var(--ui-text-2);
+  font-weight: 600;
+}
+.ativoWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  color: var(--ui-text);
+  cursor: pointer;
+  padding-bottom: 8px;
+}
+.toolbarRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding-bottom: 2px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-md);
+}
+.pratoCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+  border: 1px solid var(--ui-border);
+}
+.pratoCardSel {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 2px var(--brand-primary-light);
+}
+.pratoHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pratoImagem {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 1px solid var(--ui-border);
+  flex-shrink: 0;
+}
+.pratoInfo { min-width: 0; }
+.pratoNome {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+.pratoPreco {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+}
+.flags {
+  display: flex;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+}
+.flag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--ui-text);
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; }
+}

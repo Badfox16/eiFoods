@@ -390,16 +390,27 @@ export const streakApi = {
     request<ApiClienteStreak[]>('/streak/clientes'),
 }
 
-// ── Planos & Subscrições (Fase 2) ─────────────────────────────────────────────
+// ── Planos & Subscrições (Fase 2; categorias/duração e menus premium — Fase 7) ─
 
+/** @deprecated substituído por ApiDuracaoPlano (mesmos valores, nome mais claro). */
 export type ApiPlanoTipo = 'semanal' | 'bissemanal' | 'mensal'
+
+export type ApiDuracaoPlano = 'starter' | 'plus' | 'mensal'
+
+export type ApiTipoPlano = 'classico' | 'premium_fit_starter' | 'premium_muscle' | 'premium_equilibrio'
+
+/** TODO(produto): ver ROADMAP Fase 7 — "195 MZN" é total do pacote ou por refeição? */
+export type ApiPrecoUnidade = 'total' | 'por_refeicao'
 
 export interface ApiPlano {
   _id: string
   nome: string
-  tipo: ApiPlanoTipo
+  categoria: ApiTipoPlano
+  duracao: ApiDuracaoPlano
   numRefeicoes: number
-  preco: number
+  /** `null` = preço ainda por definir — mostrar "Preço a confirmar". */
+  preco: number | null
+  precoUnidade: ApiPrecoUnidade
   validadeDias: number
   /** Plano premium: concede tier premium (desbloqueia exclusivos) — Fase 3. */
   premium: boolean
@@ -415,11 +426,14 @@ export interface ApiSubscricao {
   _id: string
   /** Populado no admin: { _id, telefone, nome }. */
   clienteId: string | { _id: string; telefone: string; nome?: string }
-  /** Populado no admin: { _id, nome, tipo }. */
-  planoId: string | { _id: string; nome: string; tipo: ApiPlanoTipo }
+  /** Populado no admin: { _id, nome, categoria, duracao }. */
+  planoId: string | { _id: string; nome: string; categoria: ApiTipoPlano; duracao: ApiDuracaoPlano }
   planoNome: string
+  categoria: ApiTipoPlano
+  duracao: ApiDuracaoPlano
   numRefeicoes: number
   preco: number
+  precoUnidade: ApiPrecoUnidade
   refeicoesRestantes: number
   estado: ApiSubscricaoEstado
   comprovativo?: { url: string; publicId: string }
@@ -432,11 +446,13 @@ export interface ApiSubscricao {
 
 export type PlanoInput = {
   nome: string
-  tipo: ApiPlanoTipo
+  categoria: ApiTipoPlano
+  duracao: ApiDuracaoPlano
   numRefeicoes: number
-  preco: number
+  /** `null`/`undefined` = "a definir" (não hardcode um valor de placeholder). */
+  preco: number | null
+  precoUnidade?: ApiPrecoUnidade
   validadeDias: number
-  premium?: boolean
   descricao?: string
   ativo?: boolean
 }
@@ -468,6 +484,35 @@ export const subscricoesApi = {
 
   rejeitar: (id: string, notaAdmin?: string) =>
     request<ApiSubscricao>(`/subscricoes/${id}/rejeitar`, json('PATCH', { notaAdmin })),
+}
+
+// ── Menus dos planos premium (Fase 7) ─────────────────────────────────────────
+
+/** Categorias que têm menu próprio — Clássico reutiliza o menu normal do dia. */
+export type ApiCategoriaComMenuProprio = 'premium_fit_starter' | 'premium_muscle' | 'premium_equilibrio'
+
+export interface ApiPlanoMenuItem {
+  pratoId: ApiPrato | string
+}
+
+export interface ApiPlanoMenu {
+  _id?: string
+  categoria: ApiCategoriaComMenuProprio
+  itens: ApiPlanoMenuItem[]
+  ativo: boolean
+  message?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export const planoMenuApi = {
+  /** Cardápio da categoria, com pratos populados. */
+  get: (categoria: ApiCategoriaComMenuProprio) =>
+    request<ApiPlanoMenu>(`/planos-menu/${categoria}`),
+
+  /** Cria ou atualiza (upsert) o cardápio da categoria. */
+  save: (categoria: ApiCategoriaComMenuProprio, payload: { itens: Array<{ pratoId: string }>; ativo?: boolean }) =>
+    request<ApiPlanoMenu>(`/planos-menu/${categoria}`, json('PUT', payload)),
 }
 
 // ── Sorteio ──────────────────────────────────────────────────────────────────
