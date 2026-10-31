@@ -1,7 +1,35 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "PowerShell(git fetch origin --prune 2>&1)",
+      "PowerShell(git rev-list --left-right --count origin/main...HEAD)",
+      "PowerShell(foreach \\($d in @\\('client','server','admin','shared'\\)\\) { echo \"=== $d ===\"; if \\(Test-Path \"$d\\\\package.json\"\\) { Get-Content \"$d\\\\package.json\" -TotalCount 25 | Out-String } else { Get-ChildItem $d -Force | Select-Object -First 12 -ExpandProperty Name | Out-String } })",
+      "PowerShell(git config user.name)",
+      "PowerShell(git config user.email)",
+      "PowerShell(git config --show-origin --get-regexp \"^user\\\\.\" 2>&1)",
+      "PowerShell(git var GIT_AUTHOR_IDENT 2>&1)",
+      "PowerShell(git config --get-all credential.helper)",
+      "PowerShell(git fetch origin --prune)",
+      "Bash(cd \"/c/Users/santos.allen/Downloads/eiFoods/eiFoods\" && cp server/.env.example server/.env && echo \"env copied\")",
+      "Bash(bun install *)",
+      "Bash(npm install *)",
+      "Bash(bun --watch index.ts)",
+      "Bash(curl -s http://localhost:3000/api/health)",
+      "Bash(npm run *)",
+      "Bash(:)",
+      "Bash(curl -s -o /dev/null -w \"client HTTP %{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"admin  HTTP %{http_code}\\\\n\" http://localhost:5174/)",
+      "Bash(curl -s http://localhost:5173/)",
+      "Bash(curl -s http://localhost:3000/api/pratos)",
+      "Bash(curl -s http://localhost:3000/api/empresas)",
+      "Bash(curl -s http://localhost:3000/api/planos)",
+      "Bash(node -e \"console.log\\(new Date\\(parseInt\\('6aabe6ef',16\\)*1000\\).toISOString\\(\\)\\)\")",
+      "Bash(cp /tmp/check_admin.ts ./_check_admin.ts)",
+      "Bash(bun run *)",
+      "Bash(rm -f ./_check_admin.ts)",
+      "Bash(taskkill //F //IM find.exe)",
+      "Bash(taskkill //F //IM grep.exe)"
     ]
   }
 }
